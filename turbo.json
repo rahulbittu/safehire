@@ -3,8 +3,14 @@
   "globalDependencies": ["**/.env.*local"],
   "globalEnv": [
     "NODE_ENV",
+    "APP_ENV",
     "NEXT_PUBLIC_SUPABASE_URL",
     "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "NEXT_PUBLIC_APP_ENV",
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "FIELD_ENCRYPTION_KEY",
+    "FIELD_HASH_PEPPER",
+    "DATABASE_URL",
     "EXPO_PUBLIC_SUPABASE_URL",
     "EXPO_PUBLIC_SUPABASE_ANON_KEY"
   ],
