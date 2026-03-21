@@ -63,7 +63,7 @@ export default function ReportIncidentPage() {
       </a>
 
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 26, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.025em", margin: 0 }}>
+        <h1 style={{ fontSize: 26, fontWeight: 800, color: "#1E293B", letterSpacing: "-0.025em", margin: 0 }}>
           Report an Incident
         </h1>
         <p style={{ color: "#64748B", fontSize: 14, marginTop: 6, lineHeight: 1.5 }}>

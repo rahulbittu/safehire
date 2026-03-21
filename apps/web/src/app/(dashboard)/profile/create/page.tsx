@@ -52,7 +52,7 @@ export default function CreateProfilePage() {
   return (
     <div style={{ maxWidth: 560, margin: "0 auto", padding: "32px 24px" }}>
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 26, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.025em", margin: 0 }}>
+        <h1 style={{ fontSize: 26, fontWeight: 800, color: "#1E293B", letterSpacing: "-0.025em", margin: 0 }}>
           Create your profile
         </h1>
         <p style={{ color: "#64748B", fontSize: 14, marginTop: 6, lineHeight: 1.5 }}>
@@ -124,7 +124,7 @@ export default function CreateProfilePage() {
           disabled={createMutation.isPending}
           style={{
             width: "100%", padding: 14,
-            background: createMutation.isPending ? "#93C5FD" : "#0A66C2",
+            background: createMutation.isPending ? "#93C5FD" : "#0F766E",
             color: "#fff", border: "none", borderRadius: 8, fontSize: 15,
             fontWeight: 600, cursor: createMutation.isPending ? "default" : "pointer",
           }}

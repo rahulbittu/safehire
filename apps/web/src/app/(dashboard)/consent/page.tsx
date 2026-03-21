@@ -53,7 +53,7 @@ export default function ConsentPage() {
   return (
     <div style={{ maxWidth: 720, margin: "0 auto", padding: "32px 24px" }}>
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 26, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.025em", margin: 0 }}>
+        <h1 style={{ fontSize: 26, fontWeight: 800, color: "#1E293B", letterSpacing: "-0.025em", margin: 0 }}>
           Manage Consent
         </h1>
         <p style={{ color: "#64748B", fontSize: 14, marginTop: 4 }}>
@@ -147,7 +147,7 @@ export default function ConsentPage() {
       )}
 
       {/* Active Consents */}
-      <h2 style={{ fontSize: 15, fontWeight: 700, color: "#0F172A", marginBottom: 12 }}>Active Consent Grants</h2>
+      <h2 style={{ fontSize: 15, fontWeight: 700, color: "#1E293B", marginBottom: 12 }}>Active Consent Grants</h2>
       {consentsLoading ? (
         <div style={{ display: "grid", gap: 10 }}>
           {[1, 2].map((n) => (
@@ -205,7 +205,7 @@ export default function ConsentPage() {
     return (
       <div style={{ maxWidth: 720, margin: "0 auto", padding: "32px 24px" }}>
         <div style={{ marginBottom: 28 }}>
-          <h1 style={{ fontSize: 26, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.025em", margin: 0 }}>
+          <h1 style={{ fontSize: 26, fontWeight: 800, color: "#1E293B", letterSpacing: "-0.025em", margin: 0 }}>
             Access Requests
           </h1>
           <p style={{ color: "#64748B", fontSize: 14, marginTop: 4 }}>
@@ -218,9 +218,9 @@ export default function ConsentPage() {
           background: "#EFF6FF", border: "1px solid #BFDBFE", borderRadius: 12,
           padding: "16px 20px", marginBottom: 24,
         }}>
-          <div style={{ fontWeight: 700, color: "#0A66C2", fontSize: 13, marginBottom: 6 }}>How to request access</div>
+          <div style={{ fontWeight: 700, color: "#0F766E", fontSize: 13, marginBottom: 6 }}>How to request access</div>
           <ol style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: "#1E40AF", lineHeight: 1.8 }}>
-            <li>Go to <a href="/search" style={{ color: "#0A66C2", fontWeight: 700, textDecoration: "none" }}>Search</a> and find a worker</li>
+            <li>Go to <a href="/search" style={{ color: "#0F766E", fontWeight: 700, textDecoration: "none" }}>Search</a> and find a worker</li>
             <li>View their trust card</li>
             <li>Click &ldquo;Request Access&rdquo;</li>
           </ol>
@@ -232,7 +232,7 @@ export default function ConsentPage() {
           </div>
         )}
 
-        <h2 style={{ fontSize: 15, fontWeight: 700, color: "#0F172A", marginBottom: 12 }}>My Requests</h2>
+        <h2 style={{ fontSize: 15, fontWeight: 700, color: "#1E293B", marginBottom: 12 }}>My Requests</h2>
         {myRequestsLoading ? (
           <div style={{ display: "grid", gap: 10 }}>
             {[1, 2].map((n) => (
@@ -245,7 +245,7 @@ export default function ConsentPage() {
           }}>
             <div style={{ fontSize: 14, color: "#64748B" }}>No access requests yet.</div>
             <div style={{ fontSize: 13, color: "#94A3B8", marginTop: 4 }}>
-              Use <a href="/search" style={{ color: "#0A66C2", fontWeight: 600, textDecoration: "none" }}>Search</a> to find workers and request access.
+              Use <a href="/search" style={{ color: "#0F766E", fontWeight: 600, textDecoration: "none" }}>Search</a> to find workers and request access.
             </div>
           </div>
         ) : (

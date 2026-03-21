@@ -4,7 +4,7 @@ export default function IncidentsPage() {
   return (
     <div style={{ maxWidth: 720, margin: "0 auto", padding: "32px 24px" }}>
       <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 26, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.025em", margin: 0 }}>
+        <h1 style={{ fontSize: 26, fontWeight: 800, color: "#1E293B", letterSpacing: "-0.025em", margin: 0 }}>
           Incidents
         </h1>
         <p style={{ color: "#64748B", fontSize: 14, marginTop: 4 }}>
@@ -25,7 +25,7 @@ export default function IncidentsPage() {
       </div>
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-        <h2 style={{ fontSize: 15, fontWeight: 700, color: "#0F172A", margin: 0 }}>My Reports</h2>
+        <h2 style={{ fontSize: 15, fontWeight: 700, color: "#1E293B", margin: 0 }}>My Reports</h2>
         <a
           href="/incidents/report"
           style={{

@@ -24,7 +24,7 @@ export default function NotFound() {
           href="/"
           style={{
             display: "inline-flex", alignItems: "center", padding: "12px 24px",
-            background: "#1D4ED8", color: "#fff", borderRadius: 8,
+            background: "#0F766E", color: "#fff", borderRadius: 8,
             textDecoration: "none", fontSize: 14, fontWeight: 600,
           }}
         >

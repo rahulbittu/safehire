@@ -7,14 +7,15 @@ interface WorkerPageProps {
   params: { id: string };
 }
 
-const C = {
-  primary: "#0A66C2",
-  verified: "#057642",
-  text: "#191919",
-  textSec: "#666666",
-  textTer: "#999999",
-  border: "#E0E0E0",
-  warning: "#C37D16",
+const T = {
+  teal: "#0F766E",
+  tealLight: "#F0FDF9",
+  amber: "#D97706",
+  amberLight: "#FFF7ED",
+  text: "#1E293B",
+  sub: "#64748B",
+  muted: "#94A3B8",
+  border: "#F1F5F9",
 };
 
 const DEFAULT_REQUEST_FIELDS = ["full_name", "skills", "experience_years"];
@@ -24,34 +25,24 @@ export default function WorkerTrustCardPage({ params }: WorkerPageProps) {
   const [requestSent, setRequestSent] = useState(false);
   const [endorsementSent, setEndorsementSent] = useState(false);
 
-  const { data, isLoading, error } = trpc.hirer.viewTrustCard.useQuery(
-    { workerId: params.id }
-  );
-
-  const requestMutation = trpc.consent.requestAccess.useMutation({
-    onSuccess: () => setRequestSent(true),
-  });
-
-  const endorseMutation = trpc.trust.submitEndorsement.useMutation({
-    onSuccess: () => setEndorsementSent(true),
-  });
+  const { data, isLoading, error } = trpc.hirer.viewTrustCard.useQuery({ workerId: params.id });
+  const requestMutation = trpc.consent.requestAccess.useMutation({ onSuccess: () => setRequestSent(true) });
+  const endorseMutation = trpc.trust.submitEndorsement.useMutation({ onSuccess: () => setEndorsementSent(true) });
 
   if (isLoading) {
     return (
-      <div style={{ maxWidth: 680, margin: "0 auto", padding: "24px 24px" }}>
-        <div style={{ height: 180, background: "#fff", borderRadius: 8, border: `1px solid ${C.border}`, marginBottom: 16 }} />
-        <div style={{ height: 120, background: "#fff", borderRadius: 8, border: `1px solid ${C.border}` }} />
+      <div style={{ maxWidth: 640, margin: "0 auto", padding: "24px" }}>
+        {[160, 120].map((h, i) => (
+          <div key={i} style={{ height: h, background: "#fff", borderRadius: 14, border: `1px solid ${T.border}`, marginBottom: 16 }} />
+        ))}
       </div>
     );
   }
 
   if (error) {
     return (
-      <div style={{ maxWidth: 680, margin: "0 auto", padding: "24px 24px" }}>
-        <div style={{
-          background: "#fff", border: `1px solid ${C.border}`, borderLeft: "3px solid #CC1016",
-          padding: 16, borderRadius: 8, fontSize: 14, color: "#CC1016",
-        }}>
+      <div style={{ maxWidth: 640, margin: "0 auto", padding: "24px" }}>
+        <div style={{ background: "#fff", borderLeft: "3px solid #DC2626", padding: 16, borderRadius: 14, fontSize: 14, color: "#DC2626", border: `1px solid ${T.border}` }}>
           {error.message}
         </div>
       </div>
@@ -63,114 +54,97 @@ export default function WorkerTrustCardPage({ params }: WorkerPageProps) {
   const card = data.trustCard as Record<string, unknown>;
   const tier = (card.tier as string) ?? "unverified";
 
-  const tierConfig: Record<string, { gradient: string; color: string; label: string }> = {
-    unverified: { gradient: "linear-gradient(135deg, #666, #999)", color: C.textSec, label: "Unverified" },
-    basic: { gradient: "linear-gradient(135deg, #0A66C2, #004182)", color: C.primary, label: "Basic Trust" },
-    enhanced: { gradient: "linear-gradient(135deg, #057642, #0A4A2E)", color: C.verified, label: "Enhanced Trust" },
+  const tierStyle: Record<string, { gradient: string; color: string; label: string; bg: string }> = {
+    unverified: { gradient: "linear-gradient(135deg, #64748B, #94A3B8)", color: T.sub, label: "Unverified", bg: "#F8FAFC" },
+    basic: { gradient: "linear-gradient(135deg, #0F766E, #14B8A6)", color: T.teal, label: "Basic", bg: T.tealLight },
+    enhanced: { gradient: "linear-gradient(135deg, #D97706, #F59E0B)", color: T.amber, label: "Enhanced", bg: T.amberLight },
   };
-  const tc_ = tierConfig[tier] ?? tierConfig.unverified;
+  const ts = tierStyle[tier] ?? tierStyle.unverified;
 
   return (
-    <div style={{ maxWidth: 680, margin: "0 auto", padding: "24px 24px" }}>
-      <a href="/search" style={{ fontSize: 13, color: C.textSec, textDecoration: "none", marginBottom: 16, display: "inline-block" }}>
+    <div style={{ maxWidth: 640, margin: "0 auto", padding: "24px" }}>
+      <a href="/search" style={{ fontSize: 13, color: T.sub, textDecoration: "none", marginBottom: 16, display: "inline-block" }}>
         ← Back to search
       </a>
 
-      {/* Profile header — LinkedIn style */}
+      {/* Profile header */}
       <div style={{
-        background: "#fff", borderRadius: 8, border: `1px solid ${C.border}`,
-        marginBottom: 16, overflow: "hidden",
+        background: "#fff", borderRadius: 14, overflow: "hidden", marginBottom: 16,
+        boxShadow: "0 1px 4px rgba(0,0,0,0.04)", border: `1px solid ${T.border}`,
       }}>
-        {/* Banner */}
-        <div style={{ background: tc_.gradient, height: 80 }} />
-
-        {/* Profile info */}
-        <div style={{ padding: "0 24px 20px", marginTop: -32 }}>
+        <div style={{ height: 64, background: ts.gradient }} />
+        <div style={{ padding: "0 24px 22px", marginTop: -28 }}>
           <div style={{
-            width: 72, height: 72, borderRadius: "50%",
-            background: tc_.color, color: "#fff",
+            width: 56, height: 56, borderRadius: 14,
+            background: ts.gradient, color: "#fff",
             display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 28, fontWeight: 700,
-            border: "3px solid #fff",
-          }}>
-            W
-          </div>
-
-          <div style={{ marginTop: 12, display: "flex", justifyContent: "space-between", alignItems: "start" }}>
+            fontSize: 22, fontWeight: 700, border: "3px solid #fff",
+          }}>W</div>
+          <div style={{ marginTop: 12, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <div>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <h1 style={{ fontSize: 22, fontWeight: 700, color: C.text, margin: 0 }}>
-                  Worker Profile
-                </h1>
-                <span style={{
-                  fontSize: 10, fontWeight: 700, textTransform: "uppercase",
-                  padding: "3px 10px", borderRadius: 12,
-                  background: tier === "enhanced" ? "#E8F5E9" : tier === "basic" ? "#E3F2FD" : "#F5F5F5",
-                  color: tc_.color,
-                }}>
-                  {tc_.label}
-                </span>
-              </div>
-              <div style={{ fontSize: 14, color: C.textSec, marginTop: 4 }}>
-                Trust signals are public. Personal data requires worker consent.
+              <h1 style={{ fontSize: 22, fontWeight: 800, color: T.text, margin: 0, letterSpacing: "-0.02em" }}>
+                Worker Profile
+              </h1>
+              <div style={{ fontSize: 14, color: T.sub, marginTop: 4 }}>
+                Trust signals visible. Profile details require consent.
               </div>
             </div>
+            <span style={{
+              padding: "5px 14px", borderRadius: 8,
+              fontSize: 11, fontWeight: 800, textTransform: "uppercase",
+              letterSpacing: "0.04em", background: ts.bg, color: ts.color,
+            }}>{ts.label}</span>
           </div>
         </div>
       </div>
 
-      {/* Trust card stats */}
+      {/* Trust stats */}
       <div style={{
-        background: "#fff", borderRadius: 8, border: `1px solid ${C.border}`,
-        padding: 20, marginBottom: 16,
+        background: "#fff", borderRadius: 14, padding: 20, marginBottom: 16,
+        boxShadow: "0 1px 4px rgba(0,0,0,0.04)", border: `1px solid ${T.border}`,
       }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: C.text, marginBottom: 14 }}>Trust Card</div>
-        <div className="grid-4col" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
+        <div style={{ fontSize: 15, fontWeight: 800, color: T.text, marginBottom: 14 }}>Trust Card</div>
+        <div className="grid-4col" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10 }}>
           {[
-            { label: "Verification", value: (card.verification_status as string) ?? "pending", icon: "🛡️" },
-            { label: "Tenure", value: `${(card.tenure_months as number) ?? 0}mo`, icon: "📅" },
-            { label: "Endorsements", value: (card.endorsement_count as number) ?? 0, icon: "⭐" },
-            { label: "Incidents", value: card.incident_flag ? `Yes (${card.incident_severity_max})` : "None", icon: "📋" },
+            { label: "Verification", value: (card.verification_status as string) ?? "pending" },
+            { label: "Tenure", value: `${(card.tenure_months as number) ?? 0}mo` },
+            { label: "Endorsements", value: String((card.endorsement_count as number) ?? 0) },
+            { label: "Incidents", value: card.incident_flag ? `Yes` : "None" },
           ].map((stat) => (
             <div key={stat.label} style={{
-              textAlign: "center", padding: 14,
-              background: "#F8F9FA", borderRadius: 8,
+              textAlign: "center", padding: 14, background: "#F8FAFC", borderRadius: 10,
             }}>
-              <div style={{ fontSize: 18, marginBottom: 4 }}>{stat.icon}</div>
-              <div style={{ fontSize: 18, fontWeight: 700, color: C.text }}>{stat.value}</div>
-              <div style={{ fontSize: 10, color: C.textTer, marginTop: 4, textTransform: "uppercase", fontWeight: 600, letterSpacing: "0.04em" }}>
+              <div style={{ fontSize: 18, fontWeight: 800, color: T.text }}>{stat.value}</div>
+              <div style={{ fontSize: 10, color: T.muted, marginTop: 4, textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.04em" }}>
                 {stat.label}
               </div>
             </div>
           ))}
         </div>
-        <div style={{ fontSize: 12, color: C.textTer, marginTop: 12, textAlign: "right" }}>
+        <div style={{ fontSize: 12, color: T.muted, marginTop: 12, textAlign: "right" }}>
           Updated {card.last_computed_at ? new Date(card.last_computed_at as string).toLocaleDateString() : "—"}
         </div>
       </div>
 
-      {/* Consent status */}
+      {/* Consent section */}
       {data.hasConsent ? (
         <div style={{
-          background: "#fff", borderRadius: 8, border: `1px solid ${C.border}`,
-          borderLeft: `3px solid ${C.verified}`, padding: 20, marginBottom: 16,
+          background: "#fff", borderRadius: 14, padding: 20, marginBottom: 16,
+          borderLeft: `3px solid ${T.teal}`,
+          boxShadow: "0 1px 4px rgba(0,0,0,0.04)", border: `1px solid ${T.border}`,
         }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
-            <span style={{ fontSize: 16 }}>✅</span>
-            <span style={{ fontWeight: 700, color: C.verified, fontSize: 15 }}>Access Granted</span>
-          </div>
-          <div style={{ fontSize: 13, color: C.textSec, marginBottom: 14 }}>
-            You have access to: {data.consentedFields.join(", ")}
+          <div style={{ fontSize: 15, fontWeight: 800, color: T.teal, marginBottom: 12 }}>Access Granted</div>
+          <div style={{ fontSize: 13, color: T.sub, marginBottom: 14 }}>
+            Fields: {data.consentedFields.join(", ")}
           </div>
           {data.profile && (
-            <div style={{ padding: 16, background: "#F8F9FA", borderRadius: 8 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: C.text, marginBottom: 12 }}>Worker Details</div>
+            <div style={{ padding: 16, background: "#F8FAFC", borderRadius: 10 }}>
               {Object.entries(data.profile as Record<string, unknown>).map(([key, value]) => (
                 <div key={key} style={{ fontSize: 14, marginBottom: 6, display: "flex", gap: 12 }}>
-                  <span style={{ color: C.textSec, minWidth: 130, textTransform: "capitalize", fontWeight: 500 }}>
+                  <span style={{ color: T.sub, minWidth: 130, textTransform: "capitalize", fontWeight: 500 }}>
                     {key.replace(/_/g, " ")}
                   </span>
-                  <span style={{ color: C.text, fontWeight: 600 }}>
+                  <span style={{ color: T.text, fontWeight: 700 }}>
                     {Array.isArray(value) ? value.join(", ") : String(value ?? "—")}
                   </span>
                 </div>
@@ -180,15 +154,13 @@ export default function WorkerTrustCardPage({ params }: WorkerPageProps) {
         </div>
       ) : (
         <div style={{
-          background: "#fff", borderRadius: 8, border: `1px solid ${C.border}`,
-          borderLeft: `3px solid ${C.warning}`, padding: 20, marginBottom: 16,
+          background: "#fff", borderRadius: 14, padding: 20, marginBottom: 16,
+          borderLeft: `3px solid ${T.amber}`,
+          boxShadow: "0 1px 4px rgba(0,0,0,0.04)", border: `1px solid ${T.border}`,
         }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-            <span style={{ fontSize: 16 }}>🔒</span>
-            <span style={{ fontWeight: 700, color: C.warning, fontSize: 15 }}>Profile Access Required</span>
-          </div>
-          <div style={{ fontSize: 13, color: C.textSec, marginBottom: 14 }}>
-            Only the trust card summary is visible. Request access to see detailed profile data.
+          <div style={{ fontSize: 15, fontWeight: 800, color: T.amber, marginBottom: 4 }}>Profile Access Required</div>
+          <div style={{ fontSize: 13, color: T.sub, marginBottom: 14 }}>
+            Request access to see detailed worker profile data.
           </div>
           {!requestSent ? (
             <div>
@@ -199,62 +171,47 @@ export default function WorkerTrustCardPage({ params }: WorkerPageProps) {
                 maxLength={500}
                 rows={2}
                 style={{
-                  width: "100%", padding: "10px 14px", border: `1px solid ${C.border}`,
-                  borderRadius: 8, marginBottom: 10, boxSizing: "border-box",
-                  resize: "vertical", fontSize: 13, outline: "none", background: "#F8F9FA",
+                  width: "100%", padding: "10px 14px", border: `1.5px solid ${T.border}`,
+                  borderRadius: 10, marginBottom: 10, boxSizing: "border-box",
+                  resize: "vertical", fontSize: 13, outline: "none", background: "#F8FAFC",
                 }}
               />
               <button
-                onClick={() => requestMutation.mutate({
-                  workerId: params.id,
-                  fields: DEFAULT_REQUEST_FIELDS,
-                  message: requestMessage || undefined,
-                })}
+                onClick={() => requestMutation.mutate({ workerId: params.id, fields: DEFAULT_REQUEST_FIELDS, message: requestMessage || undefined })}
                 disabled={requestMutation.isPending}
                 style={{
-                  padding: "10px 24px", background: C.primary, color: "#fff",
-                  border: "none", borderRadius: 20, cursor: "pointer",
-                  fontSize: 14, fontWeight: 600,
+                  padding: "10px 24px", background: T.teal, color: "#fff",
+                  border: "none", borderRadius: 8, cursor: "pointer",
+                  fontSize: 14, fontWeight: 700,
                 }}
               >
                 {requestMutation.isPending ? "Sending..." : "Request Access"}
               </button>
               {requestMutation.error && (
-                <div style={{ marginTop: 8, fontSize: 12, color: "#CC1016" }}>
-                  {requestMutation.error.message}
-                </div>
+                <div style={{ marginTop: 8, fontSize: 12, color: "#DC2626" }}>{requestMutation.error.message}</div>
               )}
             </div>
           ) : (
             <div style={{
-              display: "flex", alignItems: "center", gap: 8,
-              fontSize: 14, color: C.verified, fontWeight: 600,
-              background: "#E8F5E9", padding: "10px 14px", borderRadius: 8,
+              fontSize: 14, color: T.teal, fontWeight: 700,
+              background: T.tealLight, padding: "10px 14px", borderRadius: 8,
             }}>
-              <span>✅</span> Access request sent. The worker will review your request.
+              ✓ Access request sent. The worker will review it.
             </div>
           )}
         </div>
       )}
 
-      {/* Endorse worker */}
+      {/* Endorsement */}
       <div style={{
-        background: "#fff", borderRadius: 8, border: `1px solid ${C.border}`,
-        padding: 20,
+        background: "#fff", borderRadius: 14, padding: 20,
+        boxShadow: "0 1px 4px rgba(0,0,0,0.04)", border: `1px solid ${T.border}`,
       }}>
-        <div style={{ fontSize: 16, fontWeight: 700, color: C.text, marginBottom: 4 }}>
-          Write an endorsement
-        </div>
-        <div style={{ fontSize: 13, color: C.textSec, marginBottom: 14 }}>
-          Help build this worker&apos;s trust profile with your recommendation.
-        </div>
+        <div style={{ fontSize: 15, fontWeight: 800, color: T.text, marginBottom: 4 }}>Write an endorsement</div>
+        <div style={{ fontSize: 13, color: T.sub, marginBottom: 14 }}>Help build this worker&apos;s trust profile.</div>
         {endorsementSent ? (
-          <div style={{
-            display: "flex", alignItems: "center", gap: 8,
-            fontSize: 14, color: C.verified, fontWeight: 600,
-            background: "#E8F5E9", padding: "12px 16px", borderRadius: 8,
-          }}>
-            <span>✅</span> Endorsement submitted successfully.
+          <div style={{ fontSize: 14, color: T.teal, fontWeight: 700, background: T.tealLight, padding: "12px 16px", borderRadius: 8 }}>
+            ✓ Endorsement submitted.
           </div>
         ) : (
           <form onSubmit={(e) => {
@@ -262,38 +219,17 @@ export default function WorkerTrustCardPage({ params }: WorkerPageProps) {
             const form = e.target as HTMLFormElement;
             const relationship = (form.elements.namedItem("relationship") as HTMLInputElement).value;
             const comment = (form.elements.namedItem("comment") as HTMLTextAreaElement).value;
-            if (relationship) {
-              endorseMutation.mutate({ workerId: params.id, relationship, comment: comment || undefined });
-            }
+            if (relationship) endorseMutation.mutate({ workerId: params.id, relationship, comment: comment || undefined });
           }}>
-            <input
-              name="relationship"
-              placeholder="Your relationship (e.g., Former employer, Neighbor)"
-              style={{
-                width: "100%", padding: "10px 14px", border: `1px solid ${C.border}`,
-                borderRadius: 8, marginBottom: 8, boxSizing: "border-box",
-                fontSize: 13, outline: "none", background: "#F8F9FA",
-              }}
-            />
-            <textarea
-              name="comment"
-              placeholder="Share your experience working with them..."
-              rows={3}
-              style={{
-                width: "100%", padding: "10px 14px", border: `1px solid ${C.border}`,
-                borderRadius: 8, marginBottom: 12, boxSizing: "border-box",
-                resize: "vertical", fontSize: 13, outline: "none", background: "#F8F9FA",
-              }}
-            />
-            <button
-              type="submit"
-              disabled={endorseMutation.isPending}
-              style={{
-                padding: "10px 24px", background: C.primary, color: "#fff",
-                border: "none", borderRadius: 20, cursor: "pointer",
-                fontSize: 14, fontWeight: 600,
-              }}
-            >
+            <input name="relationship" placeholder="Your relationship (e.g., Former employer)" style={{
+              width: "100%", padding: "10px 14px", border: `1.5px solid ${T.border}`, borderRadius: 10, marginBottom: 8, boxSizing: "border-box", fontSize: 13, outline: "none", background: "#F8FAFC",
+            }} />
+            <textarea name="comment" placeholder="Share your experience..." rows={3} style={{
+              width: "100%", padding: "10px 14px", border: `1.5px solid ${T.border}`, borderRadius: 10, marginBottom: 12, boxSizing: "border-box", resize: "vertical", fontSize: 13, outline: "none", background: "#F8FAFC",
+            }} />
+            <button type="submit" disabled={endorseMutation.isPending} style={{
+              padding: "10px 24px", background: T.teal, color: "#fff", border: "none", borderRadius: 8, cursor: "pointer", fontSize: 14, fontWeight: 700,
+            }}>
               {endorseMutation.isPending ? "Submitting..." : "Submit Endorsement"}
             </button>
           </form>

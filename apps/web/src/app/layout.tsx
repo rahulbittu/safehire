@@ -21,15 +21,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en">
       <body style={{
         margin: 0,
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
-        color: "#191919",
-        background: "#F4F2EE",
+        fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        color: "#1E293B",
+        background: "#FAFBFC",
       }}>
         <TrpcProvider>
           <AuthProvider>
-            <div style={{ background: "#fff", boxShadow: "0 0 0 1px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04)" }}>
-              <Nav />
-            </div>
+            <Nav />
             <main>
               {children}
             </main>

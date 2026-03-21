@@ -1,124 +1,112 @@
 "use client";
 
 import { useAuth } from "@verifyme/auth";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 export function Nav() {
   const { user, signOut } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleLogout = () => {
     signOut();
     router.push("/login");
   };
 
-  const initial = user?.role === "worker" ? "W" : "H";
-
   return (
     <nav style={{
       background: "#fff",
-      boxShadow: "0 0 0 1px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04)",
+      borderBottom: "1px solid #F1F5F9",
       position: "sticky",
       top: 0,
       zIndex: 100,
-      padding: "0 24px",
-      display: "flex",
-      height: 52,
-      alignItems: "center",
-      maxWidth: 1128,
-      margin: "0 auto",
     }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+      <div style={{
+        maxWidth: 1080,
+        margin: "0 auto",
+        padding: "0 24px",
+        display: "flex",
+        height: 56,
+        alignItems: "center",
+      }}>
         <a href="/" style={{
-          display: "flex", alignItems: "center", gap: 8,
-          textDecoration: "none",
+          fontWeight: 800, fontSize: 20, color: "#0F766E",
+          textDecoration: "none", letterSpacing: "-0.03em",
         }}>
-          <div style={{
-            width: 34, height: 34, borderRadius: 4, background: "#0A66C2",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            color: "#fff", fontWeight: 800, fontSize: 18,
-          }}>
-            S
-          </div>
+          safe<span style={{ color: "#D97706" }}>hire</span>
         </a>
-      </div>
 
-      {user ? (
-        <>
-          <div className="nav-links" style={{
-            display: "flex", gap: 0, alignItems: "center",
-            marginLeft: 24,
-          }}>
-            <NavItem href="/dashboard" icon="⌂" label="Home" />
-            {user.role === "hirer" && (
-              <NavItem href="/search" icon="⊕" label="Search" />
-            )}
-            <NavItem href="/consent" icon="☰" label="Consent" />
-            {user.role === "hirer" && (
-              <NavItem href="/incidents/report" icon="⚑" label="Report" />
-            )}
-          </div>
-
-          <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <div style={{
-                width: 32, height: 32, borderRadius: "50%",
-                background: user.role === "worker" ? "#057642" : "#0A66C2",
-                color: "#fff", display: "flex", alignItems: "center",
-                justifyContent: "center", fontSize: 14, fontWeight: 700,
-              }}>
-                {initial}
-              </div>
-              <div style={{ lineHeight: 1.2 }}>
-                <div style={{ fontSize: 12, fontWeight: 600, color: "#191919", textTransform: "capitalize" }}>
-                  {user.role}
-                </div>
-              </div>
+        {user ? (
+          <>
+            <div className="nav-links" style={{
+              display: "flex", gap: 4, alignItems: "center",
+              marginLeft: 32,
+            }}>
+              <NavLink href="/dashboard" label="Home" active={pathname === "/dashboard"} />
+              {user.role === "hirer" && (
+                <NavLink href="/search" label="Find Workers" active={pathname === "/search"} />
+              )}
+              <NavLink href="/consent" label="Consent" active={pathname === "/consent"} />
+              {user.role === "hirer" && (
+                <NavLink href="/incidents/report" label="Report" active={pathname?.startsWith("/incidents") ?? false} />
+              )}
             </div>
-            <button
-              onClick={handleLogout}
-              style={{
-                padding: "6px 14px", background: "transparent",
-                border: "1px solid #E0E0E0", borderRadius: 16,
-                fontSize: 12, fontWeight: 600, cursor: "pointer",
-                color: "#666",
-              }}
-            >
-              Sign out
-            </button>
+
+            <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 14 }}>
+              <div style={{
+                padding: "4px 12px", borderRadius: 6,
+                background: user.role === "worker" ? "#F0FDF9" : "#FFF7ED",
+                color: user.role === "worker" ? "#0F766E" : "#D97706",
+                fontSize: 12, fontWeight: 700, textTransform: "uppercase",
+                letterSpacing: "0.04em",
+              }}>
+                {user.role}
+              </div>
+              <button
+                onClick={handleLogout}
+                style={{
+                  padding: "7px 16px", background: "transparent",
+                  border: "1.5px solid #E2E8F0", borderRadius: 8,
+                  fontSize: 13, fontWeight: 600, cursor: "pointer",
+                  color: "#64748B",
+                }}
+              >
+                Sign out
+              </button>
+            </div>
+          </>
+        ) : (
+          <div style={{ marginLeft: "auto", display: "flex", gap: 8, alignItems: "center" }}>
+            <a href="/login" style={{
+              color: "#1E293B", textDecoration: "none",
+              fontSize: 14, fontWeight: 600, padding: "8px 16px",
+            }}>
+              Log in
+            </a>
+            <a href="/login" style={{
+              color: "#fff", background: "#0F766E",
+              textDecoration: "none",
+              fontSize: 14, fontWeight: 600, padding: "9px 20px", borderRadius: 8,
+            }}>
+              Get started
+            </a>
           </div>
-        </>
-      ) : (
-        <div style={{ marginLeft: "auto", display: "flex", gap: 12, alignItems: "center" }}>
-          <a href="/login" style={{
-            color: "#0A66C2", textDecoration: "none",
-            fontSize: 14, fontWeight: 600, padding: "8px 16px",
-          }}>
-            Sign in
-          </a>
-          <a href="/login" style={{
-            color: "#0A66C2", background: "transparent",
-            border: "2px solid #0A66C2", textDecoration: "none",
-            fontSize: 14, fontWeight: 600, padding: "8px 20px", borderRadius: 20,
-          }}>
-            Join now
-          </a>
-        </div>
-      )}
+        )}
+      </div>
     </nav>
   );
 }
 
-function NavItem({ href, icon, label }: { href: string; icon: string; label: string }) {
+function NavLink({ href, label, active }: { href: string; label: string; active: boolean }) {
   return (
     <a href={href} style={{
-      display: "flex", flexDirection: "column", alignItems: "center",
-      padding: "4px 16px", textDecoration: "none", color: "#666",
-      fontSize: 10, fontWeight: 500, gap: 2, minWidth: 48,
-      borderBottom: "2px solid transparent",
+      padding: "8px 14px", textDecoration: "none",
+      color: active ? "#0F766E" : "#64748B",
+      fontSize: 14, fontWeight: active ? 700 : 500,
+      borderRadius: 8,
+      background: active ? "#F0FDF9" : "transparent",
     }}>
-      <span style={{ fontSize: 20, lineHeight: 1 }}>{icon}</span>
-      <span>{label}</span>
+      {label}
     </a>
   );
 }
