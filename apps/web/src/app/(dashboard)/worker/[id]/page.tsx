@@ -92,7 +92,7 @@ export default function WorkerTrustCardPage({ params }: WorkerPageProps) {
           </span>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
+        <div className="grid-4col" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
           {[
             { label: "Verification", value: (card.verification_status as string) ?? "pending" },
             { label: "Tenure", value: `${(card.tenure_months as number) ?? 0}mo` },

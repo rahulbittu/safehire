@@ -49,7 +49,7 @@ function HirerDashboard() {
       )}
 
       {/* Quick actions */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 28 }}>
+      <div className="grid-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 28 }}>
         <a href="/search" style={{
           display: "flex", flexDirection: "column", padding: 20,
           background: "#EFF6FF", border: "1px solid #BFDBFE", borderRadius: 12,
@@ -223,7 +223,7 @@ function WorkerDashboard() {
       </div>
 
       {/* Trust card stats */}
-      <div style={{
+      <div className="grid-4col" style={{
         display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 10, marginBottom: 20,
       }}>
         {[

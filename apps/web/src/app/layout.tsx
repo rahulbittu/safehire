@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { TrpcProvider } from "@/lib/trpc-provider";
 import { AuthProvider } from "@verifyme/auth";
 import { Nav } from "@/components/nav";
+import "./globals.css";
 
 export const metadata: Metadata = {
   title: "SafeHire — Trust profiles workers own and control",

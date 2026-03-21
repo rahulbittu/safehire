@@ -32,20 +32,20 @@ export default function HomePage() {
         }}>
           Privacy-first identity for India&apos;s workforce
         </div>
-        <h1 style={{
+        <h1 className="hero-title" style={{
           fontSize: 44, fontWeight: 800, lineHeight: 1.15,
           color: "#0F172A", margin: "0 0 16px", letterSpacing: "-0.025em",
         }}>
           Trust profiles workers<br />own and control
         </h1>
-        <p style={{
+        <p className="hero-subtitle" style={{
           fontSize: 18, color: "#64748B", lineHeight: 1.6,
           maxWidth: 560, margin: "0 auto 32px",
         }}>
           SafeHire gives domestic workers, drivers, and skilled professionals a portable, verified trust identity.
           Hirers get safety signals — without blacklists, surveillance, or unregulated WhatsApp groups.
         </p>
-        <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
+        <div className="cta-buttons" style={{ display: "flex", gap: 12, justifyContent: "center" }}>
           <a
             href="/login"
             style={{
@@ -75,7 +75,7 @@ export default function HomePage() {
         borderTop: "1px solid #E2E8F0", borderBottom: "1px solid #E2E8F0",
         padding: "20px 24px", background: "#FAFBFC",
       }}>
-        <div style={{
+        <div className="trust-bar" style={{
           maxWidth: 800, margin: "0 auto",
           display: "flex", justifyContent: "center", gap: 48, flexWrap: "wrap",
         }}>
@@ -146,7 +146,7 @@ export default function HomePage() {
       <section style={{
         maxWidth: 800, margin: "0 auto", padding: "0 24px 56px",
       }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+        <div className="grid-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
           <div style={{
             background: "#F0FDF4", border: "1px solid #BBF7D0",
             borderRadius: 12, padding: 28,

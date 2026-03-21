@@ -26,7 +26,7 @@ export function Nav() {
       alignItems: "center",
       background: "#fff",
     }}>
-      <a href="/" style={{
+      <a href="/" className="nav-brand" style={{
         fontWeight: 800, fontSize: 17, color: "#0F172A",
         textDecoration: "none", marginRight: 24, letterSpacing: "-0.02em",
       }}>
@@ -35,7 +35,7 @@ export function Nav() {
 
       {user ? (
         <>
-          <div style={{ display: "flex", gap: 2, alignItems: "center" }}>
+          <div className="nav-links" style={{ display: "flex", gap: 2, alignItems: "center" }}>
             <a href="/dashboard" style={linkStyle}>Dashboard</a>
             {user.role === "hirer" && (
               <a href="/search" style={linkStyle}>Search</a>

@@ -116,7 +116,7 @@ export default function LoginPage() {
   const isPending = loading || registerMutation.isPending || verifyMutation.isPending;
 
   return (
-    <div style={{ minHeight: "calc(100vh - 49px)", display: "flex", alignItems: "center", justifyContent: "center", background: "#F8FAFC" }}>
+    <div style={{ minHeight: "calc(100vh - 53px)", display: "flex", alignItems: "center", justifyContent: "center", background: "#F8FAFC" }}>
       <div style={{
         width: "100%", maxWidth: 420, margin: "0 auto", padding: 32,
         background: "#fff", borderRadius: 12, border: "1px solid #E2E8F0",
