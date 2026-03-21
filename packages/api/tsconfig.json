@@ -1,0 +1,16 @@
+{
+  "extends": "../config/typescript/base.json",
+  "compilerOptions": {
+    "composite": true,
+    "outDir": "dist",
+    "rootDir": "src"
+  },
+  "include": ["src/**/*"],
+  "references": [
+    { "path": "../types" },
+    { "path": "../db" },
+    { "path": "../auth" },
+    { "path": "../privacy" },
+    { "path": "../trust" }
+  ]
+}

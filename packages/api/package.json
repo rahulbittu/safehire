@@ -1,0 +1,34 @@
+{
+  "name": "@verifyme/api",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/",
+    "clean": "rm -rf dist *.tsbuildinfo"
+  },
+  "dependencies": {
+    "@trpc/server": "^11.0.0",
+    "@trpc/client": "^11.0.0",
+    "superjson": "^2.2.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@verifyme/auth": "workspace:*",
+    "@verifyme/config": "workspace:*",
+    "@verifyme/db": "workspace:*",
+    "@verifyme/privacy": "workspace:*",
+    "@verifyme/trust": "workspace:*",
+    "@verifyme/types": "workspace:*",
+    "typescript": "^5.5.0"
+  }
+}

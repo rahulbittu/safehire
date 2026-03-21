@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "paths": {
+      "@verifyme/types": ["./packages/types/src"],
+      "@verifyme/config/*": ["./packages/config/*"],
+      "@verifyme/ui": ["./packages/ui/src"],
+      "@verifyme/api": ["./packages/api/src"],
+      "@verifyme/db": ["./packages/db/src"],
+      "@verifyme/auth": ["./packages/auth/src"],
+      "@verifyme/trust": ["./packages/trust/src"],
+      "@verifyme/privacy": ["./packages/privacy/src"],
+      "@verifyme/incidents": ["./packages/incidents/src"],
+      "@verifyme/utils": ["./packages/utils/src"]
+    }
+  },
+  "exclude": ["node_modules", "dist", ".next", ".expo"]
+}

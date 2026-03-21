@@ -1,0 +1,35 @@
+{
+  "name": "@verifyme/mobile",
+  "version": "0.1.0",
+  "private": true,
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "lint": "eslint app/",
+    "typecheck": "tsc --noEmit",
+    "build": "expo export"
+  },
+  "dependencies": {
+    "expo": "~50.0.0",
+    "expo-camera": "~14.0.0",
+    "expo-document-picker": "~11.0.0",
+    "expo-router": "~3.4.0",
+    "expo-secure-store": "~12.0.0",
+    "expo-status-bar": "~1.11.0",
+    "react": "18.2.0",
+    "react-native": "0.73.0",
+    "react-native-safe-area-context": "4.8.0",
+    "react-native-screens": "~3.29.0",
+    "@supabase/supabase-js": "^2.39.0",
+    "@verifyme/types": "workspace:*",
+    "@verifyme/ui": "workspace:*",
+    "@verifyme/auth": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "~18.2.0",
+    "typescript": "^5.3.0"
+  }
+}
