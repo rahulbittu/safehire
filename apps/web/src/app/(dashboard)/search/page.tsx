@@ -6,73 +6,105 @@ import { trpc } from "@/lib/trpc";
 export default function SearchPage() {
   const [query, setQuery] = useState("");
 
-  // Always fetch — shows all workers by default, filters on search
   const { data, isLoading, error } = trpc.hirer.searchWorkers.useQuery(
     { query: query || undefined, page: 1, limit: 20 },
   );
 
   return (
-    <div>
-      <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>Search Workers</h1>
-      <p style={{ color: "#6B7280", marginBottom: 24 }}>
-        Find workers with verified trust profiles. Click a worker to view their trust card and request access.
-      </p>
+    <div style={{ maxWidth: 720, margin: "0 auto", padding: "32px 24px" }}>
+      <div style={{ marginBottom: 24 }}>
+        <h1 style={{ fontSize: 26, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.025em", margin: 0 }}>
+          Search Workers
+        </h1>
+        <p style={{ color: "#64748B", fontSize: 14, marginTop: 4 }}>
+          Find workers with verified trust profiles. Click to view their trust card.
+        </p>
+      </div>
 
-      <div style={{ display: "flex", gap: 8, marginBottom: 24 }}>
+      <div style={{ marginBottom: 24 }}>
         <input
           type="text"
-          placeholder="Filter by name or skill..."
+          placeholder="Search by name or skill..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          style={{ flex: 1, padding: 10, border: "1px solid #D1D5DB", borderRadius: 6, fontSize: 16 }}
+          style={{
+            width: "100%", padding: "12px 16px", border: "1px solid #E2E8F0",
+            borderRadius: 10, fontSize: 15, boxSizing: "border-box",
+            outline: "none", background: "#F8FAFC",
+          }}
         />
       </div>
 
-      {isLoading && <p style={{ color: "#6B7280" }}>Loading workers...</p>}
-
       {error && (
-        <div style={{ background: "#FEF2F2", color: "#DC2626", padding: 12, borderRadius: 6, marginBottom: 16, fontSize: 14 }}>
+        <div style={{ background: "#FEF2F2", border: "1px solid #FECACA", color: "#DC2626", padding: "10px 14px", borderRadius: 8, marginBottom: 20, fontSize: 13 }}>
           {error.message}
         </div>
       )}
 
+      {isLoading && (
+        <div style={{ display: "grid", gap: 10 }}>
+          {[1, 2, 3].map((n) => (
+            <div key={n} style={{ height: 72, background: "#F8FAFC", borderRadius: 10, border: "1px solid #E2E8F0" }} />
+          ))}
+        </div>
+      )}
+
       {data && (
-        <div>
-          <p style={{ color: "#6B7280", marginBottom: 16 }}>{data.total} worker{data.total !== 1 ? "s" : ""} found</p>
+        <>
+          <div style={{ fontSize: 13, color: "#94A3B8", marginBottom: 12, fontWeight: 500 }}>
+            {data.total} worker{data.total !== 1 ? "s" : ""} found
+          </div>
+
           {data.workers.length === 0 ? (
-            <div style={{ border: "1px solid #E5E7EB", borderRadius: 8, padding: 24, textAlign: "center" }}>
-              <p style={{ color: "#9CA3AF", marginBottom: 8 }}>No workers found.</p>
-              <p style={{ color: "#9CA3AF", fontSize: 13 }}>
-                Log in as a worker first and create a profile, then search here as a hirer.
-              </p>
+            <div style={{
+              border: "1px dashed #CBD5E1", borderRadius: 12, padding: 32, textAlign: "center",
+            }}>
+              <div style={{ fontSize: 14, color: "#64748B", marginBottom: 4 }}>No workers found.</div>
+              <div style={{ fontSize: 13, color: "#94A3B8" }}>
+                Try a different search, or log in as a worker first to create a profile.
+              </div>
             </div>
           ) : (
-            <div style={{ display: "grid", gap: 12 }}>
+            <div style={{ display: "grid", gap: 10 }}>
               {data.workers.map((worker: Record<string, unknown>) => (
                 <a
                   key={worker.id as string}
                   href={`/worker/${worker.user_id}`}
                   style={{ textDecoration: "none", color: "inherit" }}
                 >
-                  <div style={{ border: "1px solid #E5E7EB", borderRadius: 8, padding: 16, cursor: "pointer" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <div style={{ fontWeight: 600 }}>{worker.full_name as string}</div>
-                      <span style={{ fontSize: 11, color: "#9CA3AF", fontFamily: "monospace" }}>
-                        {(worker.user_id as string)?.slice(0, 8)}...
+                  <div style={{
+                    border: "1px solid #E2E8F0", borderRadius: 10, padding: "14px 18px",
+                    display: "flex", justifyContent: "space-between", alignItems: "center",
+                    background: "#fff", cursor: "pointer",
+                  }}>
+                    <div>
+                      <div style={{ fontWeight: 600, fontSize: 15, color: "#0F172A" }}>
+                        {worker.full_name as string}
+                      </div>
+                      <div style={{ fontSize: 13, color: "#64748B", marginTop: 3 }}>
+                        {(worker.skills as string[])?.join(", ") || "No skills listed"}
+                        <span style={{ color: "#CBD5E1", margin: "0 6px" }}>·</span>
+                        {worker.experience_years as number} years
+                      </div>
+                    </div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <span style={{
+                        fontSize: 11, fontWeight: 600, textTransform: "uppercase",
+                        padding: "3px 8px", borderRadius: 10,
+                        background: worker.verified_at ? "#F0FDF4" : "#F8FAFC",
+                        color: worker.verified_at ? "#15803D" : "#94A3B8",
+                        border: `1px solid ${worker.verified_at ? "#BBF7D0" : "#E2E8F0"}`,
+                      }}>
+                        {worker.verified_at ? "Verified" : "Unverified"}
                       </span>
-                    </div>
-                    <div style={{ fontSize: 14, color: "#6B7280", marginTop: 4 }}>
-                      {(worker.skills as string[])?.join(", ") || "No skills listed"} · {worker.experience_years as number} years
-                    </div>
-                    <div style={{ fontSize: 12, color: worker.verified_at ? "#059669" : "#9CA3AF", marginTop: 4 }}>
-                      {worker.verified_at ? "Verified" : "Unverified"}
+                      <span style={{ fontSize: 13, color: "#94A3B8" }}>&rarr;</span>
                     </div>
                   </div>
                 </a>
               ))}
             </div>
           )}
-        </div>
+        </>
       )}
     </div>
   );
