@@ -122,7 +122,7 @@ export default function LoginPage() {
 
       {authMode === "dev" && (
         <div style={{ background: "#FEF3C7", padding: 8, borderRadius: 6, marginBottom: 16, fontSize: 12, color: "#92400E" }}>
-          DEMO MODE: Use OTP code <strong>123456</strong> to log in. This is a preview — not production auth.
+          DEMO / UAT MODE: Use OTP code <strong>123456</strong> to log in. This is not production auth.
         </div>
       )}
 

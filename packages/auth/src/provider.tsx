@@ -66,7 +66,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // The Supabase client may exist for DB access even in dev mode.
   // Only use Supabase Auth when APP_ENV is staging/production (real SMS OTP required).
   const appEnv = process.env.NEXT_PUBLIC_APP_ENV || process.env.APP_ENV || "development";
-  const authMode: "supabase" | "dev" = (appEnv === "production" || appEnv === "staging") ? "supabase" : "dev";
+  // Only production uses real Supabase Auth (requires Twilio SMS).
+  // Dev and UAT use demo auth (OTP 123456) for testing.
+  const authMode: "supabase" | "dev" = appEnv === "production" ? "supabase" : "dev";
 
   // Initialize from existing session
   useEffect(() => {
