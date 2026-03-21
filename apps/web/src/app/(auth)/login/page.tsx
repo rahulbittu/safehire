@@ -116,104 +116,151 @@ export default function LoginPage() {
   const isPending = loading || registerMutation.isPending || verifyMutation.isPending;
 
   return (
-    <div style={{ maxWidth: 400, margin: "80px auto", padding: 24 }}>
-      <h1 style={{ fontSize: 24, marginBottom: 8 }}>Sign In to SafeHire</h1>
-      <p style={{ color: "#6B7280", marginBottom: 24 }}>Enter your phone number to continue</p>
-
-      {authMode === "dev" && (
-        <div style={{ background: "#FEF3C7", padding: 8, borderRadius: 6, marginBottom: 16, fontSize: 12, color: "#92400E" }}>
-          DEMO / UAT MODE: Use OTP code <strong>123456</strong> to log in. This is not production auth.
+    <div style={{ minHeight: "calc(100vh - 49px)", display: "flex", alignItems: "center", justifyContent: "center", background: "#F8FAFC" }}>
+      <div style={{
+        width: "100%", maxWidth: 420, margin: "0 auto", padding: 32,
+        background: "#fff", borderRadius: 12, border: "1px solid #E2E8F0",
+        boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+      }}>
+        <div style={{ textAlign: "center", marginBottom: 28 }}>
+          <div style={{ fontSize: 28, fontWeight: 800, color: "#0F172A", letterSpacing: "-0.025em" }}>SafeHire</div>
+          <p style={{ color: "#64748B", marginTop: 6, fontSize: 15 }}>
+            {step === "phone" ? "Sign in to your account" : "Enter verification code"}
+          </p>
         </div>
-      )}
 
-      {authMode === "supabase" && (
-        <div style={{ background: "#DCFCE7", padding: 8, borderRadius: 6, marginBottom: 16, fontSize: 12, color: "#166534" }}>
-          Supabase Auth: Real OTP will be sent via SMS.
-        </div>
-      )}
+        {authMode === "dev" && (
+          <div style={{
+            background: "#FFFBEB", border: "1px solid #FDE68A", padding: "10px 14px",
+            borderRadius: 8, marginBottom: 20, fontSize: 13, color: "#92400E",
+            lineHeight: 1.5,
+          }}>
+            Demo mode — use OTP <strong>123456</strong> to log in.
+          </div>
+        )}
 
-      {error && (
-        <div style={{ background: "#FEF2F2", color: "#DC2626", padding: 12, borderRadius: 6, marginBottom: 16, fontSize: 14 }}>
-          {error}
-        </div>
-      )}
+        {authMode === "supabase" && (
+          <div style={{
+            background: "#F0FDF4", border: "1px solid #BBF7D0", padding: "10px 14px",
+            borderRadius: 8, marginBottom: 20, fontSize: 13, color: "#166534",
+          }}>
+            A verification code will be sent to your phone via SMS.
+          </div>
+        )}
 
-      {step === "phone" ? (
-        <form onSubmit={handleSendOtp}>
-          {authMode === "dev" && (
-            <>
-              <label style={{ display: "block", fontSize: 14, fontWeight: 500, marginBottom: 4 }}>I am a</label>
-              <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
-                <button
-                  type="button"
-                  onClick={() => setRole("hirer")}
-                  style={{
-                    flex: 1, padding: 10, border: "1px solid #D1D5DB", borderRadius: 6, cursor: "pointer",
-                    background: role === "hirer" ? "#2563EB" : "#fff",
-                    color: role === "hirer" ? "#fff" : "#1F2937",
-                  }}
-                >
-                  Hirer
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setRole("worker")}
-                  style={{
-                    flex: 1, padding: 10, border: "1px solid #D1D5DB", borderRadius: 6, cursor: "pointer",
-                    background: role === "worker" ? "#2563EB" : "#fff",
-                    color: role === "worker" ? "#fff" : "#1F2937",
-                  }}
-                >
-                  Worker
-                </button>
+        {error && (
+          <div style={{
+            background: "#FEF2F2", border: "1px solid #FECACA", color: "#DC2626",
+            padding: "10px 14px", borderRadius: 8, marginBottom: 20, fontSize: 13,
+          }}>
+            {error}
+          </div>
+        )}
+
+        {step === "phone" ? (
+          <form onSubmit={handleSendOtp}>
+            {authMode === "dev" && (
+              <div style={{ marginBottom: 20 }}>
+                <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#334155", marginBottom: 6 }}>I am a</label>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                  {(["hirer", "worker"] as const).map((r) => (
+                    <button
+                      key={r}
+                      type="button"
+                      onClick={() => setRole(r)}
+                      style={{
+                        padding: "10px 0", border: role === r ? "2px solid #1D4ED8" : "1px solid #E2E8F0",
+                        borderRadius: 8, cursor: "pointer", fontSize: 14, fontWeight: 600,
+                        background: role === r ? "#EFF6FF" : "#fff",
+                        color: role === r ? "#1D4ED8" : "#64748B",
+                        textTransform: "capitalize",
+                      }}
+                    >
+                      {r}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </>
-          )}
+            )}
 
-          <label style={{ display: "block", fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Phone Number</label>
-          <input
-            type="tel"
-            placeholder="+919876543210"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            style={{ width: "100%", padding: 10, border: "1px solid #D1D5DB", borderRadius: 6, fontSize: 16, marginBottom: 16, boxSizing: "border-box" }}
-          />
-          <button
-            type="submit"
-            disabled={isPending}
-            style={{ width: "100%", padding: 12, background: "#2563EB", color: "#fff", border: "none", borderRadius: 6, fontSize: 16, cursor: "pointer" }}
-          >
-            {isPending ? "Sending..." : "Send OTP"}
-          </button>
-        </form>
-      ) : (
-        <form onSubmit={handleVerifyOtp}>
-          <label style={{ display: "block", fontSize: 14, fontWeight: 500, marginBottom: 4 }}>OTP Code</label>
-          <input
-            type="text"
-            inputMode="numeric"
-            placeholder={authMode === "dev" ? "123456" : "Enter OTP from SMS"}
-            maxLength={6}
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            style={{ width: "100%", padding: 10, border: "1px solid #D1D5DB", borderRadius: 6, fontSize: 16, marginBottom: 16, boxSizing: "border-box" }}
-          />
-          <button
-            type="submit"
-            disabled={isPending}
-            style={{ width: "100%", padding: 12, background: "#2563EB", color: "#fff", border: "none", borderRadius: 6, fontSize: 16, cursor: "pointer" }}
-          >
-            {isPending ? "Verifying..." : "Verify OTP"}
-          </button>
-          <button
-            type="button"
-            onClick={() => setStep("phone")}
-            style={{ width: "100%", padding: 12, background: "transparent", border: "1px solid #D1D5DB", borderRadius: 6, fontSize: 14, cursor: "pointer", marginTop: 8 }}
-          >
-            Change number
-          </button>
-        </form>
-      )}
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#334155", marginBottom: 6 }}>Phone number</label>
+              <input
+                type="tel"
+                placeholder="+91 98765 43210"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                style={{
+                  width: "100%", padding: "12px 14px", border: "1px solid #E2E8F0",
+                  borderRadius: 8, fontSize: 16, boxSizing: "border-box",
+                  outline: "none",
+                }}
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={isPending}
+              style={{
+                width: "100%", padding: 14, background: isPending ? "#93C5FD" : "#1D4ED8",
+                color: "#fff", border: "none", borderRadius: 8, fontSize: 15,
+                fontWeight: 600, cursor: isPending ? "default" : "pointer",
+              }}
+            >
+              {isPending ? "Sending..." : "Send OTP"}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleVerifyOtp}>
+            <div style={{ marginBottom: 20 }}>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#334155", marginBottom: 6 }}>Verification code</label>
+              <input
+                type="text"
+                inputMode="numeric"
+                placeholder={authMode === "dev" ? "123456" : "Enter 6-digit code"}
+                maxLength={6}
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                autoFocus
+                style={{
+                  width: "100%", padding: "12px 14px", border: "1px solid #E2E8F0",
+                  borderRadius: 8, fontSize: 20, letterSpacing: "0.15em",
+                  textAlign: "center", boxSizing: "border-box", outline: "none",
+                }}
+              />
+              <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 6 }}>
+                Sent to {phone}
+              </div>
+            </div>
+            <button
+              type="submit"
+              disabled={isPending}
+              style={{
+                width: "100%", padding: 14, background: isPending ? "#93C5FD" : "#1D4ED8",
+                color: "#fff", border: "none", borderRadius: 8, fontSize: 15,
+                fontWeight: 600, cursor: isPending ? "default" : "pointer",
+              }}
+            >
+              {isPending ? "Verifying..." : "Verify"}
+            </button>
+            <button
+              type="button"
+              onClick={() => { setStep("phone"); setOtp(""); setError(""); }}
+              style={{
+                width: "100%", padding: 12, background: "transparent", border: "none",
+                borderRadius: 8, fontSize: 13, cursor: "pointer", marginTop: 8,
+                color: "#64748B",
+              }}
+            >
+              Use a different number
+            </button>
+          </form>
+        )}
+
+        <div style={{ textAlign: "center", marginTop: 24, fontSize: 12, color: "#94A3B8", lineHeight: 1.5 }}>
+          By signing in, you agree to SafeHire&apos;s privacy-first approach.<br />
+          Your data is encrypted and you control who sees it.
+        </div>
+      </div>
     </div>
   );
 }

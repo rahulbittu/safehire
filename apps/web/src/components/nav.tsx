@@ -12,48 +12,68 @@ export function Nav() {
     router.push("/login");
   };
 
+  const linkStyle = {
+    color: "#475569", textDecoration: "none", fontSize: 14, fontWeight: 500 as const,
+    padding: "6px 12px", borderRadius: 6,
+  };
+
   return (
     <nav style={{
-      borderBottom: "1px solid #E5E7EB",
-      padding: "12px 24px",
+      borderBottom: "1px solid #E2E8F0",
+      padding: "0 24px",
       display: "flex",
-      gap: 16,
+      height: 52,
       alignItems: "center",
       background: "#fff",
     }}>
-      <a href="/" style={{ fontWeight: 700, color: "#1F2937", textDecoration: "none", marginRight: 16 }}>
+      <a href="/" style={{
+        fontWeight: 800, fontSize: 17, color: "#0F172A",
+        textDecoration: "none", marginRight: 24, letterSpacing: "-0.02em",
+      }}>
         SafeHire
       </a>
 
       {user ? (
         <>
-          <a href="/dashboard" style={{ color: "#6B7280", textDecoration: "none", fontSize: 14 }}>Dashboard</a>
-          {user.role === "hirer" && (
-            <a href="/search" style={{ color: "#6B7280", textDecoration: "none", fontSize: 14 }}>Search</a>
-          )}
-          <a href="/consent" style={{ color: "#6B7280", textDecoration: "none", fontSize: 14 }}>Consent</a>
-          {user.role === "hirer" && (
-            <a href="/incidents/report" style={{ color: "#6B7280", textDecoration: "none", fontSize: 14 }}>Report</a>
-          )}
+          <div style={{ display: "flex", gap: 2, alignItems: "center" }}>
+            <a href="/dashboard" style={linkStyle}>Dashboard</a>
+            {user.role === "hirer" && (
+              <a href="/search" style={linkStyle}>Search</a>
+            )}
+            <a href="/consent" style={linkStyle}>Consent</a>
+            {user.role === "hirer" && (
+              <a href="/incidents/report" style={linkStyle}>Report</a>
+            )}
+          </div>
 
-          <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 12 }}>
-            <span style={{ fontSize: 12, color: "#9CA3AF", textTransform: "capitalize" }}>
+          <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 10 }}>
+            <span style={{
+              fontSize: 12, fontWeight: 600, color: "#1D4ED8",
+              background: "#EFF6FF", padding: "3px 10px", borderRadius: 12,
+              textTransform: "capitalize",
+            }}>
               {user.role}
             </span>
             <button
               onClick={handleLogout}
               style={{
-                padding: "4px 12px", background: "transparent", border: "1px solid #D1D5DB",
-                borderRadius: 6, fontSize: 13, cursor: "pointer", color: "#6B7280",
+                padding: "6px 14px", background: "transparent", border: "1px solid #E2E8F0",
+                borderRadius: 6, fontSize: 13, fontWeight: 500,
+                cursor: "pointer", color: "#64748B",
               }}
             >
-              Logout
+              Sign out
             </button>
           </div>
         </>
       ) : (
         <div style={{ marginLeft: "auto" }}>
-          <a href="/login" style={{ color: "#2563EB", textDecoration: "none", fontSize: 14 }}>Login</a>
+          <a href="/login" style={{
+            color: "#fff", background: "#1D4ED8", textDecoration: "none",
+            fontSize: 13, fontWeight: 600, padding: "8px 16px", borderRadius: 6,
+          }}>
+            Sign in
+          </a>
         </div>
       )}
     </nav>
