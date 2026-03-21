@@ -1,4 +1,11 @@
-/* SafeHire — Responsive overrides only. Keep minimal. */
+/* SafeHire — Responsive overrides. */
+
+/* Dashboard 3-column grid → single column on mobile */
+@media (max-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
 
 /* Mobile: stack two-column grids */
 @media (max-width: 640px) {

@@ -124,7 +124,7 @@ export default function CreateProfilePage() {
           disabled={createMutation.isPending}
           style={{
             width: "100%", padding: 14,
-            background: createMutation.isPending ? "#93C5FD" : "#1D4ED8",
+            background: createMutation.isPending ? "#93C5FD" : "#0A66C2",
             color: "#fff", border: "none", borderRadius: 8, fontSize: 15,
             fontWeight: 600, cursor: createMutation.isPending ? "default" : "pointer",
           }}

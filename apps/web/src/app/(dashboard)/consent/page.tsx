@@ -218,9 +218,9 @@ export default function ConsentPage() {
           background: "#EFF6FF", border: "1px solid #BFDBFE", borderRadius: 12,
           padding: "16px 20px", marginBottom: 24,
         }}>
-          <div style={{ fontWeight: 700, color: "#1D4ED8", fontSize: 13, marginBottom: 6 }}>How to request access</div>
+          <div style={{ fontWeight: 700, color: "#0A66C2", fontSize: 13, marginBottom: 6 }}>How to request access</div>
           <ol style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: "#1E40AF", lineHeight: 1.8 }}>
-            <li>Go to <a href="/search" style={{ color: "#1D4ED8", fontWeight: 700, textDecoration: "none" }}>Search</a> and find a worker</li>
+            <li>Go to <a href="/search" style={{ color: "#0A66C2", fontWeight: 700, textDecoration: "none" }}>Search</a> and find a worker</li>
             <li>View their trust card</li>
             <li>Click &ldquo;Request Access&rdquo;</li>
           </ol>
@@ -245,7 +245,7 @@ export default function ConsentPage() {
           }}>
             <div style={{ fontSize: 14, color: "#64748B" }}>No access requests yet.</div>
             <div style={{ fontSize: 13, color: "#94A3B8", marginTop: 4 }}>
-              Use <a href="/search" style={{ color: "#1D4ED8", fontWeight: 600, textDecoration: "none" }}>Search</a> to find workers and request access.
+              Use <a href="/search" style={{ color: "#0A66C2", fontWeight: 600, textDecoration: "none" }}>Search</a> to find workers and request access.
             </div>
           </div>
         ) : (

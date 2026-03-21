@@ -19,10 +19,17 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <body style={{ margin: 0, fontFamily: "system-ui, -apple-system, sans-serif", color: "#1F2937" }}>
+      <body style={{
+        margin: 0,
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+        color: "#191919",
+        background: "#F4F2EE",
+      }}>
         <TrpcProvider>
           <AuthProvider>
-            <Nav />
+            <div style={{ background: "#fff", boxShadow: "0 0 0 1px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04)" }}>
+              <Nav />
+            </div>
             <main>
               {children}
             </main>

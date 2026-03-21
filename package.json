@@ -8,7 +8,9 @@
     "typecheck": "turbo typecheck",
     "test": "turbo test",
     "clean": "turbo clean && rm -rf node_modules",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "db:migrate": "npx tsx scripts/run-migrations.ts",
+    "db:seed": "npx tsx scripts/seed.ts"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",

@@ -131,11 +131,18 @@ export default function LoginPage() {
 
         {authMode === "dev" && (
           <div style={{
-            background: "#FFFBEB", border: "1px solid #FDE68A", padding: "10px 14px",
+            background: "#FFFBEB", border: "1px solid #FDE68A", padding: "14px 16px",
             borderRadius: 8, marginBottom: 20, fontSize: 13, color: "#92400E",
-            lineHeight: 1.5,
+            lineHeight: 1.6,
           }}>
-            Demo mode — use OTP <strong>123456</strong> to log in.
+            <strong>Demo mode</strong> — OTP is always <strong>123456</strong>
+            <div style={{ marginTop: 8, fontSize: 12, color: "#A16207" }}>
+              Try these accounts:
+            </div>
+            <div style={{ marginTop: 4, fontSize: 12, display: "grid", gap: 2 }}>
+              <div><strong>+919876543201</strong> — Priya (worker, enhanced trust)</div>
+              <div><strong>+919876543301</strong> — Ananya (hirer)</div>
+            </div>
           </div>
         )}
 
@@ -169,10 +176,10 @@ export default function LoginPage() {
                       type="button"
                       onClick={() => setRole(r)}
                       style={{
-                        padding: "10px 0", border: role === r ? "2px solid #1D4ED8" : "1px solid #E2E8F0",
+                        padding: "10px 0", border: role === r ? "2px solid #0A66C2" : "1px solid #E2E8F0",
                         borderRadius: 8, cursor: "pointer", fontSize: 14, fontWeight: 600,
                         background: role === r ? "#EFF6FF" : "#fff",
-                        color: role === r ? "#1D4ED8" : "#64748B",
+                        color: role === r ? "#0A66C2" : "#64748B",
                         textTransform: "capitalize",
                       }}
                     >
@@ -201,7 +208,7 @@ export default function LoginPage() {
               type="submit"
               disabled={isPending}
               style={{
-                width: "100%", padding: 14, background: isPending ? "#93C5FD" : "#1D4ED8",
+                width: "100%", padding: 14, background: isPending ? "#93C5FD" : "#0A66C2",
                 color: "#fff", border: "none", borderRadius: 8, fontSize: 15,
                 fontWeight: 600, cursor: isPending ? "default" : "pointer",
               }}
@@ -235,7 +242,7 @@ export default function LoginPage() {
               type="submit"
               disabled={isPending}
               style={{
-                width: "100%", padding: 14, background: isPending ? "#93C5FD" : "#1D4ED8",
+                width: "100%", padding: 14, background: isPending ? "#93C5FD" : "#0A66C2",
                 color: "#fff", border: "none", borderRadius: 8, fontSize: 15,
                 fontWeight: 600, cursor: isPending ? "default" : "pointer",
               }}
