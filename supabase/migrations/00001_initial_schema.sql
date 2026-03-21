@@ -1,4 +1,4 @@
--- Verify Me: Initial Schema Migration
+-- SafeHire: Initial Schema Migration
 -- Creates all core tables for the privacy-first worker trust platform.
 
 -- Enable required extensions

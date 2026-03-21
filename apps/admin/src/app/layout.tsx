@@ -3,8 +3,8 @@ import type { ReactNode } from "react";
 import { TrpcProvider } from "@/lib/trpc-provider";
 
 export const metadata: Metadata = {
-  title: "Verify Me — Admin",
-  description: "Admin dashboard for the Verify Me worker trust platform.",
+  title: "SafeHire — Admin",
+  description: "Admin dashboard for the SafeHire worker trust platform.",
 };
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
@@ -23,7 +23,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               }}
             >
               <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 32 }}>
-                Verify Me Admin
+                SafeHire Admin
               </div>
               <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
                 <NavItem href="/" label="Dashboard" />

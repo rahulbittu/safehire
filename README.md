@@ -1,8 +1,8 @@
-# Verify Me
+# SafeHire
 
 **A privacy-first, worker-owned digital trust identity for India's informal workforce.**
 
-Verify Me gives domestic workers, drivers, cooks, cleaners, nannies, electricians, plumbers, and security guards a portable, verified trust profile they own and control. Hirers get the safety signals they need without resorting to blacklists, surveillance, or unregulated WhatsApp groups.
+SafeHire gives domestic workers, drivers, cooks, cleaners, nannies, electricians, plumbers, and security guards a portable, verified trust profile they own and control. Hirers get the safety signals they need without resorting to blacklists, surveillance, or unregulated WhatsApp groups.
 
 ---
 

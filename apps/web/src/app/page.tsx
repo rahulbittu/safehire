@@ -20,7 +20,7 @@ export default function HomePage() {
 
   return (
     <div style={{ maxWidth: 600, margin: "60px auto", padding: 24 }}>
-      <h1 style={{ fontSize: 32, fontWeight: 700, marginBottom: 8 }}>Verify Me</h1>
+      <h1 style={{ fontSize: 32, fontWeight: 700, marginBottom: 8 }}>SafeHire</h1>
       <p style={{ fontSize: 18, color: "#6B7280", marginBottom: 32 }}>
         Privacy-first worker trust profiles for safer hiring decisions.
       </p>

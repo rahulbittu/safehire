@@ -5,7 +5,7 @@ import { AuthProvider } from "@verifyme/auth";
 import { Nav } from "@/components/nav";
 
 export const metadata: Metadata = {
-  title: "Verify Me — Trusted Worker Platform",
+  title: "SafeHire — Trusted Worker Platform",
   description: "Privacy-first worker trust platform for India.",
 };
 

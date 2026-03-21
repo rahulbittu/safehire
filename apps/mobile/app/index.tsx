@@ -41,7 +41,7 @@ export default function IndexScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Verify Me</Text>
+      <Text style={styles.title}>SafeHire</Text>
       <Text style={styles.subtitle}>Trust, verified.</Text>
       <ActivityIndicator
         size="large"

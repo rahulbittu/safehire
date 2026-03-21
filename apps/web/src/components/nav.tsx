@@ -22,12 +22,12 @@ export function Nav() {
       background: "#fff",
     }}>
       <a href="/" style={{ fontWeight: 700, color: "#1F2937", textDecoration: "none", marginRight: 16 }}>
-        Verify Me
+        SafeHire
       </a>
 
       {user ? (
         <>
-          <a href="/" style={{ color: "#6B7280", textDecoration: "none", fontSize: 14 }}>Dashboard</a>
+          <a href="/dashboard" style={{ color: "#6B7280", textDecoration: "none", fontSize: 14 }}>Dashboard</a>
           {user.role === "hirer" && (
             <a href="/search" style={{ color: "#6B7280", textDecoration: "none", fontSize: 14 }}>Search</a>
           )}

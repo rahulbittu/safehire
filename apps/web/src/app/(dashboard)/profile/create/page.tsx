@@ -15,7 +15,7 @@ export default function CreateProfilePage() {
   const [error, setError] = useState("");
 
   const createMutation = trpc.worker.createProfile.useMutation({
-    onSuccess: () => router.push("/"),
+    onSuccess: () => router.push("/dashboard"),
     onError: (err) => setError(err.message),
   });
 

@@ -62,38 +62,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [supabase] = useState<SupabaseClient | null>(() => createSupabaseClient());
 
-  // Determine auth mode: if we have a supabase client, try supabase auth first
-  const authMode: "supabase" | "dev" = supabase ? "supabase" : "dev";
+  // Determine auth mode from APP_ENV, not from Supabase client existence.
+  // The Supabase client may exist for DB access even in dev mode.
+  // Only use Supabase Auth when APP_ENV is staging/production (real SMS OTP required).
+  const appEnv = process.env.NEXT_PUBLIC_APP_ENV || process.env.APP_ENV || "development";
+  const authMode: "supabase" | "dev" = (appEnv === "production" || appEnv === "staging") ? "supabase" : "dev";
 
   // Initialize from existing session
   useEffect(() => {
-    if (supabase) {
-      // Try Supabase Auth session first
+    if (authMode === "supabase" && supabase) {
+      // Real Supabase Auth path (staging/production)
       supabase.auth.getSession().then(({ data: { session } }) => {
         if (session?.user) {
           setUserFromSupabase(session.user);
-        } else {
-          // Fall back to dev token
-          loadDevSession();
         }
         setLoading(false);
       });
 
-      // Listen for auth state changes
       const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
         if (session?.user) {
           setUserFromSupabase(session.user);
-        } else if (!hasDevSession()) {
+        } else {
           setUser(null);
         }
       });
 
       return () => subscription.unsubscribe();
     } else {
+      // Dev auth path — load from localStorage
       loadDevSession();
       setLoading(false);
     }
-  }, [supabase]);
+  }, [supabase, authMode]);
 
   function setUserFromSupabase(supabaseUser: SupabaseUser) {
     setUser({
@@ -101,11 +101,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       phone: supabaseUser.phone ?? null,
       role: (supabaseUser.user_metadata?.role as "worker" | "hirer" | "admin") ?? "worker",
     });
-  }
-
-  function hasDevSession(): boolean {
-    if (typeof window === "undefined") return false;
-    return !!localStorage.getItem("verifyme-token");
   }
 
   function loadDevSession() {

@@ -2,20 +2,12 @@
 
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
-
-const AVAILABLE_FIELDS = ["full_name", "skills", "languages", "experience_years", "photo_url", "verified_at"];
+import { useAuth } from "@verifyme/auth";
 
 export default function ConsentPage() {
-  const [hirerId, setHirerId] = useState("");
-  const [selectedFields, setSelectedFields] = useState<string[]>(["full_name", "skills"]);
-  const [expiresInDays, setExpiresInDays] = useState(90);
   const [error, setError] = useState("");
-  const [role, setRole] = useState<string | null>(null);
-
-  // Detect role from localStorage
-  if (typeof window !== "undefined" && role === null) {
-    setRole(localStorage.getItem("verifyme-role") || "worker");
-  }
+  const { user } = useAuth();
+  const role = user?.role ?? null;
 
   const utils = trpc.useUtils();
 
@@ -36,10 +28,6 @@ export default function ConsentPage() {
   );
 
   // Worker mutations
-  const grantMutation = trpc.consent.grantConsent.useMutation({
-    onSuccess: () => { setHirerId(""); setError(""); utils.consent.getMyConsents.invalidate(); },
-    onError: (err) => setError(err.message),
-  });
   const revokeMutation = trpc.consent.revokeConsent.useMutation({
     onSuccess: () => utils.consent.getMyConsents.invalidate(),
     onError: (err) => setError(err.message),
@@ -56,21 +44,6 @@ export default function ConsentPage() {
     onError: (err) => setError(err.message),
   });
 
-  // Hirer mutations
-  const requestMutation = trpc.consent.requestAccess.useMutation({
-    onSuccess: () => {
-      setHirerId("");
-      setError("");
-      utils.consent.getMyRequests.invalidate();
-    },
-    onError: (err) => setError(err.message),
-  });
-
-  const toggleField = (field: string) => {
-    setSelectedFields((prev) =>
-      prev.includes(field) ? prev.filter((f) => f !== field) : [...prev, field]
-    );
-  };
 
   if (role === "hirer") return <HirerConsentView />;
 
@@ -97,66 +70,13 @@ export default function ConsentPage() {
         isPending={approveMutation.isPending || rejectMutation.isPending}
       />
 
-      {/* Grant New Consent */}
-      <div style={{ border: "1px solid #E5E7EB", borderRadius: 8, padding: 16, marginBottom: 24 }}>
-        <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12 }}>Grant New Access</h2>
-        <div style={{ marginBottom: 12 }}>
-          <label style={{ display: "block", fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Hirer ID (UUID)</label>
-          <input
-            type="text"
-            placeholder="Hirer UUID"
-            value={hirerId}
-            onChange={(e) => setHirerId(e.target.value)}
-            style={{ width: "100%", padding: 8, border: "1px solid #D1D5DB", borderRadius: 6, boxSizing: "border-box" }}
-          />
-        </div>
-
-        <div style={{ marginBottom: 12 }}>
-          <label style={{ display: "block", fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Fields to Share</label>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-            {AVAILABLE_FIELDS.map((field) => (
-              <button
-                key={field}
-                type="button"
-                onClick={() => toggleField(field)}
-                style={{
-                  padding: "4px 10px", borderRadius: 12, fontSize: 13, cursor: "pointer",
-                  border: "1px solid #D1D5DB",
-                  background: selectedFields.includes(field) ? "#2563EB" : "#fff",
-                  color: selectedFields.includes(field) ? "#fff" : "#1F2937",
-                }}
-              >
-                {field.replace(/_/g, " ")}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div style={{ marginBottom: 12 }}>
-          <label style={{ display: "block", fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Expires in (days)</label>
-          <input
-            type="number"
-            min={1}
-            max={365}
-            value={expiresInDays}
-            onChange={(e) => setExpiresInDays(parseInt(e.target.value) || 90)}
-            style={{ width: 100, padding: 8, border: "1px solid #D1D5DB", borderRadius: 6 }}
-          />
-        </div>
-
-        <button
-          onClick={() => {
-            if (!hirerId || selectedFields.length === 0) {
-              setError("Hirer ID and at least one field are required");
-              return;
-            }
-            grantMutation.mutate({ hirerId, fields: selectedFields, expiresInDays });
-          }}
-          disabled={grantMutation.isPending}
-          style={{ padding: "8px 16px", background: "#059669", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}
-        >
-          {grantMutation.isPending ? "Granting..." : "Grant Access"}
-        </button>
+      {/* How consent works */}
+      <div style={{ background: "#EFF6FF", border: "1px solid #BFDBFE", borderRadius: 8, padding: 16, marginBottom: 24 }}>
+        <div style={{ fontWeight: 600, color: "#1E40AF", marginBottom: 4 }}>How consent works</div>
+        <p style={{ fontSize: 14, color: "#1E40AF", margin: 0 }}>
+          When a hirer wants to see your profile, they send an access request.
+          You&apos;ll see it in &quot;Pending Access Requests&quot; above. You can approve or reject each request.
+        </p>
       </div>
 
       {/* Active Consents */}
@@ -263,84 +183,28 @@ export default function ConsentPage() {
   }
 
   function HirerConsentView() {
-    const [workerId, setWorkerId] = useState("");
-    const [reqFields, setReqFields] = useState<string[]>(["full_name", "skills"]);
-    const [message, setMessage] = useState("");
-
     return (
       <div style={{ maxWidth: 700, padding: 24 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>Request Worker Access</h1>
+        <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>Consent &amp; Access Requests</h1>
         <p style={{ color: "#6B7280", marginBottom: 24 }}>
-          Request access to a worker&apos;s profile data. The worker will be notified and can approve or reject your request.
+          View the status of your access requests. To request access to a new worker, use Search.
         </p>
+
+        {/* Guide to requesting access */}
+        <div style={{ background: "#EFF6FF", border: "1px solid #BFDBFE", borderRadius: 8, padding: 16, marginBottom: 24 }}>
+          <div style={{ fontWeight: 600, color: "#1E40AF", marginBottom: 4 }}>How to request access</div>
+          <ol style={{ margin: 0, paddingLeft: 20, fontSize: 14, color: "#1E40AF" }}>
+            <li>Go to <a href="/search" style={{ color: "#2563EB", fontWeight: 600 }}>Search</a> and find a worker</li>
+            <li>Click on their profile to view their trust card</li>
+            <li>Click &quot;Request Access&quot; to ask for their profile data</li>
+          </ol>
+        </div>
 
         {error && (
           <div style={{ background: "#FEF2F2", color: "#DC2626", padding: 12, borderRadius: 6, marginBottom: 16, fontSize: 14 }}>
             {error}
           </div>
         )}
-
-        {/* Request Access Form */}
-        <div style={{ border: "1px solid #E5E7EB", borderRadius: 8, padding: 16, marginBottom: 24 }}>
-          <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12 }}>New Access Request</h2>
-          <div style={{ marginBottom: 12 }}>
-            <label style={{ display: "block", fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Worker ID (UUID)</label>
-            <input
-              type="text"
-              placeholder="Worker UUID"
-              value={workerId}
-              onChange={(e) => setWorkerId(e.target.value)}
-              style={{ width: "100%", padding: 8, border: "1px solid #D1D5DB", borderRadius: 6, boxSizing: "border-box" }}
-            />
-          </div>
-
-          <div style={{ marginBottom: 12 }}>
-            <label style={{ display: "block", fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Fields to Request</label>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-              {AVAILABLE_FIELDS.map((field) => (
-                <button
-                  key={field}
-                  type="button"
-                  onClick={() => setReqFields(prev => prev.includes(field) ? prev.filter(f => f !== field) : [...prev, field])}
-                  style={{
-                    padding: "4px 10px", borderRadius: 12, fontSize: 13, cursor: "pointer",
-                    border: "1px solid #D1D5DB",
-                    background: reqFields.includes(field) ? "#2563EB" : "#fff",
-                    color: reqFields.includes(field) ? "#fff" : "#1F2937",
-                  }}
-                >
-                  {field.replace(/_/g, " ")}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div style={{ marginBottom: 12 }}>
-            <label style={{ display: "block", fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Message (optional)</label>
-            <textarea
-              placeholder="Why do you need access to this worker's data?"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              maxLength={500}
-              rows={3}
-              style={{ width: "100%", padding: 8, border: "1px solid #D1D5DB", borderRadius: 6, boxSizing: "border-box", resize: "vertical" }}
-            />
-          </div>
-
-          <button
-            onClick={() => {
-              if (!workerId || reqFields.length === 0) {
-                setError("Worker ID and at least one field are required");
-                return;
-              }
-              requestMutation.mutate({ workerId, fields: reqFields, message: message || undefined });
-            }}
-            disabled={requestMutation.isPending}
-            style={{ padding: "8px 16px", background: "#2563EB", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}
-          >
-            {requestMutation.isPending ? "Sending..." : "Send Request"}
-          </button>
-        </div>
 
         {/* My Requests */}
         <h2 style={{ fontSize: 16, fontWeight: 600, marginBottom: 12 }}>My Requests</h2>

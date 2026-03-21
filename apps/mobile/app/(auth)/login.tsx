@@ -49,7 +49,7 @@ export default function LoginScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Welcome to Verify Me</Text>
+        <Text style={styles.title}>Welcome to SafeHire</Text>
         <Text style={styles.subtitle}>
           Enter your phone number to get started
         </Text>

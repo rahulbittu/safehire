@@ -1,5 +1,5 @@
 -- ============================================================================
--- ROW LEVEL SECURITY POLICIES for Verify Me
+-- ROW LEVEL SECURITY POLICIES for SafeHire
 -- ============================================================================
 -- Convention: auth.uid() returns the current user's UUID from Supabase Auth.
 -- Helper to get user role:

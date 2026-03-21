@@ -85,9 +85,13 @@ export default function LoginPage() {
     setLoading(false);
   }
 
-  // Send OTP handler — tries Supabase Auth, falls back to dev
+  // Send OTP handler
   function handleSendOtp(e: React.FormEvent) {
     e.preventDefault();
+    if (!phone.trim()) {
+      setError("Please enter a phone number");
+      return;
+    }
     if (authMode === "supabase") {
       handleSupabaseSendOtp();
     } else {
@@ -95,9 +99,13 @@ export default function LoginPage() {
     }
   }
 
-  // Verify OTP handler — tries Supabase Auth, falls back to dev
+  // Verify OTP handler
   function handleVerifyOtp(e: React.FormEvent) {
     e.preventDefault();
+    if (!otp.trim()) {
+      setError("Please enter the OTP code");
+      return;
+    }
     if (authMode === "supabase") {
       handleSupabaseVerifyOtp();
     } else {
@@ -109,12 +117,12 @@ export default function LoginPage() {
 
   return (
     <div style={{ maxWidth: 400, margin: "80px auto", padding: 24 }}>
-      <h1 style={{ fontSize: 24, marginBottom: 8 }}>Sign In to Verify Me</h1>
+      <h1 style={{ fontSize: 24, marginBottom: 8 }}>Sign In to SafeHire</h1>
       <p style={{ color: "#6B7280", marginBottom: 24 }}>Enter your phone number to continue</p>
 
       {authMode === "dev" && (
         <div style={{ background: "#FEF3C7", padding: 8, borderRadius: 6, marginBottom: 16, fontSize: 12, color: "#92400E" }}>
-          DEV AUTH: OTP code is <strong>123456</strong>. Not for production.
+          DEMO MODE: Use OTP code <strong>123456</strong> to log in. This is a preview — not production auth.
         </div>
       )}
 

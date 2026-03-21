@@ -1,15 +1,41 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { trpc } from "@/lib/trpc";
+import { useAuth } from "@verifyme/auth";
+
+export default function DashboardPage() {
+  const router = useRouter();
+  const { user, loading } = useAuth();
+
+  if (loading) return <p style={{ padding: 24, color: "#6B7280" }}>Loading...</p>;
+
+  if (!user) {
+    router.replace("/login");
+    return null;
+  }
+
+  return (
+    <div style={{ maxWidth: 700, padding: 24 }}>
+      <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 24 }}>Dashboard</h1>
+      {user.role === "worker" ? <WorkerDashboard /> : <HirerDashboard />}
+    </div>
+  );
+}
 
 function HirerDashboard() {
-  const { data: workers, isLoading } = trpc.hirer.getMyWorkers.useQuery();
+  const { data: workers, isLoading, error } = trpc.hirer.getMyWorkers.useQuery();
 
   return (
     <div>
       <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 12 }}>Your Workers</h2>
+
+      {error && (
+        <div style={{ background: "#FEF2F2", color: "#DC2626", padding: 12, borderRadius: 6, marginBottom: 16, fontSize: 14 }}>
+          {error.message}
+        </div>
+      )}
+
       {isLoading ? (
         <p style={{ color: "#6B7280" }}>Loading...</p>
       ) : workers?.workers.length === 0 ? (
@@ -46,6 +72,7 @@ function HirerDashboard() {
       )}
 
       <div style={{ marginTop: 24 }}>
+        <a href="/search" style={{ color: "#2563EB", fontSize: 14, marginRight: 16 }}>Search Workers</a>
         <a href="/consent" style={{ color: "#2563EB", fontSize: 14 }}>View my access requests</a>
       </div>
     </div>
@@ -53,12 +80,20 @@ function HirerDashboard() {
 }
 
 function WorkerDashboard() {
-  const { data: profile, isLoading: profileLoading } = trpc.worker.getProfile.useQuery();
+  const { data: profile, isLoading: profileLoading, error: profileError } = trpc.worker.getProfile.useQuery();
   const { data: trustCard, isLoading: trustLoading } = trpc.worker.getMyTrustCard.useQuery();
   const { data: consents } = trpc.consent.getMyConsents.useQuery();
   const { data: pendingRequests } = trpc.consent.getMyPendingRequests.useQuery();
 
   if (profileLoading || trustLoading) return <p style={{ color: "#6B7280" }}>Loading...</p>;
+
+  if (profileError) {
+    return (
+      <div style={{ background: "#FEF2F2", color: "#DC2626", padding: 12, borderRadius: 6, marginBottom: 16, fontSize: 14 }}>
+        Error loading profile: {profileError.message}
+      </div>
+    );
+  }
 
   if (!profile) {
     return (
@@ -68,8 +103,8 @@ function WorkerDashboard() {
         <a
           href="/profile/create"
           style={{
-            display: "inline-block", padding: "8px 16px", background: "#2563EB",
-            color: "#fff", borderRadius: 6, textDecoration: "none", fontSize: 14,
+            display: "inline-block", padding: "12px 24px", background: "#2563EB",
+            color: "#fff", borderRadius: 6, textDecoration: "none", fontSize: 16, fontWeight: 600,
           }}
         >
           Create Profile
@@ -107,6 +142,9 @@ function WorkerDashboard() {
         </div>
         <div style={{ fontSize: 14, color: "#6B7280", marginTop: 4 }}>
           Experience: {p.experience_years as number} years
+        </div>
+        <div style={{ fontSize: 11, color: "#9CA3AF", marginTop: 8, fontFamily: "monospace" }}>
+          User ID: {p.user_id as string}
         </div>
       </div>
 
@@ -151,31 +189,6 @@ function WorkerDashboard() {
           </div>
         </>
       )}
-    </div>
-  );
-}
-
-export default function DashboardPage() {
-  const router = useRouter();
-  const [role, setRole] = useState<string | null>(null);
-  const [checked, setChecked] = useState(false);
-
-  useEffect(() => {
-    const token = localStorage.getItem("verifyme-token");
-    if (!token) {
-      router.replace("/login");
-      return;
-    }
-    setRole(localStorage.getItem("verifyme-role"));
-    setChecked(true);
-  }, [router]);
-
-  if (!checked) return null;
-
-  return (
-    <div style={{ maxWidth: 700, padding: 24 }}>
-      <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 24 }}>Dashboard</h1>
-      {role === "worker" ? <WorkerDashboard /> : <HirerDashboard />}
     </div>
   );
 }
