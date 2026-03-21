@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "turbo dev",
-    "build": "turbo build",
+    "build": "turbo build --filter=!@verifyme/mobile",
     "lint": "turbo lint",
     "typecheck": "turbo typecheck",
     "test": "turbo test",
