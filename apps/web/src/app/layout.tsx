@@ -7,6 +7,7 @@ import { Nav } from "@/components/nav";
 export const metadata: Metadata = {
   title: "SafeHire — Trust profiles workers own and control",
   description: "Privacy-first verified trust identities for India's informal workforce. Workers own their profiles. Hirers get safety signals — with consent.",
+  icons: { icon: "/favicon.svg" },
   openGraph: {
     title: "SafeHire — Trust profiles workers own and control",
     description: "Privacy-first verified trust identities for India's informal workforce.",
@@ -21,7 +22,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <TrpcProvider>
           <AuthProvider>
             <Nav />
-            <main style={{ padding: 24 }}>
+            <main>
               {children}
             </main>
           </AuthProvider>
