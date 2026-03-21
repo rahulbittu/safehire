@@ -5,8 +5,13 @@ import { AuthProvider } from "@verifyme/auth";
 import { Nav } from "@/components/nav";
 
 export const metadata: Metadata = {
-  title: "SafeHire — Trusted Worker Platform",
-  description: "Privacy-first worker trust platform for India.",
+  title: "SafeHire — Trust profiles workers own and control",
+  description: "Privacy-first verified trust identities for India's informal workforce. Workers own their profiles. Hirers get safety signals — with consent.",
+  openGraph: {
+    title: "SafeHire — Trust profiles workers own and control",
+    description: "Privacy-first verified trust identities for India's informal workforce.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

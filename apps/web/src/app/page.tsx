@@ -19,36 +19,211 @@ export default function HomePage() {
   if (!checked) return null;
 
   return (
-    <div style={{ maxWidth: 600, margin: "60px auto", padding: 24 }}>
-      <h1 style={{ fontSize: 32, fontWeight: 700, marginBottom: 8 }}>SafeHire</h1>
-      <p style={{ fontSize: 18, color: "#6B7280", marginBottom: 32 }}>
-        Privacy-first worker trust profiles for safer hiring decisions.
-      </p>
-
-      <div style={{ display: "grid", gap: 24, marginBottom: 32 }}>
-        <div style={{ border: "1px solid #E5E7EB", borderRadius: 8, padding: 20 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 8 }}>For Workers</h2>
-          <p style={{ color: "#6B7280", fontSize: 14 }}>
-            Build a verified trust profile you own and control. Share your credentials with hirers on your terms.
-          </p>
+    <div style={{ background: "#fff" }}>
+      {/* Hero */}
+      <section style={{
+        maxWidth: 800, margin: "0 auto", padding: "64px 24px 48px",
+        textAlign: "center",
+      }}>
+        <div style={{
+          display: "inline-block", padding: "4px 14px", borderRadius: 20,
+          background: "#EFF6FF", color: "#1D4ED8", fontSize: 13, fontWeight: 600,
+          marginBottom: 20, letterSpacing: "0.02em",
+        }}>
+          Privacy-first identity for India&apos;s workforce
         </div>
-        <div style={{ border: "1px solid #E5E7EB", borderRadius: 8, padding: 20 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 600, marginBottom: 8 }}>For Hirers</h2>
-          <p style={{ color: "#6B7280", fontSize: 14 }}>
-            Search for workers with verified trust signals. Request access to detailed profiles with worker consent.
-          </p>
+        <h1 style={{
+          fontSize: 44, fontWeight: 800, lineHeight: 1.15,
+          color: "#0F172A", margin: "0 0 16px", letterSpacing: "-0.025em",
+        }}>
+          Trust profiles workers<br />own and control
+        </h1>
+        <p style={{
+          fontSize: 18, color: "#64748B", lineHeight: 1.6,
+          maxWidth: 560, margin: "0 auto 32px",
+        }}>
+          SafeHire gives domestic workers, drivers, and skilled professionals a portable, verified trust identity.
+          Hirers get safety signals — without blacklists, surveillance, or unregulated WhatsApp groups.
+        </p>
+        <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
+          <a
+            href="/login"
+            style={{
+              display: "inline-flex", alignItems: "center", padding: "14px 28px",
+              background: "#1D4ED8", color: "#fff", borderRadius: 8,
+              textDecoration: "none", fontSize: 16, fontWeight: 600,
+              transition: "background 0.15s",
+            }}
+          >
+            Get Started
+          </a>
+          <a
+            href="#how-it-works"
+            style={{
+              display: "inline-flex", alignItems: "center", padding: "14px 28px",
+              background: "#F1F5F9", color: "#334155", borderRadius: 8,
+              textDecoration: "none", fontSize: 16, fontWeight: 600,
+            }}
+          >
+            How it works
+          </a>
         </div>
-      </div>
+      </section>
 
-      <a
-        href="/login"
-        style={{
-          display: "inline-block", padding: "12px 24px", background: "#2563EB",
-          color: "#fff", borderRadius: 6, textDecoration: "none", fontSize: 16,
-        }}
-      >
-        Get Started
-      </a>
+      {/* Trust bar */}
+      <section style={{
+        borderTop: "1px solid #E2E8F0", borderBottom: "1px solid #E2E8F0",
+        padding: "20px 24px", background: "#FAFBFC",
+      }}>
+        <div style={{
+          maxWidth: 800, margin: "0 auto",
+          display: "flex", justifyContent: "center", gap: 48, flexWrap: "wrap",
+        }}>
+          {[
+            ["Worker-owned", "Profiles belong to workers, not platforms"],
+            ["Consent-first", "Hirers see data only when workers approve"],
+            ["No blacklists", "Trust signals without exploitative practices"],
+          ].map(([title, desc]) => (
+            <div key={title} style={{ textAlign: "center", maxWidth: 200 }}>
+              <div style={{ fontWeight: 700, fontSize: 14, color: "#0F172A" }}>{title}</div>
+              <div style={{ fontSize: 13, color: "#64748B", marginTop: 2 }}>{desc}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section id="how-it-works" style={{
+        maxWidth: 800, margin: "0 auto", padding: "56px 24px",
+      }}>
+        <h2 style={{
+          fontSize: 28, fontWeight: 700, color: "#0F172A",
+          textAlign: "center", marginBottom: 40, letterSpacing: "-0.02em",
+        }}>
+          How SafeHire works
+        </h2>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 24 }}>
+          {[
+            {
+              step: "1",
+              title: "Workers create a profile",
+              desc: "Add your skills, experience, and languages. Your profile is encrypted and you decide who sees it.",
+            },
+            {
+              step: "2",
+              title: "Build trust over time",
+              desc: "Earn endorsements from hirers. Your trust card grows with verified experience — no gaming, no fake reviews.",
+            },
+            {
+              step: "3",
+              title: "Hirers request access",
+              desc: "Search for workers by skill. View public trust cards. Request access to detailed profiles — with worker consent.",
+            },
+          ].map((item) => (
+            <div key={item.step} style={{
+              border: "1px solid #E2E8F0", borderRadius: 12, padding: 24,
+              background: "#fff",
+            }}>
+              <div style={{
+                width: 36, height: 36, borderRadius: 8, background: "#EFF6FF",
+                color: "#1D4ED8", display: "flex", alignItems: "center", justifyContent: "center",
+                fontWeight: 800, fontSize: 16, marginBottom: 16,
+              }}>
+                {item.step}
+              </div>
+              <div style={{ fontWeight: 600, fontSize: 16, color: "#0F172A", marginBottom: 8 }}>
+                {item.title}
+              </div>
+              <div style={{ fontSize: 14, color: "#64748B", lineHeight: 1.5 }}>
+                {item.desc}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Two-audience section */}
+      <section style={{
+        maxWidth: 800, margin: "0 auto", padding: "0 24px 56px",
+      }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+          <div style={{
+            background: "#F0FDF4", border: "1px solid #BBF7D0",
+            borderRadius: 12, padding: 28,
+          }}>
+            <div style={{
+              fontSize: 12, fontWeight: 700, textTransform: "uppercase",
+              color: "#15803D", letterSpacing: "0.05em", marginBottom: 8,
+            }}>
+              For Workers
+            </div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: "#14532D", marginBottom: 8 }}>
+              Own your professional identity
+            </div>
+            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 14, color: "#166534", lineHeight: 1.8 }}>
+              <li>Portable profile across employers</li>
+              <li>You approve every data request</li>
+              <li>Build trust that follows you</li>
+              <li>No one can blacklist you unfairly</li>
+            </ul>
+          </div>
+          <div style={{
+            background: "#EFF6FF", border: "1px solid #BFDBFE",
+            borderRadius: 12, padding: 28,
+          }}>
+            <div style={{
+              fontSize: 12, fontWeight: 700, textTransform: "uppercase",
+              color: "#1D4ED8", letterSpacing: "0.05em", marginBottom: 8,
+            }}>
+              For Hirers
+            </div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: "#1E3A5F", marginBottom: 8 }}>
+              Hire with confidence
+            </div>
+            <ul style={{ margin: 0, paddingLeft: 18, fontSize: 14, color: "#1E40AF", lineHeight: 1.8 }}>
+              <li>Verified trust signals, not rumors</li>
+              <li>Consent-based access to profiles</li>
+              <li>Endorsement history from past hirers</li>
+              <li>Incident reporting for accountability</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section style={{
+        background: "#0F172A", padding: "48px 24px", textAlign: "center",
+      }}>
+        <div style={{ maxWidth: 600, margin: "0 auto" }}>
+          <h2 style={{
+            fontSize: 24, fontWeight: 700, color: "#fff",
+            marginBottom: 12,
+          }}>
+            Ready to build safer hiring?
+          </h2>
+          <p style={{ fontSize: 16, color: "#94A3B8", marginBottom: 24 }}>
+            Whether you&apos;re a worker building your trust profile or a hirer looking for verified talent — get started in minutes.
+          </p>
+          <a
+            href="/login"
+            style={{
+              display: "inline-flex", alignItems: "center", padding: "14px 32px",
+              background: "#fff", color: "#0F172A", borderRadius: 8,
+              textDecoration: "none", fontSize: 16, fontWeight: 600,
+            }}
+          >
+            Create your account
+          </a>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer style={{
+        borderTop: "1px solid #E2E8F0", padding: "24px",
+        textAlign: "center", fontSize: 13, color: "#94A3B8",
+      }}>
+        SafeHire — Privacy-first worker trust for India&apos;s informal workforce.
+      </footer>
     </div>
   );
 }

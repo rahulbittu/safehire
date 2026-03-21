@@ -4,7 +4,7 @@ import { useAuth } from "@verifyme/auth";
 import { useRouter } from "next/navigation";
 
 export function Nav() {
-  const { user, signOut, authMode } = useAuth();
+  const { user, signOut } = useAuth();
   const router = useRouter();
 
   const handleLogout = () => {
@@ -37,8 +37,8 @@ export function Nav() {
           )}
 
           <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 12 }}>
-            <span style={{ fontSize: 12, color: "#9CA3AF" }}>
-              {user.role} {authMode === "dev" && "(dev)"}
+            <span style={{ fontSize: 12, color: "#9CA3AF", textTransform: "capitalize" }}>
+              {user.role}
             </span>
             <button
               onClick={handleLogout}
