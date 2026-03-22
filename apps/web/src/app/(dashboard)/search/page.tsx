@@ -115,7 +115,6 @@ function SearchPageInner() {
                 const rawSkills = w.skills;
                 const skills = Array.isArray(rawSkills) ? rawSkills as string[] : typeof rawSkills === "string" ? [rawSkills] : [];
                 const exp = (w.experience_years as number) ?? 0;
-                const verified = !!w.verified_at;
                 const workerCategory = (w.category as string) || "";
                 const catLabel = CATEGORIES.find((c) => c.slug === workerCategory)?.label || workerCategory;
                 const workerLocality = (w.locality as string) || "";
@@ -128,49 +127,65 @@ function SearchPageInner() {
                 const languages = Array.isArray(rawLangs) ? rawLangs as string[] : typeof rawLangs === "string" ? [rawLangs] : [];
                 const tier = (w.tier as string) || "";
 
+                const initial = name.charAt(0).toUpperCase();
+                const avatarBg = agencyId ? "#DBEAFE" : C.bg;
+                const avatarColor = agencyId ? "#1D4ED8" : C.navy;
+
                 return (
                   <a key={w.id as string} href={`/worker/${w.user_id}`} style={{ textDecoration: "none", color: "inherit" }}>
                     <div style={{
-                      background: "#fff", borderRadius: 10, padding: "14px 16px",
+                      background: "#fff", borderRadius: 12, padding: "16px",
                       border: `1px solid ${C.border}`,
+                      borderLeft: agencyId ? `3px solid #1D4ED8` : `3px solid ${C.border}`,
                     }}>
-                      {/* Row 1: Name + badges */}
-                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
+                      <div style={{ display: "flex", gap: 14 }}>
+                        {/* Avatar */}
+                        <div style={{
+                          width: 44, height: 44, borderRadius: 22, flexShrink: 0,
+                          background: avatarBg, display: "flex", alignItems: "center", justifyContent: "center",
+                          fontSize: 18, fontWeight: 700, color: avatarColor,
+                        }}>{initial}</div>
+                        {/* Content */}
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
                             <span style={{ fontSize: 15, fontWeight: 700, color: C.navy }}>{name}</span>
-                            {tier === "enhanced" && (
-                              <span style={{ fontSize: 10, fontWeight: 700, color: C.green, background: "#DCFCE7", padding: "2px 6px", borderRadius: 4, textTransform: "uppercase" }}>Enhanced</span>
-                            )}
-                            {tier === "basic" && (
-                              <span style={{ fontSize: 10, fontWeight: 700, color: C.amber, background: "#FDF6E8", padding: "2px 6px", borderRadius: 4, textTransform: "uppercase" }}>Basic</span>
-                            )}
-                            {!tier && verified && (
-                              <span style={{ fontSize: 10, fontWeight: 700, color: C.green, background: "#DCFCE7", padding: "2px 6px", borderRadius: 4, textTransform: "uppercase" }}>Verified</span>
-                            )}
-                            {agencyId && (
-                              <span style={{ fontSize: 10, fontWeight: 700, color: "#1D4ED8", background: "#DBEAFE", padding: "2px 6px", borderRadius: 4, textTransform: "uppercase" }}>Agency</span>
-                            )}
-                            {availability === "available" && (
-                              <span style={{ fontSize: 10, fontWeight: 700, color: C.green, background: "#DCFCE7", padding: "2px 6px", borderRadius: 4, textTransform: "uppercase" }}>Available</span>
+                            {avgRating != null && ratingCount != null && ratingCount > 0 && (
+                              <span style={{ fontSize: 12, fontWeight: 600, color: C.navy }}>{avgRating} ★</span>
                             )}
                           </div>
-                          {/* Row 2: Category · locality */}
-                          <div style={{ fontSize: 13, color: C.sub, marginTop: 4 }}>
+                          <div style={{ fontSize: 13, color: C.sub, marginTop: 3 }}>
                             {catLabel || (skills.length > 0 ? skills.join(" · ") : "No category")}
                             {workerLocality && <> · {workerLocality}</>}
                           </div>
-                          {/* Row 3: Stats row */}
-                          <div style={{ display: "flex", gap: 12, marginTop: 6, fontSize: 12, color: C.muted, flexWrap: "wrap" }}>
-                            {avgRating != null && ratingCount != null && ratingCount > 0 && (
-                              <span style={{ color: C.navy, fontWeight: 600 }}>{avgRating} ★ <span style={{ fontWeight: 400, color: C.muted }}>({ratingCount})</span></span>
+                          <div style={{ display: "flex", gap: 6, marginTop: 8, flexWrap: "wrap", alignItems: "center" }}>
+                            {availability === "available" && (
+                              <span style={{ fontSize: 10, fontWeight: 700, color: C.green, background: "#DCFCE7", padding: "2px 8px", borderRadius: 10, textTransform: "uppercase" }}>Available</span>
                             )}
-                            {exp > 0 && <span>{exp} yr exp</span>}
-                            {verSteps > 0 && <span>{verSteps}/10 verified</span>}
-                            {languages.length > 0 && <span>{languages.join(", ")}</span>}
+                            {agencyId ? (
+                              <span style={{ fontSize: 10, fontWeight: 700, color: "#1D4ED8", background: "#DBEAFE", padding: "2px 8px", borderRadius: 10, textTransform: "uppercase" }}>Agency-backed</span>
+                            ) : (
+                              <span style={{ fontSize: 10, fontWeight: 600, color: C.muted, background: C.bg, padding: "2px 8px", borderRadius: 10, textTransform: "uppercase" }}>Independent</span>
+                            )}
+                            {tier === "enhanced" && (
+                              <span style={{ fontSize: 10, fontWeight: 700, color: C.green, background: "#DCFCE7", padding: "2px 8px", borderRadius: 10, textTransform: "uppercase" }}>{verSteps}/10 verified</span>
+                            )}
+                            {tier === "basic" && (
+                              <span style={{ fontSize: 10, fontWeight: 600, color: C.amber, background: "#FDF6E8", padding: "2px 8px", borderRadius: 10, textTransform: "uppercase" }}>{verSteps}/10 verified</span>
+                            )}
+                            {!tier && verSteps > 0 && (
+                              <span style={{ fontSize: 10, fontWeight: 600, color: C.muted, background: C.bg, padding: "2px 8px", borderRadius: 10 }}>{verSteps}/10</span>
+                            )}
+                            {exp > 0 && <span style={{ fontSize: 11, color: C.muted }}>{exp} yr exp</span>}
+                            {languages.length > 0 && <span style={{ fontSize: 11, color: C.muted }}>{languages.join(", ")}</span>}
                           </div>
                         </div>
-                        <span style={{ fontSize: 16, color: C.muted, flexShrink: 0, marginLeft: 12 }}>→</span>
+                        {/* CTA */}
+                        <div style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
+                          <span style={{
+                            padding: "8px 14px", borderRadius: 8, fontSize: 12, fontWeight: 700,
+                            background: C.amber, color: "#fff", whiteSpace: "nowrap",
+                          }}>View</span>
+                        </div>
                       </div>
                     </div>
                   </a>
