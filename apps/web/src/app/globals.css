@@ -1,10 +1,8 @@
-/* SafeHire — Responsive overrides. */
+/* SafeHire — Mobile-first responsive styles */
 
-/* Dashboard 3-column grid → single column on mobile */
-@media (max-width: 900px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr !important;
-  }
+/* Bottom tab bar spacing for logged-in pages */
+main {
+  padding-bottom: 72px;
 }
 
 /* Mobile: stack two-column grids */
@@ -23,12 +21,6 @@
   }
   .trust-bar {
     gap: 24px !important;
-  }
-  .nav-links {
-    display: none !important;
-  }
-  .nav-brand {
-    font-size: 15px !important;
   }
 }
 

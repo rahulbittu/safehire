@@ -4,6 +4,8 @@ import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@verifyme/auth";
 
+const C = { amber: "#C49A1A", navy: "#0D1B2A", green: "#34C759", blue: "#007AFF", sub: "#636366", muted: "#8E8E93", border: "#E5E5EA", bg: "#F7F6F3" };
+
 export default function ConsentPage() {
   const [error, setError] = useState("");
   const { user } = useAuth();
@@ -11,7 +13,6 @@ export default function ConsentPage() {
 
   const utils = trpc.useUtils();
 
-  // Worker queries
   const { data: consents, isLoading: consentsLoading } = trpc.consent.getMyConsents.useQuery(
     undefined,
     { enabled: role === "worker" }
@@ -21,13 +22,11 @@ export default function ConsentPage() {
     { enabled: role === "worker" }
   );
 
-  // Hirer queries
   const { data: myRequests, isLoading: myRequestsLoading } = trpc.consent.getMyRequests.useQuery(
     undefined,
     { enabled: role === "hirer" }
   );
 
-  // Worker mutations
   const revokeMutation = trpc.consent.revokeConsent.useMutation({
     onSuccess: () => utils.consent.getMyConsents.invalidate(),
     onError: (err) => setError(err.message),
@@ -46,23 +45,22 @@ export default function ConsentPage() {
 
   if (role === "hirer") return <HirerConsentView />;
 
-  // Worker view
   const pendingList = pendingRequests?.requests as Array<Record<string, unknown>> | undefined;
   const pendingCount = pendingList?.length ?? 0;
 
   return (
-    <div style={{ maxWidth: 720, margin: "0 auto", padding: "32px 24px" }}>
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 26, fontWeight: 800, color: "#1E293B", letterSpacing: "-0.025em", margin: 0 }}>
+    <div style={{ maxWidth: 520, margin: "0 auto", padding: "24px 20px" }}>
+      <div style={{ marginBottom: 20 }}>
+        <h1 style={{ fontSize: 22, fontWeight: 800, color: C.navy, letterSpacing: "-0.02em", margin: 0 }}>
           Manage Consent
         </h1>
-        <p style={{ color: "#64748B", fontSize: 14, marginTop: 4 }}>
-          Control which hirers can see your profile data. Revoke access at any time.
+        <p style={{ color: C.sub, fontSize: 14, marginTop: 4 }}>
+          Control which hirers can see your profile data.
         </p>
       </div>
 
       {error && (
-        <div style={{ background: "#FEF2F2", border: "1px solid #FECACA", color: "#DC2626", padding: "10px 14px", borderRadius: 8, marginBottom: 20, fontSize: 13 }}>
+        <div style={{ background: "#FEF2F2", borderLeft: "3px solid #FF3B30", color: "#FF3B30", padding: "10px 14px", borderRadius: 14, marginBottom: 14, fontSize: 13, border: `1px solid ${C.border}` }}>
           {error}
         </div>
       )}
@@ -70,16 +68,17 @@ export default function ConsentPage() {
       {/* Pending Access Requests */}
       {!requestsLoading && pendingCount > 0 && (
         <div style={{
-          border: "1px solid #FDE68A", borderRadius: 12, padding: 20,
-          marginBottom: 24, background: "#FFFBEB",
+          background: "#fff", borderRadius: 14, padding: 18,
+          marginBottom: 14, borderLeft: `3px solid ${C.amber}`,
+          border: `1px solid ${C.border}`, boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
         }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 }}>
-            <h2 style={{ fontSize: 15, fontWeight: 700, color: "#92400E", margin: 0 }}>
+            <div style={{ fontSize: 15, fontWeight: 800, color: C.amber }}>
               Pending Requests
-            </h2>
+            </div>
             <span style={{
-              fontSize: 12, fontWeight: 700, color: "#D97706",
-              background: "#FEF3C7", padding: "3px 10px", borderRadius: 12,
+              fontSize: 11, fontWeight: 800, color: C.amber,
+              background: "#FDF6E8", padding: "3px 10px", borderRadius: 99,
             }}>
               {pendingCount}
             </span>
@@ -87,19 +86,19 @@ export default function ConsentPage() {
           <div style={{ display: "grid", gap: 10 }}>
             {pendingList!.map((r) => (
               <div key={r.id as string} style={{
-                background: "#fff", border: "1px solid #E2E8F0", borderRadius: 10, padding: "14px 16px",
+                background: C.bg, borderRadius: 12, padding: "14px 16px",
               }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: "#334155" }}>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>
                       {Array.isArray(r.fields) ? (r.fields as string[]).join(", ") : "Profile access"}
                     </div>
                     {typeof r.message === "string" && r.message && (
-                      <div style={{ fontSize: 13, color: "#64748B", marginTop: 4, fontStyle: "italic", lineHeight: 1.4 }}>
+                      <div style={{ fontSize: 13, color: C.sub, marginTop: 4, fontStyle: "italic", lineHeight: 1.4 }}>
                         &ldquo;{r.message}&rdquo;
                       </div>
                     )}
-                    <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 4 }}>
+                    <div style={{ fontSize: 12, color: C.muted, marginTop: 4 }}>
                       {r.requested_at ? new Date(r.requested_at as string).toLocaleDateString() : ""}
                     </div>
                   </div>
@@ -108,8 +107,8 @@ export default function ConsentPage() {
                       onClick={() => approveMutation.mutate({ requestId: r.id as string })}
                       disabled={approveMutation.isPending || rejectMutation.isPending}
                       style={{
-                        padding: "6px 14px", background: "#15803D", color: "#fff",
-                        border: "none", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer",
+                        padding: "8px 16px", background: C.green, color: "#fff",
+                        border: "none", borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer",
                       }}
                     >
                       Approve
@@ -118,8 +117,8 @@ export default function ConsentPage() {
                       onClick={() => rejectMutation.mutate({ requestId: r.id as string })}
                       disabled={approveMutation.isPending || rejectMutation.isPending}
                       style={{
-                        padding: "6px 14px", background: "#fff", color: "#DC2626",
-                        border: "1px solid #FECACA", borderRadius: 6, fontSize: 12, fontWeight: 600, cursor: "pointer",
+                        padding: "8px 16px", background: "#fff", color: "#FF3B30",
+                        border: `1px solid ${C.border}`, borderRadius: 10, fontSize: 13, fontWeight: 700, cursor: "pointer",
                       }}
                     >
                       Reject
@@ -132,14 +131,14 @@ export default function ConsentPage() {
         </div>
       )}
 
-      {/* How consent works — show only when no pending requests */}
+      {/* How consent works */}
       {!requestsLoading && pendingCount === 0 && (
         <div style={{
-          background: "#F8FAFC", border: "1px solid #E2E8F0", borderRadius: 12,
-          padding: "16px 20px", marginBottom: 24,
+          background: "#fff", borderRadius: 14, padding: 18,
+          marginBottom: 14, border: `1px solid ${C.border}`, boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
         }}>
-          <div style={{ fontWeight: 700, color: "#334155", fontSize: 13, marginBottom: 4 }}>How consent works</div>
-          <p style={{ fontSize: 13, color: "#64748B", margin: 0, lineHeight: 1.5 }}>
+          <div style={{ fontWeight: 800, color: C.navy, fontSize: 14, marginBottom: 4 }}>How consent works</div>
+          <p style={{ fontSize: 13, color: C.sub, margin: 0, lineHeight: 1.6 }}>
             When a hirer wants to see your profile, they send an access request.
             You&apos;ll see it here. You can approve or reject each request.
           </p>
@@ -147,144 +146,142 @@ export default function ConsentPage() {
       )}
 
       {/* Active Consents */}
-      <h2 style={{ fontSize: 15, fontWeight: 700, color: "#1E293B", marginBottom: 12 }}>Active Consent Grants</h2>
-      {consentsLoading ? (
-        <div style={{ display: "grid", gap: 10 }}>
-          {[1, 2].map((n) => (
-            <div key={n} style={{ height: 64, background: "#F8FAFC", borderRadius: 10, border: "1px solid #E2E8F0" }} />
-          ))}
-        </div>
-      ) : (consents?.consents as unknown[])?.length === 0 ? (
-        <div style={{
-          border: "1px dashed #CBD5E1", borderRadius: 12, padding: 28, textAlign: "center",
-        }}>
-          <div style={{ fontSize: 14, color: "#64748B" }}>No active consent grants.</div>
-          <div style={{ fontSize: 13, color: "#94A3B8", marginTop: 4 }}>
-            Grants appear here when you approve a hirer&apos;s access request.
+      <div style={{ background: "#fff", borderRadius: 14, padding: 18, border: `1px solid ${C.border}`, boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
+        <div style={{ fontSize: 15, fontWeight: 800, color: C.navy, marginBottom: 14 }}>Active Consent Grants</div>
+        {consentsLoading ? (
+          <div style={{ display: "grid", gap: 10 }}>
+            {[1, 2].map((n) => (
+              <div key={n} style={{ height: 64, background: C.bg, borderRadius: 12 }} />
+            ))}
           </div>
-        </div>
-      ) : (
-        <div style={{ display: "grid", gap: 10 }}>
-          {(consents?.consents as Array<Record<string, unknown>>)?.map((c) => (
-            <div key={c.id as string} style={{
-              border: "1px solid #E2E8F0", borderRadius: 10, padding: "14px 18px",
-              display: "flex", justifyContent: "space-between", alignItems: "center",
-            }}>
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "#334155" }}>
-                  {Array.isArray(c.fields) ? (c.fields as string[]).join(", ") : "Profile access"}
-                </div>
-                <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 2 }}>
-                  Granted {c.granted_at ? new Date(c.granted_at as string).toLocaleDateString() : "—"}
-                  {c.expires_at ? ` · Expires ${new Date(c.expires_at as string).toLocaleDateString()}` : ""}
-                </div>
-              </div>
-              <button
-                onClick={() => revokeMutation.mutate({ consentId: c.id as string })}
-                disabled={revokeMutation.isPending}
-                style={{
-                  padding: "6px 14px", background: "#fff", color: "#DC2626",
-                  border: "1px solid #FECACA", borderRadius: 6, fontSize: 12,
-                  fontWeight: 600, cursor: "pointer",
-                }}
-              >
-                Revoke
-              </button>
+        ) : (consents?.consents as unknown[])?.length === 0 ? (
+          <div style={{ padding: 28, textAlign: "center" }}>
+            <div style={{ fontSize: 14, color: C.sub }}>No active consent grants.</div>
+            <div style={{ fontSize: 13, color: C.muted, marginTop: 4 }}>
+              Grants appear here when you approve a hirer&apos;s access request.
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        ) : (
+          <div style={{ display: "grid", gap: 10 }}>
+            {(consents?.consents as Array<Record<string, unknown>>)?.map((c) => (
+              <div key={c.id as string} style={{
+                background: C.bg, borderRadius: 12, padding: "14px 16px",
+                display: "flex", justifyContent: "space-between", alignItems: "center",
+              }}>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>
+                    {Array.isArray(c.fields) ? (c.fields as string[]).join(", ") : "Profile access"}
+                  </div>
+                  <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>
+                    Granted {c.granted_at ? new Date(c.granted_at as string).toLocaleDateString() : "—"}
+                    {c.expires_at ? ` · Expires ${new Date(c.expires_at as string).toLocaleDateString()}` : ""}
+                  </div>
+                </div>
+                <button
+                  onClick={() => revokeMutation.mutate({ consentId: c.id as string })}
+                  disabled={revokeMutation.isPending}
+                  style={{
+                    padding: "8px 16px", background: "#fff", color: "#FF3B30",
+                    border: `1px solid ${C.border}`, borderRadius: 10, fontSize: 13,
+                    fontWeight: 700, cursor: "pointer",
+                  }}
+                >
+                  Revoke
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 
   // =========================================================================
-  // Hirer view
-  // =========================================================================
-
   function HirerConsentView() {
     return (
-      <div style={{ maxWidth: 720, margin: "0 auto", padding: "32px 24px" }}>
-        <div style={{ marginBottom: 28 }}>
-          <h1 style={{ fontSize: 26, fontWeight: 800, color: "#1E293B", letterSpacing: "-0.025em", margin: 0 }}>
+      <div style={{ maxWidth: 520, margin: "0 auto", padding: "24px 20px" }}>
+        <div style={{ marginBottom: 20 }}>
+          <h1 style={{ fontSize: 22, fontWeight: 800, color: C.navy, letterSpacing: "-0.02em", margin: 0 }}>
             Access Requests
           </h1>
-          <p style={{ color: "#64748B", fontSize: 14, marginTop: 4 }}>
+          <p style={{ color: C.sub, fontSize: 14, marginTop: 4 }}>
             Track the status of your access requests to worker profiles.
           </p>
         </div>
 
         {/* Guide */}
         <div style={{
-          background: "#EFF6FF", border: "1px solid #BFDBFE", borderRadius: 12,
-          padding: "16px 20px", marginBottom: 24,
+          background: "#fff", borderRadius: 14, padding: 18,
+          marginBottom: 14, borderLeft: `3px solid ${C.blue}`,
+          border: `1px solid ${C.border}`, boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
         }}>
-          <div style={{ fontWeight: 700, color: "#0F766E", fontSize: 13, marginBottom: 6 }}>How to request access</div>
-          <ol style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: "#1E40AF", lineHeight: 1.8 }}>
-            <li>Go to <a href="/search" style={{ color: "#0F766E", fontWeight: 700, textDecoration: "none" }}>Search</a> and find a worker</li>
+          <div style={{ fontWeight: 800, color: C.blue, fontSize: 14, marginBottom: 6 }}>How to request access</div>
+          <ol style={{ margin: 0, paddingLeft: 18, fontSize: 13, color: C.sub, lineHeight: 1.8 }}>
+            <li>Go to <a href="/search" style={{ color: C.amber, fontWeight: 700, textDecoration: "none" }}>Search</a> and find a worker</li>
             <li>View their trust card</li>
             <li>Click &ldquo;Request Access&rdquo;</li>
           </ol>
         </div>
 
         {error && (
-          <div style={{ background: "#FEF2F2", border: "1px solid #FECACA", color: "#DC2626", padding: "10px 14px", borderRadius: 8, marginBottom: 20, fontSize: 13 }}>
+          <div style={{ background: "#FEF2F2", borderLeft: "3px solid #FF3B30", color: "#FF3B30", padding: "10px 14px", borderRadius: 14, marginBottom: 14, fontSize: 13, border: `1px solid ${C.border}` }}>
             {error}
           </div>
         )}
 
-        <h2 style={{ fontSize: 15, fontWeight: 700, color: "#1E293B", marginBottom: 12 }}>My Requests</h2>
-        {myRequestsLoading ? (
-          <div style={{ display: "grid", gap: 10 }}>
-            {[1, 2].map((n) => (
-              <div key={n} style={{ height: 64, background: "#F8FAFC", borderRadius: 10, border: "1px solid #E2E8F0" }} />
-            ))}
-          </div>
-        ) : (myRequests?.requests as unknown[])?.length === 0 ? (
-          <div style={{
-            border: "1px dashed #CBD5E1", borderRadius: 12, padding: 28, textAlign: "center",
-          }}>
-            <div style={{ fontSize: 14, color: "#64748B" }}>No access requests yet.</div>
-            <div style={{ fontSize: 13, color: "#94A3B8", marginTop: 4 }}>
-              Use <a href="/search" style={{ color: "#0F766E", fontWeight: 600, textDecoration: "none" }}>Search</a> to find workers and request access.
+        <div style={{ background: "#fff", borderRadius: 14, padding: 18, border: `1px solid ${C.border}`, boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
+          <div style={{ fontSize: 15, fontWeight: 800, color: C.navy, marginBottom: 14 }}>My Requests</div>
+          {myRequestsLoading ? (
+            <div style={{ display: "grid", gap: 10 }}>
+              {[1, 2].map((n) => (
+                <div key={n} style={{ height: 64, background: C.bg, borderRadius: 12 }} />
+              ))}
             </div>
-          </div>
-        ) : (
-          <div style={{ display: "grid", gap: 10 }}>
-            {(myRequests?.requests as Array<Record<string, unknown>>)?.map((r) => (
-              <div key={r.id as string} style={{
-                border: "1px solid #E2E8F0", borderRadius: 10, padding: "14px 18px",
-                display: "flex", justifyContent: "space-between", alignItems: "center",
-              }}>
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: "#334155" }}>
-                    {Array.isArray(r.fields) ? (r.fields as string[]).join(", ") : "Profile access"}
-                  </div>
-                  <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 2 }}>
-                    {r.requested_at ? new Date(r.requested_at as string).toLocaleDateString() : ""}
-                  </div>
-                </div>
-                <StatusBadge status={r.status as string} />
+          ) : (myRequests?.requests as unknown[])?.length === 0 ? (
+            <div style={{ padding: 28, textAlign: "center" }}>
+              <div style={{ fontSize: 14, color: C.sub }}>No access requests yet.</div>
+              <div style={{ fontSize: 13, color: C.muted, marginTop: 4 }}>
+                Use <a href="/search" style={{ color: C.amber, fontWeight: 700, textDecoration: "none" }}>Search</a> to find workers and request access.
               </div>
-            ))}
-          </div>
-        )}
+            </div>
+          ) : (
+            <div style={{ display: "grid", gap: 10 }}>
+              {(myRequests?.requests as Array<Record<string, unknown>>)?.map((r) => (
+                <div key={r.id as string} style={{
+                  background: C.bg, borderRadius: 12, padding: "14px 16px",
+                  display: "flex", justifyContent: "space-between", alignItems: "center",
+                }}>
+                  <div>
+                    <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>
+                      {Array.isArray(r.fields) ? (r.fields as string[]).join(", ") : "Profile access"}
+                    </div>
+                    <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>
+                      {r.requested_at ? new Date(r.requested_at as string).toLocaleDateString() : ""}
+                    </div>
+                  </div>
+                  <StatusBadge status={r.status as string} />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     );
   }
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const styles: Record<string, { bg: string; text: string; border: string }> = {
-    pending: { bg: "#FFFBEB", text: "#D97706", border: "#FDE68A" },
-    approved: { bg: "#F0FDF4", text: "#15803D", border: "#BBF7D0" },
-    rejected: { bg: "#FEF2F2", text: "#DC2626", border: "#FECACA" },
-    expired: { bg: "#F8FAFC", text: "#64748B", border: "#E2E8F0" },
+  const styles: Record<string, { bg: string; text: string }> = {
+    pending: { bg: "#FDF6E8", text: "#C49A1A" },
+    approved: { bg: "#E8FAE8", text: "#34C759" },
+    rejected: { bg: "#FEF2F2", text: "#FF3B30" },
+    expired: { bg: "#F7F6F3", text: "#8E8E93" },
   };
   const s = styles[status] || styles.pending;
   return (
     <span style={{
-      padding: "3px 10px", borderRadius: 12, fontSize: 11, fontWeight: 700,
-      background: s.bg, color: s.text, border: `1px solid ${s.border}`,
+      padding: "4px 12px", borderRadius: 99, fontSize: 10, fontWeight: 800,
+      background: s.bg, color: s.text,
       textTransform: "uppercase", letterSpacing: "0.04em",
     }}>
       {status}

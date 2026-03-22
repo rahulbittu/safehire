@@ -3,143 +3,101 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 
-const T = {
-  teal: "#0F766E",
-  tealLight: "#F0FDF9",
-  amber: "#D97706",
-  text: "#1E293B",
-  sub: "#64748B",
-  muted: "#94A3B8",
-  border: "#F1F5F9",
-};
+const C = { amber: "#C49A1A", navy: "#0D1B2A", green: "#34C759", sub: "#636366", muted: "#8E8E93", border: "#E5E5EA", bg: "#F7F6F3" };
 
-const AVATAR_COLORS = ["#0F766E", "#D97706", "#6366F1", "#DC2626", "#0891B2", "#7C3AED", "#059669"];
+const COLORS = ["#C49A1A", "#34C759", "#007AFF", "#FF3B30", "#AF52DE", "#FF9500", "#5AC8FA"];
 function avatarColor(name: string): string {
   let h = 0;
   for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h);
-  return AVATAR_COLORS[Math.abs(h) % AVATAR_COLORS.length];
+  return COLORS[Math.abs(h) % COLORS.length];
 }
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
-
   const { data, isLoading, error } = trpc.hirer.searchWorkers.useQuery(
     { query: query || undefined, page: 1, limit: 20 },
   );
 
   return (
-    <div style={{ maxWidth: 640, margin: "0 auto", padding: "24px" }}>
-      {/* Search */}
-      <div style={{
-        background: "#fff", borderRadius: 14, padding: 20, marginBottom: 16,
-        boxShadow: "0 1px 4px rgba(0,0,0,0.04)", border: `1px solid ${T.border}`,
-      }}>
-        <h1 style={{ fontSize: 20, fontWeight: 800, color: T.text, margin: "0 0 12px", letterSpacing: "-0.02em" }}>
-          Find Workers
-        </h1>
-        <input
-          type="text"
-          placeholder="Search by name, skill, or expertise..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          style={{
-            width: "100%", padding: "12px 16px",
-            background: "#F8FAFC", border: `1.5px solid ${T.border}`,
-            borderRadius: 10, fontSize: 14, boxSizing: "border-box",
-            outline: "none",
-          }}
-        />
-      </div>
+    <div style={{ maxWidth: 520, margin: "0 auto", padding: "24px 20px" }}>
+      <h1 style={{ fontSize: 22, fontWeight: 800, color: C.navy, margin: "0 0 14px", letterSpacing: "-0.02em" }}>
+        Find Workers
+      </h1>
+      <input
+        type="text"
+        placeholder="Search by name or skill..."
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        style={{
+          width: "100%", padding: "14px 16px",
+          background: "#fff", border: `1px solid ${C.border}`,
+          borderRadius: 12, fontSize: 15, boxSizing: "border-box",
+          outline: "none", marginBottom: 20,
+        }}
+      />
 
       {error && (
-        <div style={{
-          background: "#fff", borderLeft: "3px solid #DC2626",
-          padding: 16, borderRadius: 14, marginBottom: 16, fontSize: 14, color: "#DC2626",
-          boxShadow: "0 1px 4px rgba(0,0,0,0.04)", border: `1px solid ${T.border}`,
-        }}>
+        <div style={{ background: "#fff", borderLeft: `3px solid #FF3B30`, padding: 16, borderRadius: 14, marginBottom: 14, fontSize: 14, color: "#FF3B30", border: `1px solid ${C.border}` }}>
           {error.message}
         </div>
       )}
 
       {isLoading && (
-        <div style={{ display: "grid", gap: 12 }}>
-          {[1, 2, 3].map((n) => (
-            <div key={n} style={{
-              height: 80, background: "#fff", borderRadius: 14, border: `1px solid ${T.border}`,
-            }} />
-          ))}
+        <div style={{ display: "grid", gap: 10 }}>
+          {[1, 2, 3].map((n) => <div key={n} style={{ height: 80, background: "#fff", borderRadius: 14, border: `1px solid ${C.border}` }} />)}
         </div>
       )}
 
       {data && (
         <>
-          <div style={{ fontSize: 13, fontWeight: 600, color: T.muted, marginBottom: 12 }}>
-            {data.total} worker{data.total !== 1 ? "s" : ""} found
+          <div style={{ fontSize: 13, fontWeight: 600, color: C.muted, marginBottom: 12 }}>
+            {data.total} result{data.total !== 1 ? "s" : ""}
           </div>
 
           {data.workers.length === 0 ? (
-            <div style={{
-              background: "#fff", borderRadius: 14, padding: 40, textAlign: "center",
-              boxShadow: "0 1px 4px rgba(0,0,0,0.04)", border: `1px solid ${T.border}`,
-            }}>
-              <div style={{ fontSize: 15, color: T.sub }}>No workers found.</div>
-              <div style={{ fontSize: 13, color: T.muted, marginTop: 4 }}>Try a different search term.</div>
+            <div style={{ background: "#fff", borderRadius: 14, padding: 40, textAlign: "center", border: `1px solid ${C.border}` }}>
+              <div style={{ fontSize: 15, color: C.sub }}>No workers found.</div>
+              <div style={{ fontSize: 13, color: C.muted, marginTop: 4 }}>Try a different search.</div>
             </div>
           ) : (
             <div style={{ display: "grid", gap: 10 }}>
-              {data.workers.map((worker: Record<string, unknown>) => {
-                const name = worker.full_name as string;
-                const skills = (worker.skills as string[]) || [];
+              {data.workers.map((w: Record<string, unknown>) => {
+                const name = (w.full_name as string) || "Unknown";
+                const skills = (w.skills as string[]) || [];
                 const color = avatarColor(name);
 
                 return (
-                  <a key={worker.id as string} href={`/worker/${worker.user_id}`} style={{ textDecoration: "none", color: "inherit" }}>
+                  <a key={w.id as string} href={`/worker/${w.user_id}`} style={{ textDecoration: "none", color: "inherit" }}>
                     <div style={{
-                      background: "#fff", borderRadius: 14, padding: "18px 20px",
-                      display: "flex", alignItems: "center", gap: 16,
-                      boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
-                      border: `1px solid ${T.border}`,
-                      cursor: "pointer",
+                      background: "#fff", borderRadius: 14, padding: "16px 18px",
+                      display: "flex", alignItems: "center", gap: 14,
+                      border: `1px solid ${C.border}`, boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
                     }}>
-                      {/* Avatar */}
                       <div style={{
-                        width: 52, height: 52, borderRadius: 14,
-                        background: `linear-gradient(135deg, ${color}, ${color}88)`,
+                        width: 50, height: 50, borderRadius: 14,
+                        background: `linear-gradient(135deg, ${color}, ${color}99)`,
                         color: "#fff", display: "flex", alignItems: "center", justifyContent: "center",
                         fontSize: 20, fontWeight: 700, flexShrink: 0,
-                      }}>
-                        {name.charAt(0)}
-                      </div>
-
-                      {/* Info */}
+                      }}>{name.charAt(0)}</div>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                          <span style={{ fontSize: 16, fontWeight: 700, color: T.text }}>{name}</span>
-                          {worker.verified_at ? (
+                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                          <span style={{ fontSize: 16, fontWeight: 700, color: C.navy }}>{name}</span>
+                          {w.verified_at ? (
                             <span style={{
-                              fontSize: 10, fontWeight: 700, color: T.teal,
-                              background: T.tealLight, padding: "2px 8px", borderRadius: 6,
-                            }}>
-                              Verified
-                            </span>
+                              fontSize: 9, fontWeight: 800, color: C.green,
+                              background: "#E8FAE8", padding: "2px 7px", borderRadius: 99,
+                              textTransform: "uppercase",
+                            }}>Verified</span>
                           ) : null}
                         </div>
-                        <div style={{ fontSize: 14, color: T.sub, marginTop: 3 }}>
+                        <div style={{ fontSize: 13, color: C.sub, marginTop: 3 }}>
                           {skills.join(" · ") || "No skills listed"}
                         </div>
-                        <div style={{ fontSize: 12, color: T.muted, marginTop: 2 }}>
-                          {worker.experience_years as number} years experience
+                        <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>
+                          {(w.experience_years as number) ?? 0} years
                         </div>
                       </div>
-
-                      {/* CTA */}
-                      <span style={{
-                        padding: "8px 18px", borderRadius: 8,
-                        border: `1.5px solid ${T.teal}`, color: T.teal,
-                        fontSize: 13, fontWeight: 700, flexShrink: 0, whiteSpace: "nowrap",
-                      }}>
-                        View
-                      </span>
+                      <span style={{ fontSize: 18, color: C.amber }}>→</span>
                     </div>
                   </a>
                 );

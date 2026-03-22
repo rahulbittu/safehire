@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { trpc } from "@/lib/trpc";
 
+const C = { amber: "#C49A1A", navy: "#0D1B2A", sub: "#636366", muted: "#8E8E93", border: "#E5E5EA", bg: "#F7F6F3" };
+
 export default function ReportIncidentPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -41,61 +43,55 @@ export default function ReportIncidentPage() {
   const inputStyle = {
     width: "100%" as const,
     padding: "12px 14px",
-    border: "1px solid #E2E8F0",
-    borderRadius: 8,
+    border: `1px solid ${C.border}`,
+    borderRadius: 10,
     fontSize: 15,
     boxSizing: "border-box" as const,
     outline: "none",
-  };
-
-  const labelStyle = {
-    display: "block" as const,
-    fontSize: 13,
-    fontWeight: 600 as const,
-    color: "#334155",
-    marginBottom: 6,
+    background: C.bg,
   };
 
   return (
-    <div style={{ maxWidth: 560, margin: "0 auto", padding: "32px 24px" }}>
-      <a href="/dashboard" style={{ fontSize: 13, color: "#64748B", textDecoration: "none", marginBottom: 20, display: "inline-block" }}>
-        &larr; Back to dashboard
+    <div style={{ maxWidth: 520, margin: "0 auto", padding: "24px 20px" }}>
+      <a href="/dashboard" style={{ fontSize: 13, color: C.sub, textDecoration: "none", marginBottom: 14, display: "inline-block" }}>
+        ← Back to dashboard
       </a>
 
-      <div style={{ marginBottom: 28 }}>
-        <h1 style={{ fontSize: 26, fontWeight: 800, color: "#1E293B", letterSpacing: "-0.025em", margin: 0 }}>
+      <div style={{ marginBottom: 20 }}>
+        <h1 style={{ fontSize: 22, fontWeight: 800, color: C.navy, letterSpacing: "-0.02em", margin: 0 }}>
           Report an Incident
         </h1>
-        <p style={{ color: "#64748B", fontSize: 14, marginTop: 6, lineHeight: 1.5 }}>
+        <p style={{ color: C.sub, fontSize: 14, marginTop: 4, lineHeight: 1.5 }}>
           The worker will be notified and has the right to appeal. All reports are reviewed.
         </p>
       </div>
 
       {/* Accountability notice */}
       <div style={{
-        background: "#FFFBEB", border: "1px solid #FDE68A", borderRadius: 12,
-        padding: "14px 18px", marginBottom: 20,
+        background: "#fff", borderRadius: 14, padding: 18,
+        marginBottom: 14, borderLeft: "3px solid #FF3B30",
+        border: `1px solid ${C.border}`, boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
       }}>
-        <div style={{ fontWeight: 700, color: "#92400E", fontSize: 13, marginBottom: 4 }}>Fair reporting</div>
-        <p style={{ fontSize: 13, color: "#A16207", margin: 0, lineHeight: 1.5 }}>
+        <div style={{ fontWeight: 800, color: "#FF3B30", fontSize: 14, marginBottom: 4 }}>Fair reporting</div>
+        <p style={{ fontSize: 13, color: C.sub, margin: 0, lineHeight: 1.6 }}>
           SafeHire is not a blacklist. False or malicious reports are reviewed and can result in your account being restricted.
           Workers can appeal any report.
         </p>
       </div>
 
       {error && (
-        <div style={{ background: "#FEF2F2", border: "1px solid #FECACA", color: "#DC2626", padding: "10px 14px", borderRadius: 8, marginBottom: 20, fontSize: 13 }}>
+        <div style={{ background: "#FEF2F2", borderLeft: "3px solid #FF3B30", color: "#FF3B30", padding: "10px 14px", borderRadius: 14, marginBottom: 14, fontSize: 13, border: `1px solid ${C.border}` }}>
           {error}
         </div>
       )}
 
       <form onSubmit={handleSubmit}>
         <div style={{
-          border: "1px solid #E2E8F0", borderRadius: 12, padding: 24,
-          background: "#fff", marginBottom: 20,
+          background: "#fff", borderRadius: 14, padding: 20,
+          marginBottom: 14, border: `1px solid ${C.border}`, boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
         }}>
           <div style={{ marginBottom: 20 }}>
-            <label style={labelStyle}>Worker ID</label>
+            <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: C.navy, marginBottom: 6 }}>Worker ID</label>
             <input
               type="text"
               placeholder="Worker UUID from their profile"
@@ -103,14 +99,14 @@ export default function ReportIncidentPage() {
               onChange={(e) => setFormData({ ...formData, workerId: e.target.value })}
               style={inputStyle}
             />
-            <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 4 }}>
+            <div style={{ fontSize: 12, color: C.muted, marginTop: 4 }}>
               Find this on the worker&apos;s trust card page
             </div>
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 20 }} className="grid-2col">
             <div>
-              <label style={labelStyle}>Incident type</label>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: C.navy, marginBottom: 6 }}>Incident type</label>
               <select
                 value={formData.type}
                 onChange={(e) => setFormData({ ...formData, type: e.target.value })}
@@ -126,7 +122,7 @@ export default function ReportIncidentPage() {
               </select>
             </div>
             <div>
-              <label style={labelStyle}>Severity</label>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: C.navy, marginBottom: 6 }}>Severity</label>
               <select
                 value={formData.severity}
                 onChange={(e) => setFormData({ ...formData, severity: e.target.value })}
@@ -142,7 +138,7 @@ export default function ReportIncidentPage() {
           </div>
 
           <div>
-            <label style={labelStyle}>Description</label>
+            <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: C.navy, marginBottom: 6 }}>Description</label>
             <textarea
               rows={4}
               placeholder="Describe what happened. Be specific and factual."
@@ -151,7 +147,7 @@ export default function ReportIncidentPage() {
               maxLength={10000}
               style={{ ...inputStyle, resize: "vertical" as const }}
             />
-            <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 4 }}>
+            <div style={{ fontSize: 12, color: C.muted, marginTop: 4 }}>
               Minimum 10 characters. Be factual — this report is reviewed by our team.
             </div>
           </div>
@@ -162,15 +158,15 @@ export default function ReportIncidentPage() {
           disabled={reportMutation.isPending}
           style={{
             width: "100%", padding: 14,
-            background: reportMutation.isPending ? "#FCA5A5" : "#DC2626",
-            color: "#fff", border: "none", borderRadius: 8, fontSize: 15,
-            fontWeight: 600, cursor: reportMutation.isPending ? "default" : "pointer",
+            background: reportMutation.isPending ? "#FCA5A5" : "#FF3B30",
+            color: "#fff", border: "none", borderRadius: 12, fontSize: 15,
+            fontWeight: 700, cursor: reportMutation.isPending ? "default" : "pointer",
           }}
         >
           {reportMutation.isPending ? "Submitting..." : "Submit Report"}
         </button>
 
-        <div style={{ textAlign: "center", marginTop: 16, fontSize: 12, color: "#94A3B8", lineHeight: 1.5 }}>
+        <div style={{ textAlign: "center", marginTop: 16, fontSize: 12, color: C.muted, lineHeight: 1.5 }}>
           Reports are encrypted and reviewed fairly. The worker will be notified and can appeal.
         </div>
       </form>

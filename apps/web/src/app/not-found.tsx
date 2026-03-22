@@ -1,22 +1,22 @@
 export default function NotFound() {
   return (
     <div style={{
-      maxWidth: 480, margin: "0 auto", padding: "80px 24px",
+      maxWidth: 520, margin: "0 auto", padding: "80px 20px",
       textAlign: "center",
     }}>
       <div style={{
-        fontSize: 56, fontWeight: 800, color: "#E2E8F0",
+        fontSize: 56, fontWeight: 800, color: "#E5E5EA",
         letterSpacing: "-0.04em", marginBottom: 8,
       }}>
         404
       </div>
       <h1 style={{
-        fontSize: 22, fontWeight: 700, color: "#0F172A",
+        fontSize: 22, fontWeight: 800, color: "#0D1B2A",
         margin: "0 0 8px", letterSpacing: "-0.02em",
       }}>
         Page not found
       </h1>
-      <p style={{ color: "#64748B", fontSize: 15, marginBottom: 28, lineHeight: 1.5 }}>
+      <p style={{ color: "#636366", fontSize: 15, marginBottom: 28, lineHeight: 1.5 }}>
         The page you&apos;re looking for doesn&apos;t exist or has been moved.
       </p>
       <div style={{ display: "flex", gap: 12, justifyContent: "center" }}>
@@ -24,8 +24,8 @@ export default function NotFound() {
           href="/"
           style={{
             display: "inline-flex", alignItems: "center", padding: "12px 24px",
-            background: "#0F766E", color: "#fff", borderRadius: 8,
-            textDecoration: "none", fontSize: 14, fontWeight: 600,
+            background: "#C49A1A", color: "#fff", borderRadius: 12,
+            textDecoration: "none", fontSize: 14, fontWeight: 700,
           }}
         >
           Go home
@@ -34,8 +34,9 @@ export default function NotFound() {
           href="/login"
           style={{
             display: "inline-flex", alignItems: "center", padding: "12px 24px",
-            background: "#F1F5F9", color: "#334155", borderRadius: 8,
-            textDecoration: "none", fontSize: 14, fontWeight: 600,
+            background: "#F7F6F3", color: "#0D1B2A", borderRadius: 12,
+            textDecoration: "none", fontSize: 14, fontWeight: 700,
+            border: "1px solid #E5E5EA",
           }}
         >
           Sign in

@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@verifyme/auth";
 
+const C = { amber: "#C49A1A", navy: "#0D1B2A", green: "#34C759", sub: "#636366", muted: "#8E8E93", border: "#E5E5EA", bg: "#F7F6F3" };
+
 export default function LoginPage() {
   const router = useRouter();
   const { authMode, setDevSession, supabase } = useAuth();
@@ -73,28 +75,29 @@ export default function LoginPage() {
   const isPending = loading || registerMutation.isPending || verifyMutation.isPending;
 
   return (
-    <div style={{ minHeight: "calc(100vh - 57px)", display: "flex", alignItems: "center", justifyContent: "center", background: "#FAFBFC" }}>
+    <div style={{ minHeight: "calc(100vh - 53px)", display: "flex", alignItems: "center", justifyContent: "center", background: C.bg }}>
       <div style={{
         width: "100%", maxWidth: 400, margin: "0 auto", padding: 32,
         background: "#fff", borderRadius: 14,
-        boxShadow: "0 4px 24px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04)",
+        border: `1px solid ${C.border}`,
+        boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
       }}>
         <div style={{ textAlign: "center", marginBottom: 28 }}>
-          <div style={{ fontSize: 28, fontWeight: 800, color: "#0F766E", letterSpacing: "-0.03em" }}>
-            safe<span style={{ color: "#D97706" }}>hire</span>
+          <div style={{ fontSize: 28, fontWeight: 800, color: C.navy, letterSpacing: "-0.03em" }}>
+            Safe<span style={{ color: C.amber }}>Hire</span>
           </div>
-          <p style={{ color: "#64748B", marginTop: 6, fontSize: 15 }}>
+          <p style={{ color: C.sub, marginTop: 6, fontSize: 15 }}>
             {step === "phone" ? "Sign in to your account" : "Enter verification code"}
           </p>
         </div>
 
         {authMode === "dev" && (
           <div style={{
-            background: "#FFF7ED", border: "1px solid #FDE68A", padding: "14px 16px",
+            background: "#FDF6E8", border: `1px solid ${C.amber}33`, padding: "14px 16px",
             borderRadius: 10, marginBottom: 20, fontSize: 13, color: "#92400E", lineHeight: 1.6,
           }}>
             <strong>Demo mode</strong> — OTP is always <strong>123456</strong>
-            <div style={{ marginTop: 8, fontSize: 12, color: "#A16207" }}>Try these accounts:</div>
+            <div style={{ marginTop: 8, fontSize: 12, color: C.sub }}>Try these accounts:</div>
             <div style={{ marginTop: 4, fontSize: 12, display: "grid", gap: 2 }}>
               <div><strong>+919876543201</strong> — Priya (worker, enhanced trust)</div>
               <div><strong>+919876543301</strong> — Ananya (hirer)</div>
@@ -104,7 +107,7 @@ export default function LoginPage() {
 
         {authMode === "supabase" && (
           <div style={{
-            background: "#F0FDF9", border: "1px solid #D1FAE5", padding: "10px 14px",
+            background: "#E8FAE8", border: `1px solid ${C.green}33`, padding: "10px 14px",
             borderRadius: 10, marginBottom: 20, fontSize: 13, color: "#166534",
           }}>
             A verification code will be sent via SMS.
@@ -113,7 +116,7 @@ export default function LoginPage() {
 
         {error && (
           <div style={{
-            background: "#FEF2F2", border: "1px solid #FECACA", color: "#DC2626",
+            background: "#FEF2F2", border: "1px solid #FECACA", color: "#FF3B30",
             padding: "10px 14px", borderRadius: 10, marginBottom: 20, fontSize: 13,
           }}>
             {error}
@@ -124,15 +127,15 @@ export default function LoginPage() {
           <form onSubmit={handleSendOtp}>
             {authMode === "dev" && (
               <div style={{ marginBottom: 20 }}>
-                <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "#1E293B", marginBottom: 6 }}>I am a</label>
+                <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: C.navy, marginBottom: 6 }}>I am a</label>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                   {(["hirer", "worker"] as const).map((r) => (
                     <button key={r} type="button" onClick={() => setRole(r)} style={{
                       padding: "10px 0",
-                      border: role === r ? "2px solid #0F766E" : "1.5px solid #F1F5F9",
+                      border: role === r ? `2px solid ${C.amber}` : `1.5px solid ${C.border}`,
                       borderRadius: 10, cursor: "pointer", fontSize: 14, fontWeight: 700,
-                      background: role === r ? "#F0FDF9" : "#fff",
-                      color: role === r ? "#0F766E" : "#64748B",
+                      background: role === r ? "#FDF6E8" : "#fff",
+                      color: role === r ? C.amber : C.sub,
                       textTransform: "capitalize",
                     }}>
                       {r}
@@ -142,16 +145,16 @@ export default function LoginPage() {
               </div>
             )}
             <div style={{ marginBottom: 20 }}>
-              <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "#1E293B", marginBottom: 6 }}>Phone number</label>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: C.navy, marginBottom: 6 }}>Phone number</label>
               <input type="tel" placeholder="+91 98765 43210" value={phone} onChange={(e) => setPhone(e.target.value)} style={{
-                width: "100%", padding: "12px 14px", border: "1.5px solid #F1F5F9",
-                borderRadius: 10, fontSize: 16, boxSizing: "border-box", outline: "none",
+                width: "100%", padding: "12px 14px", border: `1px solid ${C.border}`,
+                borderRadius: 10, fontSize: 16, boxSizing: "border-box", outline: "none", background: C.bg,
               }} />
             </div>
             <button type="submit" disabled={isPending} style={{
               width: "100%", padding: 14,
-              background: isPending ? "#99F6E4" : "#0F766E",
-              color: "#fff", border: "none", borderRadius: 10, fontSize: 15,
+              background: isPending ? `${C.amber}66` : C.amber,
+              color: "#fff", border: "none", borderRadius: 12, fontSize: 15,
               fontWeight: 700, cursor: isPending ? "default" : "pointer",
             }}>
               {isPending ? "Sending..." : "Send OTP"}
@@ -160,33 +163,33 @@ export default function LoginPage() {
         ) : (
           <form onSubmit={handleVerifyOtp}>
             <div style={{ marginBottom: 20 }}>
-              <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "#1E293B", marginBottom: 6 }}>Verification code</label>
+              <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: C.navy, marginBottom: 6 }}>Verification code</label>
               <input type="text" inputMode="numeric" placeholder={authMode === "dev" ? "123456" : "Enter 6-digit code"}
                 maxLength={6} value={otp} onChange={(e) => setOtp(e.target.value)} autoFocus style={{
-                  width: "100%", padding: "12px 14px", border: "1.5px solid #F1F5F9",
+                  width: "100%", padding: "12px 14px", border: `1px solid ${C.border}`,
                   borderRadius: 10, fontSize: 20, letterSpacing: "0.15em",
-                  textAlign: "center", boxSizing: "border-box", outline: "none",
+                  textAlign: "center", boxSizing: "border-box", outline: "none", background: C.bg,
                 }} />
-              <div style={{ fontSize: 12, color: "#94A3B8", marginTop: 6 }}>Sent to {phone}</div>
+              <div style={{ fontSize: 12, color: C.muted, marginTop: 6 }}>Sent to {phone}</div>
             </div>
             <button type="submit" disabled={isPending} style={{
               width: "100%", padding: 14,
-              background: isPending ? "#99F6E4" : "#0F766E",
-              color: "#fff", border: "none", borderRadius: 10, fontSize: 15,
+              background: isPending ? `${C.amber}66` : C.amber,
+              color: "#fff", border: "none", borderRadius: 12, fontSize: 15,
               fontWeight: 700, cursor: isPending ? "default" : "pointer",
             }}>
               {isPending ? "Verifying..." : "Verify"}
             </button>
             <button type="button" onClick={() => { setStep("phone"); setOtp(""); setError(""); }} style={{
               width: "100%", padding: 12, background: "transparent", border: "none",
-              borderRadius: 10, fontSize: 13, cursor: "pointer", marginTop: 8, color: "#64748B",
+              borderRadius: 10, fontSize: 13, cursor: "pointer", marginTop: 8, color: C.sub,
             }}>
               Use a different number
             </button>
           </form>
         )}
 
-        <div style={{ textAlign: "center", marginTop: 24, fontSize: 12, color: "#94A3B8", lineHeight: 1.5 }}>
+        <div style={{ textAlign: "center", marginTop: 24, fontSize: 12, color: C.muted, lineHeight: 1.5 }}>
           Your data is encrypted and you control who sees it.
         </div>
       </div>
