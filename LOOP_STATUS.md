@@ -61,7 +61,17 @@
 ---
 
 ## Loop 2 — Homepage Rebuild
-**Status:** PENDING
+**Status:** COMPLETE
+**Changes:**
+- Search-first hero: "Find trusted help in your area" with functional category grid + locality input
+- Category grid is the primary CTA, not actor paths
+- Locality input feeds into search URL params
+- "Search all" button alongside locality
+- Actor paths (worker/agency) moved below search as secondary
+- Sample trust card shows rating, availability, agency badge, and language
+- Trust principles in 2x2 grid, tighter
+- UAT banner links directly to login
+- CTA has dual buttons: "Find help now" + "Create your trust card"
 
 ## Loop 3 — Login / Role Entry Redesign
 **Status:** PENDING
