@@ -131,22 +131,27 @@ function HirerDash() {
           </div>
         ) : (
           <div style={{ display: "grid", gap: 6 }}>
-            {workers?.workers.map((w: Record<string, unknown>, i: number) => (
-              <a key={i} href={`/worker/${w.worker_id}`} style={{ textDecoration: "none", color: "inherit" }}>
-                <div style={{
-                  display: "flex", justifyContent: "space-between", alignItems: "center",
-                  padding: "10px 12px", borderRadius: 8, background: C.bg,
-                }}>
-                  <div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: C.navy }}>{humanizeFields(w.fields)}</div>
-                    <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>
-                      Expires {w.expires_at ? new Date(w.expires_at as string).toLocaleDateString() : "never"}
+            {workers?.workers.map((w: Record<string, unknown>, i: number) => {
+              const wp = w.worker_profiles as Record<string, unknown> | undefined;
+              const workerName = (wp?.full_name as string) || "Worker";
+              const workerSkills = Array.isArray(wp?.skills) ? (wp.skills as string[]).join(", ") : "";
+              return (
+                <a key={i} href={`/worker/${w.worker_id}`} style={{ textDecoration: "none", color: "inherit" }}>
+                  <div style={{
+                    display: "flex", justifyContent: "space-between", alignItems: "center",
+                    padding: "10px 12px", borderRadius: 8, background: C.bg,
+                  }}>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: C.navy }}>{workerName}</div>
+                      <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>
+                        {workerSkills || humanizeFields(w.fields)} · Expires {w.expires_at ? new Date(w.expires_at as string).toLocaleDateString() : "never"}
+                      </div>
                     </div>
+                    <span style={{ fontSize: 13, color: C.amber }}>→</span>
                   </div>
-                  <span style={{ fontSize: 13, color: C.amber }}>→</span>
-                </div>
-              </a>
-            ))}
+                </a>
+              );
+            })}
           </div>
         )}
       </div>
@@ -205,56 +210,78 @@ function WorkerDash() {
   const tier = (tc?.tier as string) ?? "unverified";
   const pendingCount = (pendingRequests?.requests as unknown[])?.length ?? 0;
   const endoList = (endorsements?.endorsements ?? []) as Array<Record<string, unknown>>;
-  const skills = Array.isArray(p.skills) ? (p.skills as string[]) : [];
+  const languages = Array.isArray(p.languages) ? (p.languages as string[]) : [];
+  const workerCategory = (p.category as string) || "";
+  const catLabel = CATEGORIES.find((c) => c.slug === workerCategory)?.label || workerCategory;
   const verSteps = (tc?.verification_steps ?? p.verification_steps) as Record<string, unknown> | null;
   const completedSteps = verSteps ? VERIFICATION_STEPS.filter((s) => verSteps[s.key] === true).length : 0;
+  const availability = (p.availability as string) || "";
 
   const tierStyles: Record<string, { bg: string; color: string; label: string }> = {
     unverified: { bg: "#F3F4F6", color: "#6B7280", label: "Unverified" },
-    basic: { bg: "#DBEAFE", color: "#1D4ED8", label: "Basic" },
-    enhanced: { bg: "#DCFCE7", color: C.green, label: "Verified" },
+    basic: { bg: "#FDF6E8", color: C.amber, label: "Basic" },
+    enhanced: { bg: "#DCFCE7", color: C.green, label: "Enhanced" },
   };
   const ts = tierStyles[tier] ?? tierStyles.unverified;
+
+  // Find next incomplete verification step
+  const nextStep = verSteps ? VERIFICATION_STEPS.find((s) => verSteps[s.key] !== true) : VERIFICATION_STEPS[0];
 
   return (
     <>
       {/* Trust card — flat, practical */}
       <div style={{ background: "#fff", borderRadius: 12, overflow: "hidden", border: `1px solid ${C.border}`, marginBottom: 12 }}>
-        <div style={{ padding: "16px 18px", display: "flex", justifyContent: "space-between", alignItems: "start" }}>
+        <div style={{ padding: "18px 20px", display: "flex", justifyContent: "space-between", alignItems: "start" }}>
           <div>
-            <div style={{ fontSize: 17, fontWeight: 800, color: C.navy }}>{p.full_name as string}</div>
-            <div style={{ fontSize: 13, color: C.sub, marginTop: 3 }}>
-              {skills.length > 0 ? skills.join(" · ") : (p.category as string) || "No skills listed"}
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+              <span style={{ fontSize: 18, fontWeight: 800, color: C.navy }}>{p.full_name as string}</span>
+              <span style={{
+                padding: "3px 8px", borderRadius: 5, fontSize: 10, fontWeight: 700,
+                background: ts.bg, color: ts.color, textTransform: "uppercase",
+              }}>{ts.label}</span>
+              {availability === "available" && (
+                <span style={{ padding: "3px 8px", borderRadius: 5, fontSize: 10, fontWeight: 700, background: "#DCFCE7", color: C.green, textTransform: "uppercase" }}>Available</span>
+              )}
             </div>
-            {((p.locality as string) || (p.experience_years as number)) && (
-              <div style={{ fontSize: 12, color: C.muted, marginTop: 3 }}>
-                {[
-                  p.locality as string,
-                  (p.experience_years as number) ? `${p.experience_years} yr exp` : "",
-                ].filter(Boolean).join(" · ")}
-              </div>
-            )}
+            <div style={{ fontSize: 14, color: C.sub, marginTop: 5 }}>
+              {catLabel}{(p.locality as string) ? ` · ${p.locality as string}` : ""}
+            </div>
+            <div style={{ fontSize: 12, color: C.muted, marginTop: 4, display: "flex", gap: 10, flexWrap: "wrap" }}>
+              {(p.experience_years as number) > 0 && <span>{p.experience_years as number} yr exp</span>}
+              {languages.length > 0 && <span>{languages.join(", ")}</span>}
+            </div>
           </div>
-          <div style={{
-            padding: "3px 8px", borderRadius: 5, fontSize: 10, fontWeight: 700,
-            background: ts.bg, color: ts.color, textTransform: "uppercase", flexShrink: 0,
-          }}>{ts.label}</div>
         </div>
         {/* Stats */}
         <div style={{ borderTop: `1px solid ${C.border}`, display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr" }} className="grid-4col">
           {[
             { v: `${completedSteps}/10`, l: "Verified" },
             { v: String((tc?.endorsement_count as number) ?? 0), l: "References" },
-            { v: `${(tc?.tenure_months as number) ?? 0}mo`, l: "Tenure" },
+            { v: `${(tc?.tenure_months as number) ?? 0} mo`, l: "Tenure" },
             { v: tc?.incident_flag ? "Flagged" : "Clean", l: "Record" },
           ].map((s) => (
-            <div key={s.l} style={{ padding: "10px 6px", textAlign: "center", borderRight: `1px solid ${C.border}` }}>
+            <div key={s.l} style={{ padding: "12px 8px", textAlign: "center", borderRight: `1px solid ${C.border}` }}>
               <div style={{ fontSize: 15, fontWeight: 700, color: C.navy }}>{s.v}</div>
-              <div style={{ fontSize: 10, color: C.muted, marginTop: 2 }}>{s.l}</div>
+              <div style={{ fontSize: 10, color: C.muted, marginTop: 3 }}>{s.l}</div>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Next step nudge */}
+      {nextStep && completedSteps < 10 && (
+        <div style={{
+          background: "#FDF6E8", borderRadius: 12, padding: "14px 18px",
+          border: `1px solid ${C.amber}33`, marginBottom: 12,
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+        }}>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: C.navy }}>Next: {nextStep.label}</div>
+            <div style={{ fontSize: 12, color: C.sub, marginTop: 2 }}>Complete step {completedSteps + 1} of 10 to strengthen your trust card</div>
+          </div>
+          <div style={{ padding: "7px 14px", borderRadius: 8, background: C.amber, color: "#fff", fontSize: 12, fontWeight: 700, flexShrink: 0 }}>Do it</div>
+        </div>
+      )}
 
       {/* Verification progress */}
       {verSteps && (

@@ -46,6 +46,44 @@ export const hirerRouter = router({
         page: input.page,
         limit: input.limit,
       });
+
+      // Enrich with trust card tier and average rating
+      const workerIds = result.workers.map((w: Record<string, unknown>) => w.user_id as string);
+      if (workerIds.length > 0) {
+        const [trustCards, ratings] = await Promise.all([
+          ctx.db.from("trust_cards").select("worker_id, tier, endorsement_count, incident_flag").in("worker_id", workerIds),
+          ctx.db.from("ratings").select("worker_id, score").in("worker_id", workerIds),
+        ]);
+
+        const trustMap = new Map<string, Record<string, unknown>>();
+        for (const tc of trustCards.data ?? []) {
+          trustMap.set((tc as Record<string, unknown>).worker_id as string, tc as Record<string, unknown>);
+        }
+
+        const ratingMap = new Map<string, { total: number; count: number }>();
+        for (const r of ratings.data ?? []) {
+          const rid = (r as Record<string, unknown>).worker_id as string;
+          const score = (r as Record<string, unknown>).score as number;
+          const existing = ratingMap.get(rid) ?? { total: 0, count: 0 };
+          ratingMap.set(rid, { total: existing.total + score, count: existing.count + 1 });
+        }
+
+        for (const w of result.workers as Array<Record<string, unknown>>) {
+          const uid = w.user_id as string;
+          const tc = trustMap.get(uid);
+          if (tc) {
+            w.tier = tc.tier;
+            w.endorsement_count = tc.endorsement_count;
+            w.incident_flag = tc.incident_flag;
+          }
+          const rat = ratingMap.get(uid);
+          if (rat && rat.count > 0) {
+            w.avg_rating = Math.round((rat.total / rat.count) * 10) / 10;
+            w.rating_count = rat.count;
+          }
+        }
+      }
+
       return { ...result, page: input.page, limit: input.limit };
     }),
 

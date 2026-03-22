@@ -13,6 +13,12 @@ const FIELD_LABELS: Record<string, string> = {
   languages: "Languages", verified_at: "Verification", phone: "Phone",
 };
 
+const CATEGORIES: Record<string, string> = {
+  maid: "Maid", cook: "Cook", driver: "Driver", nanny: "Nanny",
+  electrician: "Electrician", plumber: "Plumber", cleaner: "Cleaner",
+  security: "Security", technician: "Technician", painter: "Painter",
+};
+
 const VERIFICATION_STEPS = [
   { key: "phone_verified", label: "Phone verified" },
   { key: "selfie_captured", label: "Selfie captured" },
@@ -26,8 +32,15 @@ const VERIFICATION_STEPS = [
   { key: "active_reverification", label: "Re-verification" },
 ];
 
+const INTENTS = [
+  { value: "hire_now", label: "I want to hire this worker" },
+  { value: "discuss_availability", label: "Check availability for a job" },
+  { value: "request_contact", label: "Get contact details" },
+  { value: "compare", label: "Comparing workers for a role" },
+];
+
 export default function WorkerTrustCardPage({ params }: WorkerPageProps) {
-  const [msg, setMsg] = useState("");
+  const [intent, setIntent] = useState("");
   const [reqSent, setReqSent] = useState(false);
   const [refSent, setRefSent] = useState(false);
 
@@ -50,13 +63,30 @@ export default function WorkerTrustCardPage({ params }: WorkerPageProps) {
   if (!data) return null;
 
   const card = data.trustCard as Record<string, unknown>;
+  const profile = data.profile as Record<string, unknown> | null;
   const tier = (card.tier as string) ?? "unverified";
   const verSteps = card.verification_steps as Record<string, unknown> | null;
   const completedSteps = verSteps ? VERIFICATION_STEPS.filter((s) => verSteps[s.key] === true).length : 0;
+  const endorsementCount = (card.endorsement_count as number) ?? 0;
+  const incidentFlag = !!card.incident_flag;
+  const tenureMonths = (card.tenure_months as number) ?? 0;
+
+  // Profile data (available with or without consent for some fields)
+  const name = (profile?.full_name as string) || "Worker";
+  const workerCategory = (profile?.category as string) || (card.category as string) || "";
+  const catLabel = CATEGORIES[workerCategory] || workerCategory;
+  const workerLocality = (profile?.locality as string) || (card.locality as string) || "";
+  const exp = (profile?.experience_years as number) ?? 0;
+  const rawLangs = profile?.languages;
+  const languages = Array.isArray(rawLangs) ? rawLangs as string[] : [];
+  const availability = (profile?.availability as string) || (card.availability as string) || "";
+  const avgRating = card.avg_rating as number | undefined;
+  const ratingCount = card.rating_count as number | undefined;
+
   const tierStyles: Record<string, { bg: string; color: string; label: string }> = {
     unverified: { bg: "#F3F4F6", color: "#6B7280", label: "Unverified" },
-    basic: { bg: "#DBEAFE", color: "#1D4ED8", label: "Basic" },
-    enhanced: { bg: "#DCFCE7", color: C.green, label: "Verified" },
+    basic: { bg: "#FDF6E8", color: C.amber, label: "Basic" },
+    enhanced: { bg: "#DCFCE7", color: C.green, label: "Enhanced" },
   };
   const ts = tierStyles[tier] ?? tierStyles.unverified;
 
@@ -66,37 +96,64 @@ export default function WorkerTrustCardPage({ params }: WorkerPageProps) {
 
       {/* Trust card header */}
       <div style={{ background: "#fff", borderRadius: 12, overflow: "hidden", border: `1px solid ${C.border}`, marginBottom: 12 }}>
-        <div style={{ padding: "16px 18px", display: "flex", justifyContent: "space-between", alignItems: "start" }}>
-          <div>
-            <h1 style={{ fontSize: 17, fontWeight: 800, color: C.navy, margin: 0 }}>Trust Card</h1>
-            <div style={{ fontSize: 13, color: C.sub, marginTop: 3 }}>Public trust data · details require consent</div>
+        <div style={{ padding: "18px 20px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                <h1 style={{ fontSize: 20, fontWeight: 800, color: C.navy, margin: 0 }}>{name}</h1>
+                <span style={{
+                  padding: "3px 8px", borderRadius: 5, fontSize: 10, fontWeight: 700,
+                  background: ts.bg, color: ts.color, textTransform: "uppercase",
+                }}>{ts.label}</span>
+                {availability === "available" && (
+                  <span style={{ padding: "3px 8px", borderRadius: 5, fontSize: 10, fontWeight: 700, background: "#DCFCE7", color: C.green, textTransform: "uppercase" }}>Available</span>
+                )}
+              </div>
+              <div style={{ fontSize: 14, color: C.sub, marginTop: 6 }}>
+                {catLabel}{workerLocality && <> · {workerLocality}</>}
+              </div>
+              {languages.length > 0 && (
+                <div style={{ fontSize: 12, color: C.muted, marginTop: 4 }}>{languages.join(", ")}</div>
+              )}
+            </div>
           </div>
-          <div style={{
-            padding: "3px 8px", borderRadius: 5, fontSize: 10, fontWeight: 700,
-            background: ts.bg, color: ts.color, textTransform: "uppercase", flexShrink: 0,
-          }}>{ts.label}</div>
         </div>
 
-        {/* Key stats */}
+        {/* Stats grid */}
         <div style={{ borderTop: `1px solid ${C.border}`, display: "grid", gridTemplateColumns: "repeat(4, 1fr)" }} className="grid-4col">
           {[
+            { v: avgRating != null && ratingCount != null && ratingCount > 0 ? `${avgRating} ★` : "—", l: ratingCount ? `${ratingCount} ratings` : "Rating" },
+            { v: exp > 0 ? `${exp} yr` : "—", l: "Experience" },
             { v: `${completedSteps}/10`, l: "Verified" },
-            { v: `${(card.tenure_months as number) ?? 0}mo`, l: "Tenure" },
-            { v: String((card.endorsement_count as number) ?? 0), l: "Refs" },
-            { v: card.incident_flag ? "Flagged" : "Clean", l: "Record" },
+            { v: String(endorsementCount), l: "References" },
           ].map((s) => (
-            <div key={s.l} style={{ padding: "12px 6px", textAlign: "center", borderRight: `1px solid ${C.border}` }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>{s.v}</div>
-              <div style={{ fontSize: 10, color: C.muted, marginTop: 2 }}>{s.l}</div>
+            <div key={s.l} style={{ padding: "14px 8px", textAlign: "center", borderRight: `1px solid ${C.border}` }}>
+              <div style={{ fontSize: 15, fontWeight: 700, color: C.navy }}>{s.v}</div>
+              <div style={{ fontSize: 10, color: C.muted, marginTop: 3 }}>{s.l}</div>
             </div>
           ))}
+        </div>
+
+        {/* Record + tenure footer */}
+        <div style={{ borderTop: `1px solid ${C.border}`, padding: "10px 20px", display: "flex", justifyContent: "space-between", fontSize: 12, color: C.muted }}>
+          <span>{tenureMonths > 0 ? `${tenureMonths} months on platform` : "New to platform"}</span>
+          <span style={{ color: incidentFlag ? "#DC2626" : C.green, fontWeight: 600 }}>
+            {incidentFlag ? "Incident flagged" : "Clean record"}
+          </span>
         </div>
       </div>
 
       {/* Verification ladder */}
       {verSteps && (
-        <div style={{ background: "#fff", borderRadius: 12, padding: "16px 18px", border: `1px solid ${C.border}`, marginBottom: 12 }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: C.navy, marginBottom: 10 }}>Verification progress</div>
+        <div style={{ background: "#fff", borderRadius: 12, padding: "18px 20px", border: `1px solid ${C.border}`, marginBottom: 12 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>Verification progress</div>
+            <span style={{ fontSize: 12, color: C.muted }}>{completedSteps}/10</span>
+          </div>
+          {/* Progress bar */}
+          <div style={{ height: 6, borderRadius: 3, background: "#E5E7EB", marginBottom: 14 }}>
+            <div style={{ height: 6, borderRadius: 3, background: completedSteps >= 8 ? C.green : C.amber, width: `${completedSteps * 10}%` }} />
+          </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }} className="grid-2col">
             {VERIFICATION_STEPS.map((step) => {
               const done = verSteps[step.key] === true;
@@ -126,45 +183,60 @@ export default function WorkerTrustCardPage({ params }: WorkerPageProps) {
         </div>
       )}
 
-      {/* Consent / Access */}
+      {/* Access request / Consented profile */}
       {data.hasConsent ? (
-        <div style={{ background: "#fff", borderRadius: 12, padding: "16px 18px", border: `1px solid ${C.border}`, marginBottom: 12 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+        <div style={{ background: "#fff", borderRadius: 12, padding: "18px 20px", border: `1px solid ${C.border}`, marginBottom: 12 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
             <div style={{ width: 8, height: 8, borderRadius: 4, background: C.green }} />
             <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>Access granted</div>
           </div>
-          <div style={{ fontSize: 12, color: C.muted, marginBottom: 10 }}>
-            Fields: {data.consentedFields.map((f: string) => FIELD_LABELS[f] || f.replace(/_/g, " ")).join(", ")}
+          <div style={{ fontSize: 12, color: C.muted, marginBottom: 12 }}>
+            Consented fields: {data.consentedFields.map((f: string) => FIELD_LABELS[f] || f.replace(/_/g, " ")).join(", ")}
           </div>
-          {data.profile && (
-            <div style={{ display: "grid", gap: 5 }}>
-              {Object.entries(data.profile as Record<string, unknown>).map(([key, value]) => (
-                <div key={key} style={{ display: "flex", justifyContent: "space-between", padding: "7px 10px", background: C.bg, borderRadius: 6 }}>
+          {profile && (
+            <div style={{ display: "grid", gap: 6 }}>
+              {Object.entries(profile).filter(([key]) => key !== "user_id").map(([key, value]) => (
+                <div key={key} style={{ display: "flex", justifyContent: "space-between", padding: "8px 12px", background: C.bg, borderRadius: 6 }}>
                   <span style={{ fontSize: 13, color: C.sub }}>{FIELD_LABELS[key] || key.replace(/_/g, " ")}</span>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: C.navy }}>{Array.isArray(value) ? value.join(", ") : String(value ?? "—")}</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: C.navy, textAlign: "right" }}>{Array.isArray(value) ? value.join(", ") : String(value ?? "—")}</span>
                 </div>
               ))}
             </div>
           )}
         </div>
       ) : (
-        <div style={{ background: "#fff", borderRadius: 12, padding: "16px 18px", border: `1px solid ${C.border}`, marginBottom: 12 }}>
+        <div style={{ background: "#fff", borderRadius: 12, padding: "18px 20px", border: `1px solid ${C.border}`, marginBottom: 12 }}>
           <div style={{ fontSize: 14, fontWeight: 700, color: C.navy, marginBottom: 3 }}>Request access to full details</div>
-          <div style={{ fontSize: 13, color: C.sub, marginBottom: 12 }}>The worker will review and approve or reject.</div>
+          <div style={{ fontSize: 13, color: C.sub, marginBottom: 14 }}>The worker will review your request and decide what to share.</div>
           {!reqSent ? (
             <div>
-              <textarea placeholder="Why do you need access? (optional)" value={msg} onChange={(e) => setMsg(e.target.value)} maxLength={500} rows={2} style={{
-                width: "100%", padding: "10px 14px", border: `1px solid ${C.border}`, borderRadius: 8, marginBottom: 8, boxSizing: "border-box", resize: "vertical", fontSize: 13, outline: "none",
-              }} />
-              <button onClick={() => reqMut.mutate({ workerId: params.id, fields: DEFAULT_FIELDS, message: msg || undefined })} disabled={reqMut.isPending} style={{
-                padding: "10px 20px", background: C.amber, color: "#fff", border: "none", borderRadius: 10, cursor: "pointer", fontSize: 14, fontWeight: 700,
+              <div style={{ fontSize: 12, fontWeight: 600, color: C.navy, marginBottom: 8 }}>Why are you requesting access?</div>
+              <div style={{ display: "grid", gap: 6, marginBottom: 12 }}>
+                {INTENTS.map((opt) => (
+                  <button key={opt.value} type="button" onClick={() => setIntent(opt.value)} style={{
+                    display: "flex", alignItems: "center", gap: 10,
+                    padding: "10px 14px", borderRadius: 8, cursor: "pointer", width: "100%", textAlign: "left",
+                    border: intent === opt.value ? `2px solid ${C.amber}` : `1px solid ${C.border}`,
+                    background: intent === opt.value ? "#FDF6E8" : "#fff",
+                  }}>
+                    <span style={{
+                      width: 16, height: 16, borderRadius: 8, flexShrink: 0,
+                      border: intent === opt.value ? `5px solid ${C.amber}` : `2px solid ${C.border}`,
+                      boxSizing: "border-box",
+                    }} />
+                    <span style={{ fontSize: 13, color: C.navy, fontWeight: intent === opt.value ? 600 : 400 }}>{opt.label}</span>
+                  </button>
+                ))}
+              </div>
+              <button onClick={() => { if (intent) reqMut.mutate({ workerId: params.id, fields: DEFAULT_FIELDS, message: intent }); }} disabled={reqMut.isPending || !intent} style={{
+                padding: "12px 24px", background: intent ? C.amber : `${C.amber}66`, color: "#fff", border: "none", borderRadius: 10, cursor: intent ? "pointer" : "default", fontSize: 14, fontWeight: 700, width: "100%",
               }}>
                 {reqMut.isPending ? "Sending..." : "Request access"}
               </button>
               {reqMut.error && <div style={{ marginTop: 8, fontSize: 12, color: "#DC2626" }}>{reqMut.error.message}</div>}
             </div>
           ) : (
-            <div style={{ fontSize: 14, color: C.green, fontWeight: 600, background: "#DCFCE7", padding: "10px 14px", borderRadius: 8 }}>
+            <div style={{ fontSize: 14, color: C.green, fontWeight: 600, background: "#DCFCE7", padding: "12px 16px", borderRadius: 8 }}>
               Request sent. The worker will review it.
             </div>
           )}
@@ -172,11 +244,11 @@ export default function WorkerTrustCardPage({ params }: WorkerPageProps) {
       )}
 
       {/* Write a reference */}
-      <div style={{ background: "#fff", borderRadius: 12, padding: "16px 18px", border: `1px solid ${C.border}` }}>
+      <div style={{ background: "#fff", borderRadius: 12, padding: "18px 20px", border: `1px solid ${C.border}` }}>
         <div style={{ fontSize: 14, fontWeight: 700, color: C.navy, marginBottom: 3 }}>Write a reference</div>
-        <div style={{ fontSize: 13, color: C.sub, marginBottom: 12 }}>Have you worked with this person? Your reference strengthens their trust card.</div>
+        <div style={{ fontSize: 13, color: C.sub, marginBottom: 14 }}>Have you worked with this person? Your reference strengthens their trust card.</div>
         {refSent ? (
-          <div style={{ fontSize: 14, color: C.green, fontWeight: 600, background: "#DCFCE7", padding: "10px 14px", borderRadius: 8 }}>Reference submitted. Thank you.</div>
+          <div style={{ fontSize: 14, color: C.green, fontWeight: 600, background: "#DCFCE7", padding: "12px 16px", borderRadius: 8 }}>Reference submitted. Thank you.</div>
         ) : (
           <form onSubmit={(e) => {
             e.preventDefault();
@@ -186,13 +258,13 @@ export default function WorkerTrustCardPage({ params }: WorkerPageProps) {
             if (rel) refMut.mutate({ workerId: params.id, relationship: rel, comment: com || undefined });
           }}>
             <input name="relationship" placeholder="Your relationship (e.g. Former employer)" style={{
-              width: "100%", padding: "10px 14px", border: `1px solid ${C.border}`, borderRadius: 8, marginBottom: 8, boxSizing: "border-box", fontSize: 13, outline: "none",
+              width: "100%", padding: "11px 14px", border: `1px solid ${C.border}`, borderRadius: 8, marginBottom: 8, boxSizing: "border-box", fontSize: 13, outline: "none",
             }} />
             <textarea name="comment" placeholder="How was your experience?" rows={2} style={{
-              width: "100%", padding: "10px 14px", border: `1px solid ${C.border}`, borderRadius: 8, marginBottom: 8, boxSizing: "border-box", resize: "vertical", fontSize: 13, outline: "none",
+              width: "100%", padding: "11px 14px", border: `1px solid ${C.border}`, borderRadius: 8, marginBottom: 10, boxSizing: "border-box", resize: "vertical", fontSize: 13, outline: "none",
             }} />
             <button type="submit" disabled={refMut.isPending} style={{
-              padding: "10px 20px", background: C.navy, color: "#fff", border: "none", borderRadius: 10, cursor: "pointer", fontSize: 14, fontWeight: 700,
+              padding: "12px 24px", background: C.navy, color: "#fff", border: "none", borderRadius: 10, cursor: "pointer", fontSize: 14, fontWeight: 700,
             }}>
               {refMut.isPending ? "Submitting..." : "Submit reference"}
             </button>

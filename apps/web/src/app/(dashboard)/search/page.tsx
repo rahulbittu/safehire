@@ -39,6 +39,8 @@ function SearchPageInner() {
   useEffect(() => {
     const cat = searchParams.get("category");
     if (cat) setCategory(cat);
+    const loc = searchParams.get("locality");
+    if (loc) setLocality(loc);
   }, [searchParams]);
 
   const { data, isLoading, error } = trpc.hirer.searchWorkers.useQuery(
@@ -115,9 +117,16 @@ function SearchPageInner() {
                 const exp = (w.experience_years as number) ?? 0;
                 const verified = !!w.verified_at;
                 const workerCategory = (w.category as string) || "";
+                const catLabel = CATEGORIES.find((c) => c.slug === workerCategory)?.label || workerCategory;
                 const workerLocality = (w.locality as string) || "";
                 const agencyId = w.agency_id as string | null;
                 const verSteps = getVerificationCount(w.verification_steps);
+                const avgRating = w.avg_rating as number | undefined;
+                const ratingCount = w.rating_count as number | undefined;
+                const availability = (w.availability as string) || "";
+                const rawLangs = w.languages;
+                const languages = Array.isArray(rawLangs) ? rawLangs as string[] : typeof rawLangs === "string" ? [rawLangs] : [];
+                const tier = (w.tier as string) || "";
 
                 return (
                   <a key={w.id as string} href={`/worker/${w.user_id}`} style={{ textDecoration: "none", color: "inherit" }}>
@@ -125,24 +134,40 @@ function SearchPageInner() {
                       background: "#fff", borderRadius: 10, padding: "14px 16px",
                       border: `1px solid ${C.border}`,
                     }}>
+                      {/* Row 1: Name + badges */}
                       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
                             <span style={{ fontSize: 15, fontWeight: 700, color: C.navy }}>{name}</span>
-                            {verified && (
+                            {tier === "enhanced" && (
+                              <span style={{ fontSize: 10, fontWeight: 700, color: C.green, background: "#DCFCE7", padding: "2px 6px", borderRadius: 4, textTransform: "uppercase" }}>Enhanced</span>
+                            )}
+                            {tier === "basic" && (
+                              <span style={{ fontSize: 10, fontWeight: 700, color: C.amber, background: "#FDF6E8", padding: "2px 6px", borderRadius: 4, textTransform: "uppercase" }}>Basic</span>
+                            )}
+                            {!tier && verified && (
                               <span style={{ fontSize: 10, fontWeight: 700, color: C.green, background: "#DCFCE7", padding: "2px 6px", borderRadius: 4, textTransform: "uppercase" }}>Verified</span>
                             )}
                             {agencyId && (
                               <span style={{ fontSize: 10, fontWeight: 700, color: "#1D4ED8", background: "#DBEAFE", padding: "2px 6px", borderRadius: 4, textTransform: "uppercase" }}>Agency</span>
                             )}
+                            {availability === "available" && (
+                              <span style={{ fontSize: 10, fontWeight: 700, color: C.green, background: "#DCFCE7", padding: "2px 6px", borderRadius: 4, textTransform: "uppercase" }}>Available</span>
+                            )}
                           </div>
+                          {/* Row 2: Category · locality */}
                           <div style={{ fontSize: 13, color: C.sub, marginTop: 4 }}>
-                            {skills.length > 0 ? skills.join(" · ") : workerCategory || "No skills listed"}
+                            {catLabel || (skills.length > 0 ? skills.join(" · ") : "No category")}
+                            {workerLocality && <> · {workerLocality}</>}
                           </div>
-                          <div style={{ display: "flex", gap: 12, marginTop: 5, fontSize: 12, color: C.muted }}>
+                          {/* Row 3: Stats row */}
+                          <div style={{ display: "flex", gap: 12, marginTop: 6, fontSize: 12, color: C.muted, flexWrap: "wrap" }}>
+                            {avgRating != null && ratingCount != null && ratingCount > 0 && (
+                              <span style={{ color: C.navy, fontWeight: 600 }}>{avgRating} ★ <span style={{ fontWeight: 400, color: C.muted }}>({ratingCount})</span></span>
+                            )}
                             {exp > 0 && <span>{exp} yr exp</span>}
-                            {workerLocality && <span>{workerLocality}</span>}
-                            {verSteps > 0 && <span>{verSteps}/10 steps</span>}
+                            {verSteps > 0 && <span>{verSteps}/10 verified</span>}
+                            {languages.length > 0 && <span>{languages.join(", ")}</span>}
                           </div>
                         </div>
                         <span style={{ fontSize: 16, color: C.muted, flexShrink: 0, marginLeft: 12 }}>→</span>
