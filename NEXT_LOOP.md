@@ -12,14 +12,14 @@ Choose the next loop based on:
 5. smallest change with highest leverage
 
 ## Current Candidate Loops
-- worker detail page restructure (service summary first, consent mechanics secondary)
-- agency browsing page for hirers (agency discovery as first-class)
+- agency browsing page for hirers (agencies are first-class but undiscoverable)
 - locality UX improvement (near-me, autocomplete)
 - rating visibility polish
 - booking/payment-ready IA
+- worker dashboard marketplace alignment
 
 ## Recommended Next
-**Worker detail page restructure** — when a hirer taps "View" on a search card, they land on a page that leads with verification internals and consent mechanics. It should lead with service quality: rating, category, locality, availability, agency info — then verification summary — then action (request contact / check availability). Consent should be invisible infrastructure, not the headline.
+**Agency browsing page for hirers** — the product docs say agencies are first-class supply-side actors, but hirers currently cannot browse or discover agencies. The homepage shows sample agency cards but they link nowhere. Creating a real `/agencies` page for hirers is the biggest gap in the marketplace model.
 
 ## Hard Rule
 Do not pick a loop outside the approved priority stack unless explicitly directed.

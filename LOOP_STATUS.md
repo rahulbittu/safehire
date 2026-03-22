@@ -3,17 +3,6 @@
 ## Purpose
 Track completed loops, blockers, checks, and commits.
 
-## Loop Template
-
-### Loop #
-### Objective:
-### Files Changed:
-### Checks Run:
-### Commit:
-### Result:
-### Remaining Weakness:
-### Next Recommended Loop:
-
 ---
 
 ## Rules
@@ -39,14 +28,27 @@ Track completed loops, blockers, checks, and commits.
 ### Objective: Redesign search result cards for marketplace feel
 ### Files Changed: `apps/web/src/app/(dashboard)/search/page.tsx`
 ### Checks Run: `pnpm build` — 11/11 success
+### Commit: bc73dba
+### Result: Search cards have avatar, agency-backed vs independent distinction, CTA button, pill badges
+### Remaining Weakness: No agency browsing for hirers, worker detail still consent-heavy
+### Next Recommended Loop: Worker detail restructure
+
+---
+
+### Loop 3
+### Objective: Restructure worker detail page — service quality first, consent mechanics secondary
+### Files Changed: `apps/web/src/app/(dashboard)/worker/[id]/page.tsx`
+### Checks Run: `pnpm build` — 11/11 success
 ### Commit: (this commit)
-### Result: Visible product behavior changed. Search cards now feel like marketplace listings:
-- Avatar circle with initial (blue for agency-backed, gray for independent)
-- Blue left border on agency-backed workers for instant visual distinction
-- "Agency-backed" vs "Independent" pill badges on every card
-- Rating shown inline with name (not buried in stats row)
-- "View" CTA button on each card (amber, right-aligned)
-- Pill-style badges for availability, verification, agency status
-- Rounded pill badges instead of square ones
-### Remaining Weakness: No agency browsing page for hirers, worker detail still consent-heavy, no photo uploads
-### Next Recommended Loop: Worker detail page restructure — prioritize service/hiring utility over consent mechanics
+### Result: Visible product behavior changed. Worker detail page restructured:
+- Avatar + name + rating inline at top (service identity first)
+- Agency-backed vs Independent badge prominent
+- "Contact this worker" as primary CTA button (amber, full-width)
+- Intent selection only appears after tapping CTA (not always visible)
+- Consent mechanics invisible — "Access granted" replaced with "Contact details available"
+- Verification ladder collapsed by default, expandable with tap
+- Quick stats: rating, experience, references, record (service quality order)
+- Language + tenure in secondary info row
+- "Rate or reference this worker" copy instead of "Write a reference"
+### Remaining Weakness: No agency browsing page, no agency card on worker detail for agency-backed workers
+### Next Recommended Loop: Agency browsing page for hirers
