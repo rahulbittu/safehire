@@ -12,13 +12,13 @@ Choose the next loop based on:
 5. smallest change with highest leverage
 
 ## Current Candidate Loops
-- worker dashboard marketplace alignment (marketplace language, guided next steps)
-- locality UX improvement (near-me, popular areas)
-- rating visibility on more surfaces
+- locality UX improvement (popular area suggestions, near-me)
+- rating visibility polish
 - booking/payment-ready IA
+- profile edit page for workers
 
 ## Recommended Next
-**Worker dashboard marketplace alignment** — the worker dashboard still uses internal language (trust card, verification progress, consent grants). It should use marketplace language: "your listing", "how hirers find you", "your availability", "complete your profile to rank higher in search."
+**Locality UX improvement** — the locality input is a bare text field across homepage, search, and profile create. Adding popular area suggestions (Koramangala, HSR Layout, Indiranagar, etc.) makes the product feel local and reduces friction for first-time users who don't know what to type.
 
 ## Hard Rule
 Do not pick a loop outside the approved priority stack unless explicitly directed.

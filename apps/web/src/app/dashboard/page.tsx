@@ -213,17 +213,17 @@ function WorkerDash() {
     return (
       <div style={{ background: "#fff", borderRadius: 12, padding: "28px 20px", border: `1px solid ${C.border}`, textAlign: "center" }}>
         <div style={{ fontSize: 22, fontWeight: 800, color: C.navy, marginBottom: 8 }}>
-          Create your trust card
+          Get listed on SafeHire
         </div>
         <p style={{ color: C.sub, marginBottom: 20, lineHeight: 1.6, fontSize: 14 }}>
-          Add your skills, category, and area. Workers with trust cards get hired faster.
+          Add your category, area, and experience. Hirers search by category and locality — get listed to get found.
         </p>
         <a href="/profile/create" style={{
           display: "inline-block", padding: "12px 24px",
           background: C.amber, color: "#fff", borderRadius: 10,
           textDecoration: "none", fontSize: 15, fontWeight: 700,
         }}>
-          Get started
+          Create your listing
         </a>
       </div>
     );
@@ -253,101 +253,59 @@ function WorkerDash() {
 
   return (
     <>
-      {/* Trust card — flat, practical */}
-      <div style={{ background: "#fff", borderRadius: 12, overflow: "hidden", border: `1px solid ${C.border}`, marginBottom: 12 }}>
-        <div style={{ padding: "18px 20px", display: "flex", justifyContent: "space-between", alignItems: "start" }}>
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-              <span style={{ fontSize: 18, fontWeight: 800, color: C.navy }}>{p.full_name as string}</span>
-              <span style={{
-                padding: "3px 8px", borderRadius: 5, fontSize: 10, fontWeight: 700,
-                background: ts.bg, color: ts.color, textTransform: "uppercase",
-              }}>{ts.label}</span>
-              {availability === "available" && (
-                <span style={{ padding: "3px 8px", borderRadius: 5, fontSize: 10, fontWeight: 700, background: "#DCFCE7", color: C.green, textTransform: "uppercase" }}>Available</span>
-              )}
-            </div>
-            <div style={{ fontSize: 14, color: C.sub, marginTop: 5 }}>
-              {catLabel}{(p.locality as string) ? ` · ${p.locality as string}` : ""}
-            </div>
-            <div style={{ fontSize: 12, color: C.muted, marginTop: 4, display: "flex", gap: 10, flexWrap: "wrap" }}>
-              {(p.experience_years as number) > 0 && <span>{p.experience_years as number} yr exp</span>}
-              {languages.length > 0 && <span>{languages.join(", ")}</span>}
+      {/* Your listing — how hirers see you */}
+      <div style={{ marginBottom: 16 }}>
+        <div style={{ fontSize: 11, fontWeight: 800, color: C.muted, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 10 }}>
+          Your listing
+        </div>
+        <div style={{ background: "#fff", borderRadius: 12, overflow: "hidden", border: `1px solid ${C.border}` }}>
+          <div style={{ padding: "18px 20px" }}>
+            <div style={{ display: "flex", gap: 14 }}>
+              <div style={{
+                width: 48, height: 48, borderRadius: 24, flexShrink: 0,
+                background: C.bg, display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 20, fontWeight: 700, color: C.navy,
+              }}>{(p.full_name as string).charAt(0).toUpperCase()}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                  <span style={{ fontSize: 18, fontWeight: 800, color: C.navy }}>{p.full_name as string}</span>
+                  <span style={{
+                    padding: "3px 8px", borderRadius: 10, fontSize: 10, fontWeight: 700,
+                    background: ts.bg, color: ts.color, textTransform: "uppercase",
+                  }}>{ts.label}</span>
+                  {availability === "available" && (
+                    <span style={{ padding: "3px 8px", borderRadius: 10, fontSize: 10, fontWeight: 700, background: "#DCFCE7", color: C.green, textTransform: "uppercase" }}>Available</span>
+                  )}
+                </div>
+                <div style={{ fontSize: 14, color: C.sub, marginTop: 4 }}>
+                  {catLabel}{(p.locality as string) ? ` · ${p.locality as string}` : ""}
+                </div>
+                <div style={{ fontSize: 12, color: C.muted, marginTop: 3, display: "flex", gap: 10, flexWrap: "wrap" }}>
+                  {(p.experience_years as number) > 0 && <span>{p.experience_years as number} yr exp</span>}
+                  {languages.length > 0 && <span>{languages.join(", ")}</span>}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        {/* Stats */}
-        <div style={{ borderTop: `1px solid ${C.border}`, display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr" }} className="grid-4col">
-          {[
-            { v: `${completedSteps}/10`, l: "Verified" },
-            { v: String((tc?.endorsement_count as number) ?? 0), l: "References" },
-            { v: `${(tc?.tenure_months as number) ?? 0} mo`, l: "Tenure" },
-            { v: tc?.incident_flag ? "Flagged" : "Clean", l: "Record" },
-          ].map((s) => (
-            <div key={s.l} style={{ padding: "12px 8px", textAlign: "center", borderRight: `1px solid ${C.border}` }}>
-              <div style={{ fontSize: 15, fontWeight: 700, color: C.navy }}>{s.v}</div>
-              <div style={{ fontSize: 10, color: C.muted, marginTop: 3 }}>{s.l}</div>
-            </div>
-          ))}
+          <div style={{ borderTop: `1px solid ${C.border}`, display: "grid", gridTemplateColumns: "1fr 1fr 1fr" }}>
+            {[
+              { v: `${completedSteps}/10`, l: "Verified" },
+              { v: String((tc?.endorsement_count as number) ?? 0), l: "References" },
+              { v: tc?.incident_flag ? "Flagged" : "Clean", l: "Record" },
+            ].map((s) => (
+              <div key={s.l} style={{ padding: "12px 8px", textAlign: "center", borderRight: `1px solid ${C.border}` }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: C.navy }}>{s.v}</div>
+                <div style={{ fontSize: 10, color: C.muted, marginTop: 3 }}>{s.l}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{ borderTop: `1px solid ${C.border}`, padding: "10px 20px", fontSize: 12, color: C.muted }}>
+            This is how hirers see you in search results
+          </div>
         </div>
       </div>
 
-      {/* Next step nudge */}
-      {nextStep && completedSteps < 10 && (
-        <div style={{
-          background: "#FDF6E8", borderRadius: 12, padding: "14px 18px",
-          border: `1px solid ${C.amber}33`, marginBottom: 12,
-          display: "flex", justifyContent: "space-between", alignItems: "center",
-        }}>
-          <div>
-            <div style={{ fontSize: 13, fontWeight: 700, color: C.navy }}>Next: {nextStep.label}</div>
-            <div style={{ fontSize: 12, color: C.sub, marginTop: 2 }}>Complete step {completedSteps + 1} of 10 to strengthen your trust card</div>
-          </div>
-          <div style={{ padding: "7px 14px", borderRadius: 8, background: C.amber, color: "#fff", fontSize: 12, fontWeight: 700, flexShrink: 0 }}>Do it</div>
-        </div>
-      )}
-
-      {/* Verification progress */}
-      {verSteps && (
-        <div style={{ background: "#fff", borderRadius: 12, padding: "16px 18px", border: `1px solid ${C.border}`, marginBottom: 12 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>Verification progress</div>
-            <span style={{ fontSize: 12, color: C.muted }}>{completedSteps}/10 complete</span>
-          </div>
-          {/* Progress bar */}
-          <div style={{ height: 6, borderRadius: 3, background: "#E5E7EB", marginBottom: 12 }}>
-            <div style={{ height: 6, borderRadius: 3, background: completedSteps >= 8 ? C.green : C.amber, width: `${completedSteps * 10}%`, transition: "width 0.3s" }} />
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 5 }} className="grid-2col">
-            {VERIFICATION_STEPS.map((step) => {
-              const done = verSteps[step.key] === true;
-              const pending = verSteps[step.key] === "pending";
-              return (
-                <div key={step.key} style={{
-                  display: "flex", alignItems: "center", gap: 7,
-                  padding: "6px 8px", borderRadius: 5,
-                  background: done ? "#DCFCE7" : pending ? "#FDF6E8" : "transparent",
-                }}>
-                  <span style={{
-                    width: 16, height: 16, borderRadius: 8, flexShrink: 0,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    fontSize: 9, fontWeight: 700,
-                    background: done ? C.green : pending ? C.amber : "#D1D5DB",
-                    color: "#fff",
-                  }}>
-                    {done ? "✓" : pending ? "…" : "—"}
-                  </span>
-                  <span style={{ fontSize: 12, color: done ? C.green : pending ? C.amber : C.muted, fontWeight: done ? 600 : 400 }}>
-                    {step.label}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Pending consent requests */}
+      {/* Incoming requests from hirers */}
       {pendingCount > 0 && (
         <a href="/consent" style={{ textDecoration: "none", display: "block", marginBottom: 12 }}>
           <div style={{
@@ -357,22 +315,51 @@ function WorkerDash() {
           }}>
             <div>
               <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>
-                {pendingCount} access request{pendingCount > 1 ? "s" : ""}
+                {pendingCount} hirer request{pendingCount > 1 ? "s" : ""}
               </div>
-              <div style={{ fontSize: 13, color: C.sub, marginTop: 2 }}>A hirer wants to view your details</div>
+              <div style={{ fontSize: 13, color: C.sub, marginTop: 2 }}>Someone wants to hire you</div>
             </div>
             <div style={{ padding: "7px 14px", borderRadius: 8, background: C.amber, color: "#fff", fontSize: 13, fontWeight: 700 }}>Review</div>
           </div>
         </a>
       )}
 
-      {/* References */}
+      {/* Improve your listing — next step */}
+      {nextStep && completedSteps < 10 && (
+        <div style={{ marginBottom: 12 }}>
+          <div style={{ fontSize: 11, fontWeight: 800, color: C.muted, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>
+            Improve your listing
+          </div>
+          <div style={{
+            background: "#fff", borderRadius: 12, padding: "14px 18px",
+            border: `1px solid ${C.border}`,
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: C.navy }}>Next: {nextStep.label}</div>
+                <div style={{ fontSize: 12, color: C.sub, marginTop: 2 }}>
+                  {completedSteps < 3 ? "Complete more steps to appear higher in search" :
+                   completedSteps < 7 ? "You're getting there — keep verifying to build trust" :
+                   "Almost fully verified — hirers prefer fully verified workers"}
+                </div>
+              </div>
+            </div>
+            {/* Progress bar */}
+            <div style={{ height: 6, borderRadius: 3, background: "#E5E7EB" }}>
+              <div style={{ height: 6, borderRadius: 3, background: completedSteps >= 8 ? C.green : C.amber, width: `${completedSteps * 10}%` }} />
+            </div>
+            <div style={{ fontSize: 11, color: C.muted, marginTop: 6 }}>{completedSteps}/10 steps complete</div>
+          </div>
+        </div>
+      )}
+
+      {/* Ratings & references */}
       <div style={{ background: "#fff", borderRadius: 12, padding: "16px 18px", border: `1px solid ${C.border}`, marginBottom: 12 }}>
-        <div style={{ fontSize: 14, fontWeight: 700, color: C.navy, marginBottom: 10 }}>References from past employers</div>
+        <div style={{ fontSize: 14, fontWeight: 700, color: C.navy, marginBottom: 10 }}>Ratings from hirers</div>
         {endoList.length === 0 ? (
           <div style={{ padding: "14px 0", textAlign: "center" }}>
-            <div style={{ fontSize: 14, color: C.sub }}>No references yet.</div>
-            <div style={{ fontSize: 13, color: C.muted, marginTop: 4 }}>Ask employers you&apos;ve worked with to write a reference.</div>
+            <div style={{ fontSize: 14, color: C.sub }}>No ratings yet</div>
+            <div style={{ fontSize: 13, color: C.muted, marginTop: 4 }}>Hirers you work with can rate you. Good ratings help you get more work.</div>
           </div>
         ) : (
           <div style={{ display: "grid", gap: 8 }}>
@@ -393,12 +380,15 @@ function WorkerDash() {
         )}
       </div>
 
-      {/* Who has access */}
+      {/* Active hirers */}
       {consents && (consents.consents as unknown[]).length > 0 && (
         <div style={{ background: "#fff", borderRadius: 12, padding: "16px 18px", border: `1px solid ${C.border}` }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>Who can see your details</div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>Active hirers</div>
             <a href="/consent" style={{ color: C.amber, fontSize: 12, fontWeight: 600, textDecoration: "none" }}>Manage</a>
+          </div>
+          <div style={{ fontSize: 12, color: C.muted, marginBottom: 8 }}>
+            These hirers can see your contact details
           </div>
           <div style={{ display: "grid", gap: 6 }}>
             {(consents.consents as Array<Record<string, unknown>>).map((c) => (
@@ -406,11 +396,8 @@ function WorkerDash() {
                 display: "flex", justifyContent: "space-between", alignItems: "center",
                 padding: "8px 12px", borderRadius: 8, background: C.bg,
               }}>
-                <div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: C.navy }}>{humanizeFields(c.fields)}</div>
-                  <div style={{ fontSize: 12, color: C.muted }}>
-                    Expires {c.expires_at ? new Date(c.expires_at as string).toLocaleDateString() : "never"}
-                  </div>
+                <div style={{ fontSize: 13, color: C.navy, fontWeight: 600 }}>
+                  Hirer
                 </div>
                 <span style={{
                   fontSize: 10, fontWeight: 700, color: C.green,
