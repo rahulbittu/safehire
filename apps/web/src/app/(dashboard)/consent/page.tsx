@@ -6,6 +6,15 @@ import { useAuth } from "@verifyme/auth";
 
 const C = { amber: "#C49A1A", navy: "#0D1B2A", green: "#34C759", blue: "#007AFF", sub: "#636366", muted: "#8E8E93", border: "#E5E5EA", bg: "#F7F6F3" };
 
+const FIELD_LABELS: Record<string, string> = {
+  full_name: "Full Name", skills: "Skills", experience_years: "Experience",
+  languages: "Languages", verified_at: "Verification", phone: "Phone",
+};
+function humanizeFields(fields: unknown): string {
+  if (!Array.isArray(fields)) return "Profile access";
+  return (fields as string[]).map((f) => FIELD_LABELS[f] || f.replace(/_/g, " ")).join(", ");
+}
+
 export default function ConsentPage() {
   const [error, setError] = useState("");
   const { user } = useAuth();
@@ -91,7 +100,7 @@ export default function ConsentPage() {
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>
-                      {Array.isArray(r.fields) ? (r.fields as string[]).join(", ") : "Profile access"}
+                      {humanizeFields(r.fields)}
                     </div>
                     {typeof r.message === "string" && r.message && (
                       <div style={{ fontSize: 13, color: C.sub, marginTop: 4, fontStyle: "italic", lineHeight: 1.4 }}>
@@ -170,7 +179,7 @@ export default function ConsentPage() {
               }}>
                 <div>
                   <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>
-                    {Array.isArray(c.fields) ? (c.fields as string[]).join(", ") : "Profile access"}
+                    {humanizeFields(c.fields)}
                   </div>
                   <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>
                     Granted {c.granted_at ? new Date(c.granted_at as string).toLocaleDateString() : "—"}
@@ -253,7 +262,7 @@ export default function ConsentPage() {
                 }}>
                   <div>
                     <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>
-                      {Array.isArray(r.fields) ? (r.fields as string[]).join(", ") : "Profile access"}
+                      {humanizeFields(r.fields)}
                     </div>
                     <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>
                       {r.requested_at ? new Date(r.requested_at as string).toLocaleDateString() : ""}

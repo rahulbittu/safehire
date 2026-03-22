@@ -4,6 +4,15 @@ import { useRouter } from "next/navigation";
 import { trpc } from "@/lib/trpc";
 import { useAuth } from "@verifyme/auth";
 
+const FIELD_LABELS: Record<string, string> = {
+  full_name: "Full Name", skills: "Skills", experience_years: "Experience",
+  languages: "Languages", verified_at: "Verification", phone: "Phone",
+};
+function humanizeFields(fields: unknown): string {
+  if (!Array.isArray(fields)) return "Profile access";
+  return (fields as string[]).map((f) => FIELD_LABELS[f] || f.replace(/_/g, " ")).join(", ");
+}
+
 // TopRanker-inspired tokens
 const C = {
   amber: "#C49A1A",
@@ -131,7 +140,7 @@ function HirerDash() {
                   <Avatar name="W" size={42} gradient="green" />
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 14, fontWeight: 600, color: C.text }}>
-                      {Array.isArray(w.fields) ? (w.fields as string[]).join(", ") : "Profile access"}
+                      {humanizeFields(w.fields)}
                     </div>
                     <div style={{ fontSize: 12, color: C.muted }}>
                       Expires {w.expires_at ? new Date(w.expires_at as string).toLocaleDateString() : "never"}
@@ -314,7 +323,7 @@ function WorkerDash() {
                   <Avatar name="H" size={36} gradient="blue" />
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 600, color: C.text }}>
-                      {Array.isArray(c.fields) ? (c.fields as string[]).join(", ") : "Profile access"}
+                      {humanizeFields(c.fields)}
                     </div>
                     <div style={{ fontSize: 12, color: C.muted }}>
                       Expires {c.expires_at ? new Date(c.expires_at as string).toLocaleDateString() : "never"}
