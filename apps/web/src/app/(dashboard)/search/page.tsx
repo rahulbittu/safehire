@@ -63,7 +63,8 @@ export default function SearchPage() {
             <div style={{ display: "grid", gap: 10 }}>
               {data.workers.map((w: Record<string, unknown>) => {
                 const name = (w.full_name as string) || "Unknown";
-                const skills = (w.skills as string[]) || [];
+                const rawSkills = w.skills;
+                const skills = Array.isArray(rawSkills) ? rawSkills as string[] : typeof rawSkills === "string" ? [rawSkills] : [];
                 const color = avatarColor(name);
 
                 return (
