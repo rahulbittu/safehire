@@ -216,6 +216,9 @@ export default function HomePage() {
               </div>
             </div>
           </div>
+          <div style={{ textAlign: "center", marginTop: 12 }}>
+            <a href="/agencies" style={{ fontSize: 13, color: C.amber, fontWeight: 600, textDecoration: "none" }}>Browse all agencies →</a>
+          </div>
           <div style={{ marginTop: 16 }}>
             <a href="/login?role=agency" style={{
               display: "block", padding: "14px 18px", background: "#fff",

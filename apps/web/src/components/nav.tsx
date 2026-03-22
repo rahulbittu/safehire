@@ -22,11 +22,10 @@ export function Nav() {
     if (role === "hirer") {
       tabs.push({ href: "/search", label: "Search" });
     }
-    // Agency users who logged in as hirer also get search + agency tab
-    tabs.push({ href: "/consent", label: "Consent" });
     if (role === "hirer") {
-      tabs.push({ href: "/agency", label: "Agency" });
+      tabs.push({ href: "/agencies", label: "Agencies" });
     }
+    tabs.push({ href: "/consent", label: "Consent" });
     return tabs;
   };
 

@@ -12,14 +12,14 @@ Choose the next loop based on:
 5. smallest change with highest leverage
 
 ## Current Candidate Loops
-- agency browsing page for hirers (agencies are first-class but undiscoverable)
+- worker dashboard marketplace alignment (guided onboarding, marketplace language)
+- hirer dashboard cleanup (clearer hiring flow entry)
 - locality UX improvement (near-me, autocomplete)
 - rating visibility polish
 - booking/payment-ready IA
-- worker dashboard marketplace alignment
 
 ## Recommended Next
-**Agency browsing page for hirers** — the product docs say agencies are first-class supply-side actors, but hirers currently cannot browse or discover agencies. The homepage shows sample agency cards but they link nowhere. Creating a real `/agencies` page for hirers is the biggest gap in the marketplace model.
+**Hirer dashboard cleanup** — the hirer dashboard still leads with a category grid that duplicates the search page. It should guide hirers into the hiring flow more clearly: recent searches, nearby workers, agency highlights, and a prominent search entry.
 
 ## Hard Rule
 Do not pick a loop outside the approved priority stack unless explicitly directed.
