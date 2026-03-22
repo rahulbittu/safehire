@@ -71,83 +71,107 @@ export default function DashboardPage() {
 // =============================================================================
 function HirerDash() {
   const { data: workers, isLoading } = trpc.hirer.getMyWorkers.useQuery();
+  const workerList = (workers?.workers ?? []) as Array<Record<string, unknown>>;
 
   return (
     <>
       <div style={{ marginBottom: 20 }}>
         <h1 style={{ fontSize: 22, fontWeight: 800, color: C.navy, margin: "0 0 4px", letterSpacing: "-0.02em" }}>
-          Find trusted help
+          Find local help
         </h1>
-        <p style={{ fontSize: 14, color: C.sub, margin: 0 }}>Search by category, check trust cards, request access.</p>
+        <p style={{ fontSize: 14, color: C.sub, margin: 0 }}>Search workers and agencies by category and area</p>
       </div>
 
-      {/* Category grid — primary action */}
-      <div style={{ marginBottom: 16 }}>
-        <div style={{ fontSize: 12, fontWeight: 700, color: C.muted, textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: 10 }}>
-          What do you need?
-        </div>
-        <div className="grid-cat" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 8 }}>
-          {CATEGORIES.map((cat) => (
-            <a key={cat.slug} href={`/search?category=${cat.slug}`} style={{
-              display: "flex", flexDirection: "column", alignItems: "center",
-              padding: "14px 6px", background: "#fff", borderRadius: 10,
-              border: `1px solid ${C.border}`, textDecoration: "none",
-            }}>
-              <span style={{ fontSize: 22, marginBottom: 4 }}>{cat.icon}</span>
-              <span style={{ fontSize: 11, fontWeight: 600, color: C.navy }}>{cat.label}</span>
-            </a>
-          ))}
-        </div>
-      </div>
-
-      {/* Search all */}
-      <a href="/search" style={{ textDecoration: "none", display: "block", marginBottom: 16 }}>
+      {/* Search entry — primary action */}
+      <a href="/search" style={{ textDecoration: "none", display: "block", marginBottom: 10 }}>
         <div style={{
-          background: C.amber, borderRadius: 10, padding: "14px 18px",
+          background: C.amber, borderRadius: 12, padding: "16px 20px",
           display: "flex", justifyContent: "space-between", alignItems: "center",
         }}>
           <div>
-            <div style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>Search all workers</div>
-            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.75)", marginTop: 2 }}>By name, skill, or area</div>
+            <div style={{ fontSize: 16, fontWeight: 700, color: "#fff" }}>Search workers</div>
+            <div style={{ fontSize: 12, color: "rgba(255,255,255,0.75)", marginTop: 2 }}>By category, area, or name</div>
           </div>
           <span style={{ fontSize: 20, color: "#fff" }}>→</span>
         </div>
       </a>
 
-      {/* Active access */}
+      {/* Quick category links */}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 16 }}>
+        {CATEGORIES.slice(0, 6).map((cat) => (
+          <a key={cat.slug} href={`/search?category=${cat.slug}`} style={{
+            padding: "6px 14px", borderRadius: 20, fontSize: 12, fontWeight: 600,
+            border: `1px solid ${C.border}`, background: "#fff", color: C.sub,
+            textDecoration: "none",
+          }}>{cat.icon} {cat.label}</a>
+        ))}
+        <a href="/search" style={{
+          padding: "6px 14px", borderRadius: 20, fontSize: 12, fontWeight: 600,
+          border: `1px solid ${C.border}`, background: "#fff", color: C.amber,
+          textDecoration: "none",
+        }}>All →</a>
+      </div>
+
+      {/* Browse agencies */}
+      <a href="/agencies" style={{ textDecoration: "none", display: "block", marginBottom: 16 }}>
+        <div style={{
+          background: "#fff", borderRadius: 12, padding: "14px 18px",
+          border: `1px solid ${C.border}`, borderLeft: "3px solid #1D4ED8",
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+        }}>
+          <div>
+            <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>Browse agencies</div>
+            <div style={{ fontSize: 12, color: C.sub, marginTop: 2 }}>Agency-backed workers with managed teams</div>
+          </div>
+          <span style={{ fontSize: 13, color: "#1D4ED8", fontWeight: 700 }}>→</span>
+        </div>
+      </a>
+
+      {/* Your workers */}
       <div style={{ background: "#fff", borderRadius: 12, padding: "16px 18px", border: `1px solid ${C.border}` }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>Workers you have access to</div>
-          <a href="/consent" style={{ fontSize: 12, color: C.amber, fontWeight: 600, textDecoration: "none" }}>View all</a>
+          <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>Your workers</div>
+          {workerList.length > 0 && (
+            <a href="/consent" style={{ fontSize: 12, color: C.amber, fontWeight: 600, textDecoration: "none" }}>Manage</a>
+          )}
         </div>
         {isLoading ? (
           <div style={{ display: "grid", gap: 8 }}>
             {[1, 2].map((n) => <div key={n} style={{ height: 48, background: C.bg, borderRadius: 8 }} />)}
           </div>
-        ) : workers?.workers.length === 0 ? (
-          <div style={{ padding: "16px 0", textAlign: "center" }}>
-            <div style={{ fontSize: 14, color: C.sub }}>No active access grants yet.</div>
-            <div style={{ fontSize: 13, color: C.muted, marginTop: 4 }}>Search for workers and request access to their trust cards.</div>
+        ) : workerList.length === 0 ? (
+          <div style={{ padding: "14px 0", textAlign: "center" }}>
+            <div style={{ fontSize: 14, color: C.sub }}>No workers contacted yet</div>
+            <div style={{ fontSize: 13, color: C.muted, marginTop: 4 }}>
+              <a href="/search" style={{ color: C.amber, fontWeight: 600, textDecoration: "none" }}>Search for workers</a> to get started
+            </div>
           </div>
         ) : (
           <div style={{ display: "grid", gap: 6 }}>
-            {workers?.workers.map((w: Record<string, unknown>, i: number) => {
+            {workerList.map((w, i) => {
               const wp = w.worker_profiles as Record<string, unknown> | undefined;
               const workerName = (wp?.full_name as string) || "Worker";
-              const workerSkills = Array.isArray(wp?.skills) ? (wp.skills as string[]).join(", ") : "";
+              const workerCat = (wp?.category as string) || "";
+              const catLabel = CATEGORIES.find((c) => c.slug === workerCat)?.label || workerCat;
+              const initial = workerName.charAt(0).toUpperCase();
               return (
                 <a key={i} href={`/worker/${w.worker_id}`} style={{ textDecoration: "none", color: "inherit" }}>
                   <div style={{
-                    display: "flex", justifyContent: "space-between", alignItems: "center",
+                    display: "flex", alignItems: "center", gap: 12,
                     padding: "10px 12px", borderRadius: 8, background: C.bg,
                   }}>
-                    <div>
+                    <div style={{
+                      width: 32, height: 32, borderRadius: 16, flexShrink: 0,
+                      background: "#DBEAFE", display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: 14, fontWeight: 700, color: "#1D4ED8",
+                    }}>{initial}</div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 13, fontWeight: 600, color: C.navy }}>{workerName}</div>
-                      <div style={{ fontSize: 12, color: C.muted, marginTop: 2 }}>
-                        {workerSkills || humanizeFields(w.fields)} · Expires {w.expires_at ? new Date(w.expires_at as string).toLocaleDateString() : "never"}
+                      <div style={{ fontSize: 12, color: C.muted, marginTop: 1 }}>
+                        {catLabel || humanizeFields(w.fields)}
                       </div>
                     </div>
-                    <span style={{ fontSize: 13, color: C.amber }}>→</span>
+                    <span style={{ fontSize: 12, color: C.amber, fontWeight: 600 }}>View</span>
                   </div>
                 </a>
               );
