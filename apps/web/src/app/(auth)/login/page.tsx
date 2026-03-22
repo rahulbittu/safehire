@@ -100,14 +100,25 @@ function LoginPageInner() {
     <div style={{ minHeight: "calc(100vh - 53px)", display: "flex", alignItems: "center", justifyContent: "center", background: C.bg, padding: "20px" }}>
       <div style={{ width: "100%", maxWidth: 400 }}>
 
-        <div style={{ marginBottom: 24 }}>
-          <h1 style={{ fontSize: 24, fontWeight: 800, color: C.navy, margin: "0 0 6px", letterSpacing: "-0.02em" }}>
-            {step === "phone" ? "Sign in to SafeHire" : "Enter OTP"}
+        <div style={{ marginBottom: 20 }}>
+          <h1 style={{ fontSize: 22, fontWeight: 800, color: C.navy, margin: "0 0 4px", letterSpacing: "-0.02em" }}>
+            {step === "otp"
+              ? "Enter OTP"
+              : role === "worker"
+                ? "Get verified, get hired"
+                : role === "agency"
+                  ? "Manage your workforce"
+                  : "Find trusted local help"
+            }
           </h1>
           <p style={{ color: C.sub, margin: 0, fontSize: 14, lineHeight: 1.5 }}>
-            {step === "phone"
-              ? "Your data stays private. Only you control access."
-              : <>Code sent to <strong>{phone}</strong></>
+            {step === "otp"
+              ? <>Code sent to <strong>{phone}</strong>. Enter it below.</>
+              : role === "worker"
+                ? "Create your trust card and start getting found by hirers in your area."
+                : role === "agency"
+                  ? "Build your agency profile, manage workers, and serve more customers."
+                  : "Search by category and area. Check trust cards before hiring."
             }
           </p>
         </div>

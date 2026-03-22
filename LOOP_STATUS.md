@@ -74,7 +74,12 @@
 - CTA has dual buttons: "Find help now" + "Create your trust card"
 
 ## Loop 3 — Login / Role Entry Redesign
-**Status:** PENDING
+**Status:** COMPLETE
+**Changes:**
+- Role-specific headlines: "Get verified, get hired" / "Find trusted local help" / "Manage your workforce"
+- Role-specific subtitles explaining what happens after login
+- OTP step shows clearer instruction
+- Login already had 3-role selector and 4 demo accounts from prior work
 
 ## Loop 4 — Search / Results as the Core
 **Status:** PENDING
