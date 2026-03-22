@@ -116,7 +116,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* How it works */}
+      {/* How it works — marketplace flow, not trust internals */}
       <section style={{ borderTop: `1px solid ${C.border}`, background: C.bg, padding: "36px 20px" }}>
         <div style={{ maxWidth: 520, margin: "0 auto" }}>
           <div style={{ fontSize: 11, fontWeight: 800, color: C.muted, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 16 }}>
@@ -124,9 +124,9 @@ export default function HomePage() {
           </div>
           <div style={{ display: "grid", gap: 14 }}>
             {[
-              { n: "1", title: "Workers create a trust card", desc: "Category, area, experience. Verified through a 10-step process. Data is encrypted and worker-owned." },
-              { n: "2", title: "Hirers search by category and area", desc: "Find a cook in Koramangala, a driver in Indiranagar. See verification progress, ratings, and availability." },
-              { n: "3", title: "Hire with confidence", desc: "Check trust cards, read ratings from past employers, and connect directly. No middlemen, no blacklists." },
+              { n: "1", title: "Search by category and area", desc: "Need a cook in Koramangala? A driver in Indiranagar? Pick a category, enter your area, and see who's available." },
+              { n: "2", title: "Compare ratings and verification", desc: "Every worker has a rating from past employers and a verification score. Independent workers and agency-backed workers side by side." },
+              { n: "3", title: "Request, book, and hire", desc: "Found someone good? Request contact details, check availability, and hire directly. No middlemen fees on basic requests." },
             ].map((item) => (
               <div key={item.n} style={{ display: "flex", gap: 12, alignItems: "start" }}>
                 <div style={{
@@ -145,58 +145,102 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Sample trust card */}
+      {/* Sample results — show what the marketplace looks like */}
       <section style={{ padding: "36px 20px", borderTop: `1px solid ${C.border}` }}>
-        <div style={{ maxWidth: 400, margin: "0 auto" }}>
+        <div style={{ maxWidth: 520, margin: "0 auto" }}>
           <div style={{ fontSize: 11, fontWeight: 800, color: C.muted, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12 }}>
-            What a trust card looks like
+            What you see when you search
           </div>
-          <div style={{ background: "#fff", borderRadius: 12, overflow: "hidden", border: `1px solid ${C.border}` }}>
-            <div style={{ padding: "14px 16px", borderBottom: `1px solid ${C.border}` }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
-                <div>
-                  <div style={{ fontWeight: 700, color: C.navy, fontSize: 15 }}>Priya Sharma</div>
-                  <div style={{ fontSize: 12, color: C.sub, marginTop: 2 }}>Cook · Koramangala, Bangalore</div>
-                </div>
-                <div style={{ display: "flex", gap: 4 }}>
-                  <span style={{ padding: "2px 7px", borderRadius: 4, fontSize: 10, fontWeight: 700, background: "#DCFCE7", color: C.green, textTransform: "uppercase" }}>8/10</span>
-                  <span style={{ padding: "2px 7px", borderRadius: 4, fontSize: 10, fontWeight: 700, background: "#DBEAFE", color: "#1D4ED8", textTransform: "uppercase" }}>Agency</span>
+          <div style={{ display: "grid", gap: 8 }}>
+            {[
+              { name: "Priya Sharma", cat: "Cook", loc: "Koramangala", rating: "4.5 ★", exp: "6 yr", ver: "8/10", lang: "Hindi, English", agency: "HomeServe Bangalore", avail: true },
+              { name: "Raju M.", cat: "Cook", loc: "Koramangala", rating: "4.2 ★", exp: "3 yr", ver: "5/10", lang: "Kannada, Hindi", agency: null, avail: true },
+              { name: "Sunita Devi", cat: "Cook", loc: "HSR Layout", rating: "—", exp: "10 yr", ver: "3/10", lang: "Hindi", agency: null, avail: false },
+            ].map((w) => (
+              <div key={w.name} style={{ background: "#fff", borderRadius: 10, padding: "14px 16px", border: `1px solid ${C.border}` }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+                      <span style={{ fontSize: 15, fontWeight: 700, color: C.navy }}>{w.name}</span>
+                      {w.agency && (
+                        <span style={{ fontSize: 10, fontWeight: 700, color: "#1D4ED8", background: "#DBEAFE", padding: "2px 6px", borderRadius: 4, textTransform: "uppercase" }}>Agency</span>
+                      )}
+                      {w.avail && (
+                        <span style={{ fontSize: 10, fontWeight: 700, color: C.green, background: "#DCFCE7", padding: "2px 6px", borderRadius: 4, textTransform: "uppercase" }}>Available</span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: 13, color: C.sub, marginTop: 4 }}>{w.cat} · {w.loc}</div>
+                    <div style={{ display: "flex", gap: 12, marginTop: 6, fontSize: 12, color: C.muted, flexWrap: "wrap" }}>
+                      <span style={{ color: C.navy, fontWeight: 600 }}>{w.rating}</span>
+                      <span>{w.exp} exp</span>
+                      <span>{w.ver} verified</span>
+                      <span>{w.lang}</span>
+                    </div>
+                    {w.agency && <div style={{ fontSize: 11, color: C.muted, marginTop: 4 }}>{w.agency}</div>}
+                  </div>
+                  <span style={{ fontSize: 16, color: C.muted, flexShrink: 0, marginLeft: 12 }}>→</span>
                 </div>
               </div>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", borderBottom: `1px solid ${C.border}` }} className="grid-4col">
-              {[
-                { v: "6 yr", l: "Exp" },
-                { v: "4.5 ★", l: "Rating" },
-                { v: "4", l: "Refs" },
-                { v: "Available", l: "Status" },
-              ].map((s) => (
-                <div key={s.l} style={{ padding: "10px 6px", textAlign: "center", borderRight: `1px solid ${C.border}` }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>{s.v}</div>
-                  <div style={{ fontSize: 10, color: C.muted, marginTop: 1 }}>{s.l}</div>
-                </div>
-              ))}
-            </div>
-            <div style={{ padding: "8px 16px", fontSize: 11, color: C.muted, display: "flex", justifyContent: "space-between" }}>
-              <span>HomeServe Bangalore</span>
-              <span>Hindi · English</span>
-            </div>
+            ))}
+          </div>
+          <div style={{ textAlign: "center", marginTop: 12 }}>
+            <a href="/search?category=cook" style={{ fontSize: 13, color: C.amber, fontWeight: 600, textDecoration: "none" }}>See all cooks →</a>
           </div>
         </div>
       </section>
 
-      {/* Trust principles */}
+      {/* Agencies — first-class supply side */}
       <section style={{ padding: "36px 20px", background: C.bg, borderTop: `1px solid ${C.border}` }}>
+        <div style={{ maxWidth: 520, margin: "0 auto" }}>
+          <div style={{ fontSize: 11, fontWeight: 800, color: C.muted, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 6 }}>
+            Agencies on SafeHire
+          </div>
+          <div style={{ fontSize: 15, fontWeight: 700, color: C.navy, marginBottom: 14 }}>
+            Hire independent workers or choose agency-backed teams
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }} className="grid-2col">
+            <div style={{ background: "#fff", borderRadius: 10, padding: "16px", border: `1px solid ${C.border}` }}>
+              <div style={{ fontWeight: 700, fontSize: 14, color: C.navy, marginBottom: 4 }}>HomeServe Bangalore</div>
+              <div style={{ fontSize: 12, color: C.sub, lineHeight: 1.5, marginBottom: 8 }}>Cook, Maid, Cleaner · Koramangala, Indiranagar, HSR</div>
+              <div style={{ display: "flex", gap: 8, fontSize: 12 }}>
+                <span style={{ color: C.navy, fontWeight: 600 }}>12 workers</span>
+                <span style={{ color: C.muted }}>4.3 ★ avg</span>
+              </div>
+            </div>
+            <div style={{ background: "#fff", borderRadius: 10, padding: "16px", border: `1px solid ${C.border}` }}>
+              <div style={{ fontWeight: 700, fontSize: 14, color: C.navy, marginBottom: 4 }}>DriveRight</div>
+              <div style={{ fontSize: 12, color: C.sub, lineHeight: 1.5, marginBottom: 8 }}>Driver · Whitefield, Electronic City, Marathahalli</div>
+              <div style={{ display: "flex", gap: 8, fontSize: 12 }}>
+                <span style={{ color: C.navy, fontWeight: 600 }}>8 drivers</span>
+                <span style={{ color: C.muted }}>4.6 ★ avg</span>
+              </div>
+            </div>
+          </div>
+          <div style={{ marginTop: 16 }}>
+            <a href="/login?role=agency" style={{
+              display: "block", padding: "14px 18px", background: "#fff",
+              border: `1px solid ${C.border}`, borderRadius: 10, textDecoration: "none",
+              textAlign: "center",
+            }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>Run an agency? Join SafeHire</div>
+              <div style={{ fontSize: 12, color: C.sub, marginTop: 2 }}>List your workers, grow your business, get booked directly</div>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Why SafeHire — marketplace value, not trust defensiveness */}
+      <section style={{ padding: "36px 20px", borderTop: `1px solid ${C.border}` }}>
         <div style={{ maxWidth: 520, margin: "0 auto" }}>
           <div style={{ fontSize: 11, fontWeight: 800, color: C.muted, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 14 }}>
             Why SafeHire
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }} className="grid-2col">
             {[
-              { title: "Not a blacklist", desc: "Reports are reviewed fairly. Workers can appeal." },
-              { title: "Consent required", desc: "Workers approve every access request." },
-              { title: "Verification earned", desc: "10 real steps. No pay-to-rank." },
-              { title: "Free for workers", desc: "Always free. Workers own their data." },
+              { title: "Ratings you can trust", desc: "Every rating comes from a real past employer. No fake reviews." },
+              { title: "Verified, not just listed", desc: "10-step verification. ID, face match, references — real checks." },
+              { title: "Independent & agency workers", desc: "Choose freelance workers or agency-backed teams. Both on one platform." },
+              { title: "Free for workers, always", desc: "Workers join free. Build a reputation. Get found by hirers nearby." },
             ].map((item) => (
               <div key={item.title} style={{ background: "#fff", borderRadius: 10, padding: "14px 16px", border: `1px solid ${C.border}` }}>
                 <div style={{ fontWeight: 700, fontSize: 13, color: C.navy, marginBottom: 2 }}>{item.title}</div>
@@ -210,28 +254,35 @@ export default function HomePage() {
       {/* CTA */}
       <section style={{ background: C.navy, padding: "36px 20px", textAlign: "center" }}>
         <div style={{ fontSize: 18, fontWeight: 800, color: "#fff", marginBottom: 6 }}>
-          Ready to get started?
+          Hire better. Get hired faster.
         </div>
-        <p style={{ fontSize: 13, color: "rgba(255,255,255,0.6)", marginBottom: 18 }}>Free for workers. Always.</p>
+        <p style={{ fontSize: 13, color: "rgba(255,255,255,0.6)", marginBottom: 18 }}>Search by category and area. Compare ratings and verification. Hire with confidence.</p>
         <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
           <a href="/login?role=hirer" style={{
-            padding: "11px 22px", background: C.amber, color: "#fff", borderRadius: 10,
+            padding: "12px 24px", background: C.amber, color: "#fff", borderRadius: 10,
             textDecoration: "none", fontSize: 14, fontWeight: 700,
           }}>
             Find help now
           </a>
           <a href="/login?role=worker" style={{
-            padding: "11px 22px", background: "transparent", color: "#fff",
+            padding: "12px 24px", background: "transparent", color: "#fff",
             border: "1px solid rgba(255,255,255,0.3)", borderRadius: 10,
             textDecoration: "none", fontSize: 14, fontWeight: 600,
           }}>
-            Create your trust card
+            List yourself free
+          </a>
+          <a href="/login?role=agency" style={{
+            padding: "12px 24px", background: "transparent", color: "#fff",
+            border: "1px solid rgba(255,255,255,0.3)", borderRadius: 10,
+            textDecoration: "none", fontSize: 14, fontWeight: 600,
+          }}>
+            Register your agency
           </a>
         </div>
       </section>
 
       <footer style={{ borderTop: `1px solid ${C.border}`, padding: "14px 20px", textAlign: "center", fontSize: 11, color: C.muted }}>
-        SafeHire — Verified trust for India&apos;s domestic workforce
+        SafeHire — Local labor marketplace for India
       </footer>
     </div>
   );
