@@ -3,7 +3,7 @@
 import { useAuth } from "@verifyme/auth";
 import { useRouter, usePathname } from "next/navigation";
 
-const C = { amber: "#C49A1A", navy: "#0D1B2A", sub: "#636366", muted: "#8E8E93", border: "#E5E5EA", bg: "#F7F6F3" };
+const C = { amber: "#C49A1A", navy: "#0D1B2A", sub: "#636366", muted: "#8E8E93", border: "#E5E5EA" };
 
 export function Nav() {
   const { user, signOut } = useAuth();
@@ -14,7 +14,7 @@ export function Nav() {
 
   return (
     <>
-      {/* Top bar — minimal: brand + sign out */}
+      {/* Top bar */}
       <nav style={{
         background: "#fff",
         borderBottom: `1px solid ${C.border}`,
@@ -25,24 +25,23 @@ export function Nav() {
           display: "flex", height: 52, alignItems: "center",
         }}>
           <a href="/" style={{
-            fontWeight: 800, fontSize: 20, textDecoration: "none",
-            color: C.navy, letterSpacing: "-0.03em",
+            fontWeight: 800, fontSize: 18, textDecoration: "none",
+            color: C.navy, letterSpacing: "-0.02em",
           }}>
-            Safe<span style={{ color: C.amber }}>Hire</span>
+            SafeHire
           </a>
 
           {user ? (
             <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{
-                fontSize: 10, fontWeight: 800, textTransform: "uppercase",
-                padding: "3px 8px", borderRadius: 99,
-                background: "#FDF6E8", color: C.amber, letterSpacing: "0.04em",
+                fontSize: 11, fontWeight: 700, textTransform: "uppercase",
+                color: C.muted, letterSpacing: "0.04em",
               }}>
                 {user.role}
               </span>
               <button onClick={handleLogout} style={{
                 padding: "5px 12px", background: "transparent",
-                border: `1px solid ${C.border}`, borderRadius: 8,
+                border: `1px solid ${C.border}`, borderRadius: 6,
                 fontSize: 12, fontWeight: 600, cursor: "pointer", color: C.sub,
               }}>
                 Sign out
@@ -50,21 +49,24 @@ export function Nav() {
             </div>
           ) : (
             <div style={{ marginLeft: "auto", display: "flex", gap: 8, alignItems: "center" }}>
-              <a href="/login" style={{ color: C.navy, textDecoration: "none", fontSize: 14, fontWeight: 600, padding: "8px 14px" }}>
+              <a href="/login" style={{
+                color: C.navy, textDecoration: "none", fontSize: 14,
+                fontWeight: 600, padding: "8px 14px",
+              }}>
                 Log in
               </a>
               <a href="/login" style={{
                 background: C.amber, color: "#fff", textDecoration: "none",
-                fontSize: 14, fontWeight: 600, padding: "9px 20px", borderRadius: 12,
+                fontSize: 14, fontWeight: 600, padding: "8px 18px", borderRadius: 8,
               }}>
-                Get started
+                Sign up
               </a>
             </div>
           )}
         </div>
       </nav>
 
-      {/* Bottom tab bar — mobile app style, only for logged-in users */}
+      {/* Bottom tab bar — logged-in users only */}
       {user && (
         <div style={{
           position: "fixed", bottom: 0, left: 0, right: 0,
@@ -73,16 +75,13 @@ export function Nav() {
         }}>
           <div style={{
             display: "flex", justifyContent: "space-around",
-            maxWidth: 520, margin: "0 auto", padding: "6px 0 4px",
+            maxWidth: 520, margin: "0 auto", padding: "8px 0 6px",
           }}>
-            <TabItem href="/dashboard" icon="🏠" label="Home" active={pathname === "/dashboard"} />
+            <Tab href="/dashboard" label="Home" active={pathname === "/dashboard"} />
             {user.role === "hirer" && (
-              <TabItem href="/search" icon="🔍" label="Search" active={pathname === "/search"} />
+              <Tab href="/search" label="Search" active={pathname === "/search"} />
             )}
-            <TabItem href="/consent" icon="🔐" label="Consent" active={pathname === "/consent"} />
-            {user.role === "worker" && (
-              <TabItem href="/profile/create" icon="👤" label="Profile" active={pathname === "/profile/create"} />
-            )}
+            <Tab href="/consent" label="Consent" active={pathname === "/consent"} />
           </div>
         </div>
       )}
@@ -90,19 +89,17 @@ export function Nav() {
   );
 }
 
-function TabItem({ href, icon, label, active }: { href: string; icon: string; label: string; active: boolean }) {
+function Tab({ href, label, active }: { href: string; label: string; active: boolean }) {
   return (
     <a href={href} style={{
-      display: "flex", flexDirection: "column", alignItems: "center",
-      textDecoration: "none", padding: "4px 16px", gap: 2,
-      minWidth: 56,
+      display: "flex", alignItems: "center", justifyContent: "center",
+      textDecoration: "none", padding: "6px 20px",
+      fontSize: 13, fontWeight: active ? 700 : 500,
+      color: active ? C.amber : C.muted,
+      borderTop: active ? `2px solid ${C.amber}` : "2px solid transparent",
+      marginTop: -1,
     }}>
-      <span style={{ fontSize: 20 }}>{icon}</span>
-      <span style={{
-        fontSize: 10, fontWeight: active ? 800 : 600,
-        color: active ? C.amber : C.muted,
-        letterSpacing: "0.02em",
-      }}>{label}</span>
+      {label}
     </a>
   );
 }

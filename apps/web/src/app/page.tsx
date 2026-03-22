@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+const C = { amber: "#C49A1A", navy: "#0D1B2A", green: "#16A34A", sub: "#636366", muted: "#8E8E93", border: "#E5E5EA", bg: "#F7F6F3" };
+
 export default function HomePage() {
   const router = useRouter();
   const [checked, setChecked] = useState(false);
@@ -16,182 +18,161 @@ export default function HomePage() {
 
   return (
     <div style={{ background: "#fff" }}>
-      {/* Hero */}
-      <section style={{ maxWidth: 640, margin: "0 auto", padding: "72px 20px 56px", textAlign: "center" }}>
-        <div style={{
-          display: "inline-block", padding: "6px 16px", borderRadius: 99,
-          background: "#FDF6E8", color: "#C49A1A", fontSize: 13, fontWeight: 700,
-          marginBottom: 24,
-        }}>
-          Trusted by workers across India
-        </div>
+      {/* UAT Banner */}
+      <div style={{
+        background: C.navy, padding: "8px 20px", textAlign: "center",
+        fontSize: 12, color: "#fff", fontWeight: 600, letterSpacing: "0.02em",
+      }}>
+        Product preview — use demo accounts to explore. Not yet live.
+      </div>
+
+      {/* Hero — practical, not aspirational */}
+      <section style={{ maxWidth: 560, margin: "0 auto", padding: "56px 20px 40px" }}>
         <h1 className="hero-title" style={{
-          fontSize: 44, fontWeight: 800, lineHeight: 1.15,
-          color: "#0D1B2A", margin: "0 0 16px", letterSpacing: "-0.03em",
+          fontSize: 40, fontWeight: 800, lineHeight: 1.12,
+          color: C.navy, margin: "0 0 16px", letterSpacing: "-0.03em",
         }}>
-          Your work speaks for itself
+          Verified trust for<br />domestic hiring
         </h1>
         <p className="hero-subtitle" style={{
-          fontSize: 18, color: "#636366", lineHeight: 1.7,
-          margin: "0 auto 36px", maxWidth: 480,
+          fontSize: 17, color: C.sub, lineHeight: 1.7,
+          margin: "0 0 32px", maxWidth: 440,
         }}>
-          Build a trust profile that follows you. Get endorsed by people you&apos;ve worked with. No blacklists, no middlemen — just your reputation.
+          SafeHire lets workers carry a reusable trust card — verified by real employers. Hirers get reliable signals. Workers stay in control of their data.
         </p>
-        <div className="cta-buttons" style={{ display: "flex", gap: 12, justifyContent: "center" }}>
+
+        {/* Two clear paths */}
+        <div className="grid-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginBottom: 48 }}>
           <a href="/login" style={{
-            padding: "14px 32px", background: "#C49A1A", color: "#fff",
-            borderRadius: 12, textDecoration: "none", fontSize: 16, fontWeight: 700,
+            display: "block", padding: "20px 20px", background: "#fff",
+            border: `2px solid ${C.amber}`, borderRadius: 12,
+            textDecoration: "none", textAlign: "center",
           }}>
-            Create your profile
+            <div style={{ fontSize: 14, fontWeight: 800, color: C.amber, marginBottom: 4 }}>I&apos;m hiring</div>
+            <div style={{ fontSize: 13, color: C.sub }}>Find trusted local help</div>
           </a>
-          <a href="#how-it-works" style={{
-            padding: "14px 32px", background: "#F7F6F3", color: "#0D1B2A",
-            borderRadius: 12, textDecoration: "none", fontSize: 16, fontWeight: 600,
-            border: "1px solid #E5E5EA",
+          <a href="/login" style={{
+            display: "block", padding: "20px 20px", background: C.amber,
+            border: `2px solid ${C.amber}`, borderRadius: 12,
+            textDecoration: "none", textAlign: "center",
           }}>
+            <div style={{ fontSize: 14, fontWeight: 800, color: "#fff", marginBottom: 4 }}>I&apos;m a worker</div>
+            <div style={{ fontSize: 13, color: "rgba(255,255,255,0.8)" }}>Get verified, get hired faster</div>
+          </a>
+        </div>
+      </section>
+
+      {/* How it works — 3 steps, dead simple */}
+      <section id="how-it-works" style={{ borderTop: `1px solid ${C.border}`, background: C.bg, padding: "48px 20px" }}>
+        <div style={{ maxWidth: 560, margin: "0 auto" }}>
+          <div style={{ fontSize: 12, fontWeight: 800, color: C.muted, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 20 }}>
             How it works
-          </a>
-        </div>
-      </section>
-
-      {/* Demo card */}
-      <section style={{ maxWidth: 420, margin: "0 auto", padding: "0 20px 56px" }}>
-        <div style={{
-          background: "#fff", borderRadius: 16, padding: 24,
-          boxShadow: "0 4px 20px rgba(0,0,0,0.06)",
-          border: "1px solid #E5E5EA",
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 16 }}>
-            <div style={{
-              width: 52, height: 52, borderRadius: 14,
-              background: "linear-gradient(135deg, #C49A1A, #F0C84A)",
-              color: "#fff", display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 22, fontWeight: 700,
-            }}>P</div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 700, color: "#0D1B2A", fontSize: 16 }}>Priya Sharma</div>
-              <div style={{ fontSize: 13, color: "#636366" }}>Cooking · Cleaning · Childcare</div>
-            </div>
-            <span style={{
-              fontSize: 10, fontWeight: 800, color: "#C49A1A",
-              background: "#FDF6E8", padding: "4px 10px", borderRadius: 99,
-              textTransform: "uppercase", letterSpacing: "0.04em",
-            }}>Enhanced</span>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+          <div style={{ display: "grid", gap: 20 }}>
             {[
-              { v: "4", l: "Endorsements" },
-              { v: "18mo", l: "Tenure" },
-              { v: "6yr", l: "Experience" },
-            ].map((s) => (
-              <div key={s.l} style={{ background: "#F7F6F3", borderRadius: 12, padding: "12px 8px", textAlign: "center" }}>
-                <div style={{ fontSize: 20, fontWeight: 800, color: "#0D1B2A" }}>{s.v}</div>
-                <div style={{ fontSize: 10, color: "#8E8E93", marginTop: 2, textTransform: "uppercase", fontWeight: 600, letterSpacing: "0.04em" }}>{s.l}</div>
+              { n: "1", title: "Worker creates a trust card", desc: "Name, skills, languages, experience. Takes 60 seconds. Data is encrypted and worker-owned." },
+              { n: "2", title: "Employers verify with references", desc: "Past employers write references. Each one strengthens the trust card. No fake ratings — real people only." },
+              { n: "3", title: "Hirers request access with consent", desc: "Workers approve or reject every request. No one sees your details without your permission." },
+            ].map((item) => (
+              <div key={item.n} style={{ display: "flex", gap: 16, alignItems: "start" }}>
+                <div style={{
+                  width: 32, height: 32, borderRadius: 8, flexShrink: 0,
+                  background: C.navy, color: "#fff",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 14, fontWeight: 800,
+                }}>{item.n}</div>
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: 15, color: C.navy, marginBottom: 4 }}>{item.title}</div>
+                  <div style={{ fontSize: 14, color: C.sub, lineHeight: 1.6 }}>{item.desc}</div>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Trust pillars */}
-      <section style={{ borderTop: "1px solid #E5E5EA", borderBottom: "1px solid #E5E5EA", padding: "32px 20px", background: "#FAFAF8" }}>
-        <div className="trust-bar" style={{ maxWidth: 640, margin: "0 auto", display: "flex", justifyContent: "center", gap: 40, flexWrap: "wrap" }}>
-          {[
-            ["🔐", "Worker-owned", "Your profile belongs to you"],
-            ["✅", "Consent-first", "You decide who sees your data"],
-            ["🛡️", "No blacklists", "Fair trust, not punishment"],
-          ].map(([icon, title, desc]) => (
-            <div key={title} style={{ textAlign: "center", maxWidth: 180 }}>
-              <div style={{ fontSize: 28, marginBottom: 6 }}>{icon}</div>
-              <div style={{ fontWeight: 700, fontSize: 14, color: "#0D1B2A" }}>{title}</div>
-              <div style={{ fontSize: 13, color: "#636366", marginTop: 2 }}>{desc}</div>
-            </div>
-          ))}
+      {/* Trust principles — why SafeHire is different */}
+      <section style={{ padding: "48px 20px", borderTop: `1px solid ${C.border}` }}>
+        <div style={{ maxWidth: 560, margin: "0 auto" }}>
+          <div style={{ fontSize: 12, fontWeight: 800, color: C.muted, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 20 }}>
+            Privacy-first trust
+          </div>
+          <div style={{ display: "grid", gap: 16 }}>
+            {[
+              { title: "Workers own their data", desc: "Your trust card belongs to you. Take it with you when you change employers. No one can delete it." },
+              { title: "Consent before access", desc: "Hirers must request permission to see your details. You approve or reject every request individually." },
+              { title: "No blacklists, no punishment", desc: "SafeHire is not a blacklist system. Incident reports are reviewed fairly. Workers can always appeal." },
+            ].map((item) => (
+              <div key={item.title} style={{
+                background: "#fff", borderRadius: 12, padding: "18px 20px",
+                border: `1px solid ${C.border}`,
+              }}>
+                <div style={{ fontWeight: 700, fontSize: 15, color: C.navy, marginBottom: 4 }}>{item.title}</div>
+                <div style={{ fontSize: 14, color: C.sub, lineHeight: 1.6 }}>{item.desc}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* How it works */}
-      <section id="how-it-works" style={{ maxWidth: 640, margin: "0 auto", padding: "64px 20px" }}>
-        <h2 style={{ fontSize: 30, fontWeight: 800, color: "#0D1B2A", textAlign: "center", marginBottom: 40, letterSpacing: "-0.02em" }}>
-          How SafeHire works
-        </h2>
-        <div style={{ display: "grid", gap: 16 }}>
-          {[
-            { n: "1", title: "Create your profile", desc: "Add your skills, experience, languages. Takes less than a minute. Your data is encrypted.", color: "#C49A1A" },
-            { n: "2", title: "Get endorsed", desc: "Hirers you've worked with can endorse you. Real reviews from real people — not fake ratings.", color: "#34C759" },
-            { n: "3", title: "Share with consent", desc: "When a hirer wants your details, you decide. Approve or reject every request.", color: "#007AFF" },
-          ].map((item) => (
-            <div key={item.n} style={{
-              background: "#fff", borderRadius: 14, padding: 24,
-              display: "flex", gap: 18, alignItems: "start",
-              border: "1px solid #E5E5EA",
-            }}>
-              <div style={{
-                width: 44, height: 44, borderRadius: 12, flexShrink: 0,
-                background: item.color, color: "#fff",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: 18, fontWeight: 800,
-              }}>{item.n}</div>
+      {/* Sample trust card — practical, not vanity */}
+      <section style={{ padding: "48px 20px", background: C.bg, borderTop: `1px solid ${C.border}` }}>
+        <div style={{ maxWidth: 400, margin: "0 auto" }}>
+          <div style={{ fontSize: 12, fontWeight: 800, color: C.muted, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 16 }}>
+            Sample trust card
+          </div>
+          <div style={{
+            background: "#fff", borderRadius: 12, overflow: "hidden",
+            border: `1px solid ${C.border}`,
+          }}>
+            <div style={{ padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: `1px solid ${C.border}` }}>
               <div>
-                <div style={{ fontWeight: 700, fontSize: 17, color: "#0D1B2A", marginBottom: 4 }}>{item.title}</div>
-                <div style={{ fontSize: 14, color: "#636366", lineHeight: 1.6 }}>{item.desc}</div>
+                <div style={{ fontWeight: 700, color: C.navy, fontSize: 16 }}>Priya Sharma</div>
+                <div style={{ fontSize: 13, color: C.sub, marginTop: 2 }}>Cook · Housekeeper · Childcare</div>
               </div>
+              <div style={{
+                padding: "4px 10px", borderRadius: 6, fontSize: 11, fontWeight: 700,
+                background: "#DCFCE7", color: C.green, textTransform: "uppercase",
+              }}>Verified</div>
             </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Two audiences */}
-      <section style={{ maxWidth: 640, margin: "0 auto", padding: "0 20px 64px" }}>
-        <div className="grid-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
-          <div style={{ borderRadius: 14, padding: 28, background: "#FDF6E8", border: "1px solid #F0C84A33" }}>
-            <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", color: "#C49A1A", letterSpacing: "0.06em", marginBottom: 10 }}>
-              For Workers
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", borderBottom: `1px solid ${C.border}` }}>
+              {[
+                { v: "6 yr", l: "Experience" },
+                { v: "4", l: "References" },
+                { v: "Hindi, Eng", l: "Languages" },
+              ].map((s) => (
+                <div key={s.l} style={{ padding: "14px 12px", textAlign: "center", borderRight: `1px solid ${C.border}` }}>
+                  <div style={{ fontSize: 16, fontWeight: 700, color: C.navy }}>{s.v}</div>
+                  <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>{s.l}</div>
+                </div>
+              ))}
             </div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: "#0D1B2A", marginBottom: 12 }}>
-              Your work, your identity
+            <div style={{ padding: "12px 20px", fontSize: 12, color: C.muted }}>
+              Consent required to view full details
             </div>
-            {["Portable profile", "You control your data", "Build real trust", "No unfair blacklists"].map((t) => (
-              <div key={t} style={{ display: "flex", gap: 8, fontSize: 14, color: "#636366", marginBottom: 6 }}>
-                <span style={{ color: "#C49A1A" }}>→</span> {t}
-              </div>
-            ))}
-          </div>
-          <div style={{ borderRadius: 14, padding: 28, background: "#F0F7FF", border: "1px solid #007AFF22" }}>
-            <div style={{ fontSize: 11, fontWeight: 800, textTransform: "uppercase", color: "#007AFF", letterSpacing: "0.06em", marginBottom: 10 }}>
-              For Hirers
-            </div>
-            <div style={{ fontSize: 18, fontWeight: 800, color: "#0D1B2A", marginBottom: 12 }}>
-              Hire with confidence
-            </div>
-            {["Verified trust signals", "Consent-based access", "Real endorsements", "Incident accountability"].map((t) => (
-              <div key={t} style={{ display: "flex", gap: 8, fontSize: 14, color: "#636366", marginBottom: 6 }}>
-                <span style={{ color: "#007AFF" }}>→</span> {t}
-              </div>
-            ))}
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section style={{ background: "#0D1B2A", padding: "56px 20px", textAlign: "center" }}>
-        <h2 style={{ fontSize: 26, fontWeight: 800, color: "#fff", marginBottom: 10 }}>
-          Start building your trust profile
-        </h2>
-        <p style={{ fontSize: 15, color: "#8E8E93", marginBottom: 28 }}>
+      <section style={{ background: C.navy, padding: "48px 20px", textAlign: "center" }}>
+        <div style={{ fontSize: 22, fontWeight: 800, color: "#fff", marginBottom: 8 }}>
+          Ready to get started?
+        </div>
+        <p style={{ fontSize: 14, color: C.muted, marginBottom: 24 }}>
           Free for workers. Always.
         </p>
         <a href="/login" style={{
-          display: "inline-flex", padding: "14px 32px",
-          background: "#C49A1A", color: "#fff", borderRadius: 12,
-          textDecoration: "none", fontSize: 16, fontWeight: 700,
+          display: "inline-flex", padding: "13px 28px",
+          background: C.amber, color: "#fff", borderRadius: 10,
+          textDecoration: "none", fontSize: 15, fontWeight: 700,
         }}>
-          Get started
+          Create your trust card
         </a>
       </section>
 
-      <footer style={{ borderTop: "1px solid #E5E5EA", padding: 24, textAlign: "center", fontSize: 13, color: "#8E8E93" }}>
-        SafeHire — Trust profiles for India&apos;s informal workforce.
+      <footer style={{ borderTop: `1px solid ${C.border}`, padding: "20px 20px", textAlign: "center", fontSize: 12, color: C.muted }}>
+        SafeHire — Verified trust for India&apos;s domestic workforce
       </footer>
     </div>
   );

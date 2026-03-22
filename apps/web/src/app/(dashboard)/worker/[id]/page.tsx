@@ -5,27 +5,32 @@ import { trpc } from "@/lib/trpc";
 
 interface WorkerPageProps { params: { id: string } }
 
-const C = { amber: "#C49A1A", navy: "#0D1B2A", green: "#34C759", blue: "#007AFF", sub: "#636366", muted: "#8E8E93", border: "#E5E5EA", bg: "#F7F6F3" };
+const C = { amber: "#C49A1A", navy: "#0D1B2A", green: "#16A34A", sub: "#636366", muted: "#8E8E93", border: "#E5E5EA", bg: "#F7F6F3" };
 const DEFAULT_FIELDS = ["full_name", "skills", "experience_years"];
+
+const FIELD_LABELS: Record<string, string> = {
+  full_name: "Full Name", skills: "Skills", experience_years: "Experience",
+  languages: "Languages", verified_at: "Verification", phone: "Phone",
+};
 
 export default function WorkerTrustCardPage({ params }: WorkerPageProps) {
   const [msg, setMsg] = useState("");
   const [reqSent, setReqSent] = useState(false);
-  const [endoSent, setEndoSent] = useState(false);
+  const [refSent, setRefSent] = useState(false);
 
   const { data, isLoading, error } = trpc.hirer.viewTrustCard.useQuery({ workerId: params.id });
   const reqMut = trpc.consent.requestAccess.useMutation({ onSuccess: () => setReqSent(true) });
-  const endoMut = trpc.trust.submitEndorsement.useMutation({ onSuccess: () => setEndoSent(true) });
+  const refMut = trpc.trust.submitEndorsement.useMutation({ onSuccess: () => setRefSent(true) });
 
   if (isLoading) return (
     <div style={{ maxWidth: 520, margin: "0 auto", padding: "24px 20px" }}>
-      {[160, 100].map((h, i) => <div key={i} style={{ height: h, background: "#fff", borderRadius: 14, border: `1px solid ${C.border}`, marginBottom: 14 }} />)}
+      {[100, 80].map((h, i) => <div key={i} style={{ height: h, background: "#fff", borderRadius: 10, border: `1px solid ${C.border}`, marginBottom: 12 }} />)}
     </div>
   );
 
   if (error) return (
     <div style={{ maxWidth: 520, margin: "0 auto", padding: "24px 20px" }}>
-      <div style={{ background: "#fff", borderLeft: "3px solid #FF3B30", padding: 16, borderRadius: 14, fontSize: 14, color: "#FF3B30", border: `1px solid ${C.border}` }}>{error.message}</div>
+      <div style={{ background: "#FEF2F2", padding: "14px 16px", borderRadius: 10, fontSize: 14, color: "#DC2626" }}>{error.message}</div>
     </div>
   );
 
@@ -33,118 +38,127 @@ export default function WorkerTrustCardPage({ params }: WorkerPageProps) {
 
   const card = data.trustCard as Record<string, unknown>;
   const tier = (card.tier as string) ?? "unverified";
-  const tierMap: Record<string, { gradient: string; bg: string; color: string; label: string }> = {
-    unverified: { gradient: "linear-gradient(135deg, #636366, #8E8E93)", bg: "#F8F8F8", color: "#636366", label: "Unverified" },
-    basic: { gradient: "linear-gradient(135deg, #007AFF, #58A6FF)", bg: "#F0F7FF", color: "#007AFF", label: "Basic" },
-    enhanced: { gradient: "linear-gradient(135deg, #C49A1A, #F0C84A)", bg: "#FDF6E8", color: "#C49A1A", label: "Enhanced" },
+  const tierStyles: Record<string, { bg: string; color: string; label: string }> = {
+    unverified: { bg: "#F3F4F6", color: "#6B7280", label: "Unverified" },
+    basic: { bg: "#DBEAFE", color: "#1D4ED8", label: "Basic" },
+    enhanced: { bg: "#DCFCE7", color: C.green, label: "Verified" },
   };
-  const ts = tierMap[tier] ?? tierMap.unverified;
+  const ts = tierStyles[tier] ?? tierStyles.unverified;
 
   return (
     <div style={{ maxWidth: 520, margin: "0 auto", padding: "24px 20px" }}>
-      <a href="/search" style={{ fontSize: 13, color: C.sub, textDecoration: "none", marginBottom: 14, display: "inline-block" }}>← Back</a>
+      <a href="/search" style={{ fontSize: 13, color: C.sub, textDecoration: "none", marginBottom: 16, display: "inline-block" }}>← Back to search</a>
 
-      {/* Profile header */}
-      <div style={{ background: "#fff", borderRadius: 14, overflow: "hidden", marginBottom: 14, border: `1px solid ${C.border}`, boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
-        <div style={{ height: 56, background: ts.gradient }} />
-        <div style={{ padding: "0 20px 18px", marginTop: -24 }}>
-          <div style={{
-            width: 52, height: 52, borderRadius: 14, background: ts.gradient, color: "#fff",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 20, fontWeight: 700, border: "3px solid #fff",
-          }}>W</div>
-          <div style={{ marginTop: 10, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <div>
-              <h1 style={{ fontSize: 20, fontWeight: 800, color: C.navy, margin: 0 }}>Worker Profile</h1>
-              <div style={{ fontSize: 13, color: C.sub, marginTop: 2 }}>Trust card is public. Details need consent.</div>
-            </div>
-            <span style={{ padding: "4px 12px", borderRadius: 99, fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.04em", background: ts.bg, color: ts.color }}>{ts.label}</span>
+      {/* Trust card header */}
+      <div style={{
+        background: "#fff", borderRadius: 12, overflow: "hidden",
+        border: `1px solid ${C.border}`, marginBottom: 12,
+      }}>
+        <div style={{ padding: "18px 20px", display: "flex", justifyContent: "space-between", alignItems: "start" }}>
+          <div>
+            <h1 style={{ fontSize: 18, fontWeight: 800, color: C.navy, margin: 0 }}>Trust Card</h1>
+            <div style={{ fontSize: 13, color: C.sub, marginTop: 4 }}>Public trust data. Details require consent.</div>
           </div>
+          <div style={{
+            padding: "4px 10px", borderRadius: 6, fontSize: 11, fontWeight: 700,
+            background: ts.bg, color: ts.color, textTransform: "uppercase", flexShrink: 0,
+          }}>{ts.label}</div>
         </div>
-      </div>
 
-      {/* Stats */}
-      <div style={{ background: "#fff", borderRadius: 14, padding: 18, marginBottom: 14, border: `1px solid ${C.border}`, boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
-        <div style={{ fontSize: 15, fontWeight: 800, color: C.navy, marginBottom: 12 }}>Trust Card</div>
-        <div className="grid-4col" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8 }}>
+        {/* Stats */}
+        <div style={{ borderTop: `1px solid ${C.border}`, display: "grid", gridTemplateColumns: "repeat(4, 1fr)" }} className="grid-4col">
           {[
-            { v: (card.verification_status as string) ?? "pending", l: "Verified" },
+            { v: (card.verification_status as string) ?? "pending", l: "Status" },
             { v: `${(card.tenure_months as number) ?? 0}mo`, l: "Tenure" },
-            { v: String((card.endorsement_count as number) ?? 0), l: "Endorsed" },
-            { v: card.incident_flag ? "Yes" : "None", l: "Incidents" },
+            { v: String((card.endorsement_count as number) ?? 0), l: "Refs" },
+            { v: card.incident_flag ? "Flagged" : "Clean", l: "Record" },
           ].map((s) => (
-            <div key={s.l} style={{ background: C.bg, borderRadius: 10, padding: "12px 6px", textAlign: "center" }}>
-              <div style={{ fontSize: 16, fontWeight: 800, color: C.navy }}>{s.v}</div>
-              <div style={{ fontSize: 9, color: C.muted, marginTop: 3, textTransform: "uppercase", fontWeight: 700, letterSpacing: "0.04em" }}>{s.l}</div>
+            <div key={s.l} style={{ padding: "12px 8px", textAlign: "center", borderRight: `1px solid ${C.border}` }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>{s.v}</div>
+              <div style={{ fontSize: 10, color: C.muted, marginTop: 2 }}>{s.l}</div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Consent */}
+      {/* Consent / Access */}
       {data.hasConsent ? (
-        <div style={{ background: "#fff", borderRadius: 14, padding: 18, marginBottom: 14, borderLeft: `3px solid ${C.green}`, border: `1px solid ${C.border}`, boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
-          <div style={{ fontSize: 15, fontWeight: 800, color: C.green, marginBottom: 10 }}>✓ Access Granted</div>
-          <div style={{ fontSize: 13, color: C.sub, marginBottom: 12 }}>Fields: {data.consentedFields.join(", ")}</div>
+        <div style={{
+          background: "#fff", borderRadius: 12, padding: "18px 20px",
+          border: `1px solid ${C.border}`, marginBottom: 12,
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+            <div style={{ width: 8, height: 8, borderRadius: 4, background: C.green }} />
+            <div style={{ fontSize: 14, fontWeight: 700, color: C.navy }}>Access granted</div>
+          </div>
+          <div style={{ fontSize: 12, color: C.muted, marginBottom: 12 }}>
+            Fields: {data.consentedFields.map((f: string) => FIELD_LABELS[f] || f.replace(/_/g, " ")).join(", ")}
+          </div>
           {data.profile && (
-            <div style={{ padding: 14, background: C.bg, borderRadius: 10 }}>
+            <div style={{ display: "grid", gap: 6 }}>
               {Object.entries(data.profile as Record<string, unknown>).map(([key, value]) => (
-                <div key={key} style={{ fontSize: 14, marginBottom: 6, display: "flex", gap: 10 }}>
-                  <span style={{ color: C.sub, minWidth: 110, textTransform: "capitalize" }}>{key.replace(/_/g, " ")}</span>
-                  <span style={{ color: C.navy, fontWeight: 700 }}>{Array.isArray(value) ? value.join(", ") : String(value ?? "—")}</span>
+                <div key={key} style={{ display: "flex", justifyContent: "space-between", padding: "8px 12px", background: C.bg, borderRadius: 6 }}>
+                  <span style={{ fontSize: 13, color: C.sub }}>{FIELD_LABELS[key] || key.replace(/_/g, " ")}</span>
+                  <span style={{ fontSize: 13, fontWeight: 600, color: C.navy }}>{Array.isArray(value) ? value.join(", ") : String(value ?? "—")}</span>
                 </div>
               ))}
             </div>
           )}
         </div>
       ) : (
-        <div style={{ background: "#fff", borderRadius: 14, padding: 18, marginBottom: 14, borderLeft: `3px solid ${C.amber}`, border: `1px solid ${C.border}`, boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
-          <div style={{ fontSize: 15, fontWeight: 800, color: C.amber, marginBottom: 4 }}>🔒 Profile Locked</div>
-          <div style={{ fontSize: 13, color: C.sub, marginBottom: 12 }}>Request access to see this worker&apos;s details.</div>
+        <div style={{
+          background: "#fff", borderRadius: 12, padding: "18px 20px",
+          border: `1px solid ${C.border}`, marginBottom: 12,
+        }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: C.navy, marginBottom: 4 }}>Request access to full details</div>
+          <div style={{ fontSize: 13, color: C.sub, marginBottom: 14 }}>The worker will review and approve or reject your request.</div>
           {!reqSent ? (
             <div>
               <textarea placeholder="Why do you need access? (optional)" value={msg} onChange={(e) => setMsg(e.target.value)} maxLength={500} rows={2} style={{
-                width: "100%", padding: "10px 14px", border: `1px solid ${C.border}`, borderRadius: 10, marginBottom: 10, boxSizing: "border-box", resize: "vertical", fontSize: 13, outline: "none", background: C.bg,
+                width: "100%", padding: "10px 14px", border: `1px solid ${C.border}`, borderRadius: 8, marginBottom: 10, boxSizing: "border-box", resize: "vertical", fontSize: 13, outline: "none",
               }} />
               <button onClick={() => reqMut.mutate({ workerId: params.id, fields: DEFAULT_FIELDS, message: msg || undefined })} disabled={reqMut.isPending} style={{
-                padding: "11px 24px", background: C.amber, color: "#fff", border: "none", borderRadius: 12, cursor: "pointer", fontSize: 14, fontWeight: 700,
+                padding: "11px 24px", background: C.amber, color: "#fff", border: "none", borderRadius: 10, cursor: "pointer", fontSize: 14, fontWeight: 700,
               }}>
-                {reqMut.isPending ? "Sending..." : "Request Access"}
+                {reqMut.isPending ? "Sending..." : "Request access"}
               </button>
-              {reqMut.error && <div style={{ marginTop: 8, fontSize: 12, color: "#FF3B30" }}>{reqMut.error.message}</div>}
+              {reqMut.error && <div style={{ marginTop: 8, fontSize: 12, color: "#DC2626" }}>{reqMut.error.message}</div>}
             </div>
           ) : (
-            <div style={{ fontSize: 14, color: C.green, fontWeight: 700, background: "#E8FAE8", padding: "10px 14px", borderRadius: 10 }}>
-              ✓ Request sent. The worker will review it.
+            <div style={{ fontSize: 14, color: C.green, fontWeight: 600, background: "#DCFCE7", padding: "10px 14px", borderRadius: 8 }}>
+              Request sent. The worker will review it.
             </div>
           )}
         </div>
       )}
 
-      {/* Endorse */}
-      <div style={{ background: "#fff", borderRadius: 14, padding: 18, border: `1px solid ${C.border}`, boxShadow: "0 1px 4px rgba(0,0,0,0.04)" }}>
-        <div style={{ fontSize: 15, fontWeight: 800, color: C.navy, marginBottom: 4 }}>Endorse this worker</div>
-        <div style={{ fontSize: 13, color: C.sub, marginBottom: 12 }}>Help build their trust profile.</div>
-        {endoSent ? (
-          <div style={{ fontSize: 14, color: C.green, fontWeight: 700, background: "#E8FAE8", padding: "12px 14px", borderRadius: 10 }}>✓ Endorsement submitted.</div>
+      {/* Write a reference */}
+      <div style={{
+        background: "#fff", borderRadius: 12, padding: "18px 20px",
+        border: `1px solid ${C.border}`,
+      }}>
+        <div style={{ fontSize: 14, fontWeight: 700, color: C.navy, marginBottom: 4 }}>Write a reference</div>
+        <div style={{ fontSize: 13, color: C.sub, marginBottom: 14 }}>Have you worked with this person? Your reference strengthens their trust card.</div>
+        {refSent ? (
+          <div style={{ fontSize: 14, color: C.green, fontWeight: 600, background: "#DCFCE7", padding: "12px 14px", borderRadius: 8 }}>Reference submitted. Thank you.</div>
         ) : (
           <form onSubmit={(e) => {
             e.preventDefault();
             const f = e.target as HTMLFormElement;
             const rel = (f.elements.namedItem("relationship") as HTMLInputElement).value;
             const com = (f.elements.namedItem("comment") as HTMLTextAreaElement).value;
-            if (rel) endoMut.mutate({ workerId: params.id, relationship: rel, comment: com || undefined });
+            if (rel) refMut.mutate({ workerId: params.id, relationship: rel, comment: com || undefined });
           }}>
-            <input name="relationship" placeholder="Your relationship (e.g., Former employer)" style={{
-              width: "100%", padding: "10px 14px", border: `1px solid ${C.border}`, borderRadius: 10, marginBottom: 8, boxSizing: "border-box", fontSize: 13, outline: "none", background: C.bg,
+            <input name="relationship" placeholder="Your relationship (e.g. Former employer, Neighbour)" style={{
+              width: "100%", padding: "10px 14px", border: `1px solid ${C.border}`, borderRadius: 8, marginBottom: 8, boxSizing: "border-box", fontSize: 13, outline: "none",
             }} />
-            <textarea name="comment" placeholder="Share your experience..." rows={2} style={{
-              width: "100%", padding: "10px 14px", border: `1px solid ${C.border}`, borderRadius: 10, marginBottom: 10, boxSizing: "border-box", resize: "vertical", fontSize: 13, outline: "none", background: C.bg,
+            <textarea name="comment" placeholder="How was your experience working with them?" rows={2} style={{
+              width: "100%", padding: "10px 14px", border: `1px solid ${C.border}`, borderRadius: 8, marginBottom: 10, boxSizing: "border-box", resize: "vertical", fontSize: 13, outline: "none",
             }} />
-            <button type="submit" disabled={endoMut.isPending} style={{
-              padding: "11px 24px", background: C.amber, color: "#fff", border: "none", borderRadius: 12, cursor: "pointer", fontSize: 14, fontWeight: 700,
+            <button type="submit" disabled={refMut.isPending} style={{
+              padding: "11px 24px", background: C.navy, color: "#fff", border: "none", borderRadius: 10, cursor: "pointer", fontSize: 14, fontWeight: 700,
             }}>
-              {endoMut.isPending ? "Submitting..." : "Submit Endorsement"}
+              {refMut.isPending ? "Submitting..." : "Submit reference"}
             </button>
           </form>
         )}
