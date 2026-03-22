@@ -42,18 +42,28 @@ export async function searchWorkers(
     skills?: string[];
     languages?: string[];
     minExperienceYears?: number;
+    category?: string;
+    locality?: string;
     page: number;
     limit: number;
   }
 ) {
   let queryBuilder = client
     .from("worker_profiles")
-    .select("id, user_id, full_name, skills, languages, experience_years, verified_at", {
+    .select("id, user_id, full_name, skills, languages, experience_years, verified_at, category, locality, availability, agency_id", {
       count: "exact",
     });
 
   if (params.minExperienceYears !== undefined) {
     queryBuilder = queryBuilder.gte("experience_years", params.minExperienceYears);
+  }
+
+  if (params.category !== undefined) {
+    queryBuilder = queryBuilder.eq("category", params.category);
+  }
+
+  if (params.locality !== undefined) {
+    queryBuilder = queryBuilder.ilike("locality", `%${params.locality}%`);
   }
 
   const offset = (params.page - 1) * params.limit;
@@ -78,6 +88,8 @@ export async function createWorkerProfile(
     experienceYears: number;
     encryptedAadhaarHash?: string;
     photoUrl?: string;
+    category?: string;
+    locality?: string;
   }
 ) {
   const insert: WorkerProfileInsert = {
@@ -88,6 +100,8 @@ export async function createWorkerProfile(
     experience_years: profile.experienceYears,
     encrypted_aadhaar_hash: profile.encryptedAadhaarHash ?? null,
     photo_url: profile.photoUrl ?? null,
+    category: profile.category ?? null,
+    locality: profile.locality ?? null,
   };
 
   const { data, error } = await client
@@ -112,6 +126,8 @@ export async function updateWorkerProfile(
     languages?: string[];
     experienceYears?: number;
     photoUrl?: string;
+    category?: string;
+    locality?: string;
   }
 ) {
   const dbUpdates: Database["public"]["Tables"]["worker_profiles"]["Update"] = {};
@@ -120,6 +136,8 @@ export async function updateWorkerProfile(
   if (updates.languages !== undefined) dbUpdates.languages = updates.languages;
   if (updates.experienceYears !== undefined) dbUpdates.experience_years = updates.experienceYears;
   if (updates.photoUrl !== undefined) dbUpdates.photo_url = updates.photoUrl;
+  if (updates.category !== undefined) dbUpdates.category = updates.category;
+  if (updates.locality !== undefined) dbUpdates.locality = updates.locality;
 
   const { data, error } = await client
     .from("worker_profiles")

@@ -46,6 +46,8 @@ const WORKERS = [
     tenureMonths: 18,
     endorsementCount: 4,
     verifiedAt: "2025-09-15T00:00:00Z",
+    category: "cook",
+    locality: "Indiranagar, Bangalore",
   },
   {
     id: "a0000000-0000-0000-0000-000000000002",
@@ -59,6 +61,8 @@ const WORKERS = [
     tenureMonths: 8,
     endorsementCount: 2,
     verifiedAt: "2025-11-20T00:00:00Z",
+    category: "driver",
+    locality: "Koramangala, Bangalore",
   },
   {
     id: "a0000000-0000-0000-0000-000000000003",
@@ -72,6 +76,8 @@ const WORKERS = [
     tenureMonths: 24,
     endorsementCount: 7,
     verifiedAt: "2025-06-10T00:00:00Z",
+    category: "maid",
+    locality: "HSR Layout, Bangalore",
   },
   {
     id: "a0000000-0000-0000-0000-000000000004",
@@ -85,6 +91,8 @@ const WORKERS = [
     tenureMonths: 3,
     endorsementCount: 1,
     verifiedAt: null,
+    category: "electrician",
+    locality: "Whitefield, Bangalore",
   },
   {
     id: "a0000000-0000-0000-0000-000000000005",
@@ -98,6 +106,8 @@ const WORKERS = [
     tenureMonths: 1,
     endorsementCount: 0,
     verifiedAt: null,
+    category: "nanny",
+    locality: "Jayanagar, Bangalore",
   },
   {
     id: "a0000000-0000-0000-0000-000000000006",
@@ -111,6 +121,8 @@ const WORKERS = [
     tenureMonths: 10,
     endorsementCount: 3,
     verifiedAt: "2025-10-05T00:00:00Z",
+    category: "plumber",
+    locality: "BTM Layout, Bangalore",
   },
 ];
 
@@ -136,6 +148,52 @@ const HIRERS = [
     organization: "Nair Family",
     type: "individual",
   },
+];
+
+// Agency owner user and agency record
+const AGENCY_USER = {
+  id: "c0000000-0000-0000-0000-000000000001",
+  phone: "+919876543401",
+  role: "hirer",
+  name: "HomeServe Admin",
+};
+
+const AGENCY = {
+  id: "d0000000-0000-0000-0000-000000000001",
+  userId: AGENCY_USER.id,
+  name: "HomeServe Bangalore",
+  description: "Verified domestic help agency serving Bangalore since 2019",
+  categories: ["cook", "maid", "cleaner"],
+  localities: ["Indiranagar", "Koramangala", "HSR Layout"],
+  contactPhone: "+919876543401",
+};
+
+// Workers linked to the agency
+const AGENCY_WORKER_IDS = [
+  WORKERS[2].id, // Lakshmi Devi
+  WORKERS[4].id, // Sunita Rao
+];
+
+// Ratings from hirers to workers
+const RATINGS = [
+  // Priya: 5, 4, 5
+  { workerId: WORKERS[0].id, raterId: HIRERS[0].id, score: 5, comment: "Excellent cook, very clean kitchen.", category: "cook" },
+  { workerId: WORKERS[0].id, raterId: HIRERS[1].id, score: 4, comment: "Good work, slightly late occasionally.", category: "cook" },
+  { workerId: WORKERS[0].id, raterId: HIRERS[2].id, score: 5, comment: "Best cook we have ever hired.", category: "cook" },
+  // Ramesh: 4, 4
+  { workerId: WORKERS[1].id, raterId: HIRERS[0].id, score: 4, comment: "Safe driver, punctual.", category: "driver" },
+  { workerId: WORKERS[1].id, raterId: HIRERS[1].id, score: 4, comment: "Reliable for daily commute.", category: "driver" },
+  // Lakshmi: 5, 5, 4
+  { workerId: WORKERS[2].id, raterId: HIRERS[0].id, score: 5, comment: "Thorough and dependable.", category: "maid" },
+  { workerId: WORKERS[2].id, raterId: HIRERS[1].id, score: 5, comment: "One of our best placements.", category: "maid" },
+  { workerId: WORKERS[2].id, raterId: HIRERS[2].id, score: 4, comment: "Great with elderly care.", category: "maid" },
+  // Arjun: 1 rating
+  { workerId: WORKERS[3].id, raterId: HIRERS[0].id, score: 4, comment: "Fixed electrical issues quickly.", category: "electrician" },
+  // Sunita: 1 rating
+  { workerId: WORKERS[4].id, raterId: HIRERS[2].id, score: 4, comment: "Good nanny, children love her.", category: "nanny" },
+  // Mohammad: 2 ratings
+  { workerId: WORKERS[5].id, raterId: HIRERS[0].id, score: 4, comment: "Prompt plumbing service.", category: "plumber" },
+  { workerId: WORKERS[5].id, raterId: HIRERS[1].id, score: 5, comment: "Fixed a tricky leak. Very professional.", category: "plumber" },
 ];
 
 // Endorsements linking hirers to workers
@@ -226,21 +284,27 @@ async function main() {
   console.log("Seeding worker profiles...");
   for (const w of WORKERS) {
     await sql`
-      INSERT INTO worker_profiles (user_id, full_name, skills, languages, experience_years, verified_at)
+      INSERT INTO worker_profiles (user_id, full_name, skills, languages, experience_years, verified_at, category, locality, availability)
       VALUES (
         ${w.id},
         ${w.fullName},
         ${JSON.stringify(w.skills)}::jsonb,
         ${JSON.stringify(w.languages)}::jsonb,
         ${w.experienceYears},
-        ${w.verifiedAt}
+        ${w.verifiedAt},
+        ${w.category},
+        ${w.locality},
+        'available'
       )
       ON CONFLICT (user_id) DO UPDATE SET
         full_name = EXCLUDED.full_name,
         skills = EXCLUDED.skills,
         languages = EXCLUDED.languages,
         experience_years = EXCLUDED.experience_years,
-        verified_at = EXCLUDED.verified_at
+        verified_at = EXCLUDED.verified_at,
+        category = EXCLUDED.category,
+        locality = EXCLUDED.locality,
+        availability = EXCLUDED.availability
     `;
   }
   console.log(`  ${WORKERS.length} profiles`);
@@ -358,24 +422,120 @@ async function main() {
   }
   console.log(`  ${requestCount} consent requests`);
 
-  // 8. Seed verifications for verified workers
+  // 8. Seed verifications for verified workers (basic phone verification for all)
   console.log("Seeding verifications...");
   let verifyCount = 0;
   for (const w of WORKERS) {
-    if (w.verifiedAt) {
-      try {
-        await sql`
-          INSERT INTO verifications (worker_id, type, status, verified_at, expires_at, provider)
-          VALUES (${w.id}, 'phone', 'verified', ${w.verifiedAt}, ${w.verifiedAt}::timestamptz + interval '1 year', 'msg91')
-          ON CONFLICT DO NOTHING
-        `;
-        verifyCount++;
-      } catch {
-        // Skip
-      }
+    // Phone verification for all workers
+    try {
+      await sql`
+        INSERT INTO verifications (worker_id, type, status, verified_at, expires_at, provider)
+        VALUES (${w.id}, 'phone', 'verified', COALESCE(${w.verifiedAt}::timestamptz, NOW()), COALESCE(${w.verifiedAt}::timestamptz, NOW()) + interval '1 year', 'msg91')
+        ON CONFLICT DO NOTHING
+      `;
+      verifyCount++;
+    } catch {
+      // Skip
     }
   }
+
+  // Enhanced verifications for Priya Sharma (most verified worker)
+  const priyaId = WORKERS[0].id;
+  const priyaVerifiedAt = WORKERS[0].verifiedAt!;
+  const priyaVerificationSteps = [
+    { type: "selfie", provider: "internal" },
+    { type: "government_id", provider: "digilocker" },
+    { type: "face_match", provider: "internal" },
+    { type: "address", provider: "digilocker" },
+    { type: "emergency_contact", provider: "internal" },
+    { type: "work_category", provider: "internal" },
+    { type: "reference", provider: "internal" },
+  ];
+  for (const step of priyaVerificationSteps) {
+    try {
+      await sql`
+        INSERT INTO verifications (worker_id, type, status, verified_at, expires_at, provider)
+        VALUES (${priyaId}, ${step.type}, 'verified', ${priyaVerifiedAt}, ${priyaVerifiedAt}::timestamptz + interval '1 year', ${step.provider})
+        ON CONFLICT DO NOTHING
+      `;
+      verifyCount++;
+    } catch {
+      // Skip
+    }
+  }
+
+  // Basic verifications for Ramesh Kumar (selfie verified, govt_id pending)
+  const rameshId = WORKERS[1].id;
+  const rameshVerifiedAt = WORKERS[1].verifiedAt!;
+  try {
+    await sql`
+      INSERT INTO verifications (worker_id, type, status, verified_at, expires_at, provider)
+      VALUES (${rameshId}, 'selfie', 'verified', ${rameshVerifiedAt}, ${rameshVerifiedAt}::timestamptz + interval '1 year', 'internal')
+      ON CONFLICT DO NOTHING
+    `;
+    await sql`
+      INSERT INTO verifications (worker_id, type, status, verified_at, expires_at, provider)
+      VALUES (${rameshId}, 'government_id', 'pending', NULL, NULL, 'digilocker')
+      ON CONFLICT DO NOTHING
+    `;
+    verifyCount += 2;
+  } catch {
+    // Skip
+  }
+
   console.log(`  ${verifyCount} verifications`);
+
+  // 9. Seed agency user and agency record
+  console.log("Seeding agency...");
+  await sql`
+    INSERT INTO users (id, phone, role, created_at, updated_at)
+    VALUES (${AGENCY_USER.id}, ${AGENCY_USER.phone}, ${AGENCY_USER.role}, NOW(), NOW())
+    ON CONFLICT (id) DO NOTHING
+  `;
+  await sql`
+    INSERT INTO agencies (id, user_id, name, description, categories, localities, contact_phone, worker_count)
+    VALUES (
+      ${AGENCY.id},
+      ${AGENCY.userId},
+      ${AGENCY.name},
+      ${AGENCY.description},
+      ${JSON.stringify(AGENCY.categories)}::jsonb,
+      ${JSON.stringify(AGENCY.localities)}::jsonb,
+      ${AGENCY.contactPhone},
+      ${AGENCY_WORKER_IDS.length}
+    )
+    ON CONFLICT (user_id) DO UPDATE SET
+      name = EXCLUDED.name,
+      description = EXCLUDED.description,
+      categories = EXCLUDED.categories,
+      localities = EXCLUDED.localities,
+      contact_phone = EXCLUDED.contact_phone,
+      worker_count = EXCLUDED.worker_count
+  `;
+
+  // Link agency workers
+  for (const workerId of AGENCY_WORKER_IDS) {
+    await sql`
+      UPDATE worker_profiles SET agency_id = ${AGENCY.id} WHERE user_id = ${workerId}
+    `;
+  }
+  console.log(`  1 agency, ${AGENCY_WORKER_IDS.length} linked workers`);
+
+  // 10. Seed ratings
+  console.log("Seeding ratings...");
+  let ratingCount = 0;
+  for (const r of RATINGS) {
+    try {
+      await sql`
+        INSERT INTO ratings (worker_id, rater_id, score, comment, category, created_at)
+        VALUES (${r.workerId}, ${r.raterId}, ${r.score}, ${r.comment}, ${r.category}, NOW() - interval '${sql.unsafe(String(Math.floor(Math.random() * 90)))} days')
+      `;
+      ratingCount++;
+    } catch {
+      // Skip duplicates
+    }
+  }
+  console.log(`  ${ratingCount} ratings`);
 
   await sql.end();
   console.log("\nSeed complete! Demo data is ready.");
@@ -388,6 +548,8 @@ async function main() {
   for (const h of HIRERS) {
     console.log(`  ${h.phone}  ${h.name} (${h.organization})`);
   }
+  console.log("\nAgency (log in with OTP 123456):");
+  console.log(`  ${AGENCY_USER.phone}  ${AGENCY.name}`);
 }
 
 main().catch((err) => {

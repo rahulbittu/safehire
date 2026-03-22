@@ -17,6 +17,7 @@ const MIGRATIONS = [
   "supabase/migrations/00002_rls_policies.sql",
   "supabase/migrations/00003_consent_requests.sql",
   "supabase/migrations/00004_storage_buckets.sql",
+  "supabase/migrations/20260321_add_categories_agencies_ratings.sql",
 ];
 
 function loadEnv(): Record<string, string> {

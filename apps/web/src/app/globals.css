@@ -13,26 +13,26 @@ main {
   .grid-4col {
     grid-template-columns: repeat(2, 1fr) !important;
   }
+  .grid-cat {
+    grid-template-columns: repeat(5, 1fr) !important;
+  }
   .hero-title {
-    font-size: 32px !important;
+    font-size: 30px !important;
   }
   .hero-subtitle {
-    font-size: 16px !important;
-  }
-  .trust-bar {
-    gap: 24px !important;
+    font-size: 15px !important;
   }
 }
 
-/* Small mobile: even tighter */
+/* Small mobile */
 @media (max-width: 380px) {
   .grid-4col {
     grid-template-columns: 1fr !important;
   }
-  .hero-title {
-    font-size: 28px !important;
+  .grid-cat {
+    grid-template-columns: repeat(3, 1fr) !important;
   }
-  .cta-buttons {
-    flex-direction: column !important;
+  .hero-title {
+    font-size: 26px !important;
   }
 }

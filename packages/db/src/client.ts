@@ -47,6 +47,10 @@ export interface Database {
           languages: string[];
           experience_years: number;
           verified_at: string | null;
+          category: string | null;
+          locality: string | null;
+          availability: string | null;
+          agency_id: string | null;
         };
         Insert: {
           id?: string;
@@ -58,6 +62,10 @@ export interface Database {
           languages?: string[];
           experience_years?: number;
           verified_at?: string | null;
+          category?: string | null;
+          locality?: string | null;
+          availability?: string | null;
+          agency_id?: string | null;
         };
         Update: {
           full_name?: string;
@@ -67,6 +75,10 @@ export interface Database {
           languages?: string[];
           experience_years?: number;
           verified_at?: string | null;
+          category?: string | null;
+          locality?: string | null;
+          availability?: string | null;
+          agency_id?: string | null;
         };
         Relationships: [];
       };
@@ -330,6 +342,94 @@ export interface Database {
           status?: "pending" | "approved" | "rejected" | "expired";
           responded_at?: string | null;
           consent_grant_id?: string | null;
+        };
+        Relationships: [];
+      };
+      job_categories: {
+        Row: {
+          id: string;
+          slug: string;
+          name: string;
+          icon: string | null;
+          sort_order: number;
+        };
+        Insert: {
+          id?: string;
+          slug: string;
+          name: string;
+          icon?: string | null;
+          sort_order?: number;
+        };
+        Update: {
+          slug?: string;
+          name?: string;
+          icon?: string | null;
+          sort_order?: number;
+        };
+        Relationships: [];
+      };
+      agencies: {
+        Row: {
+          id: string;
+          user_id: string;
+          name: string;
+          description: string | null;
+          categories: string[];
+          localities: string[];
+          contact_phone: string | null;
+          worker_count: number;
+          verified_at: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          name: string;
+          description?: string | null;
+          categories?: string[];
+          localities?: string[];
+          contact_phone?: string | null;
+          worker_count?: number;
+          verified_at?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          name?: string;
+          description?: string | null;
+          categories?: string[];
+          localities?: string[];
+          contact_phone?: string | null;
+          worker_count?: number;
+          verified_at?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      ratings: {
+        Row: {
+          id: string;
+          worker_id: string;
+          rater_id: string;
+          score: number;
+          comment: string | null;
+          category: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          worker_id: string;
+          rater_id: string;
+          score: number;
+          comment?: string | null;
+          category?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          score?: number;
+          comment?: string | null;
+          category?: string | null;
         };
         Relationships: [];
       };

@@ -7,6 +7,7 @@ import { consentRouter } from "./routers/consent";
 import { incidentRouter } from "./routers/incident";
 import { adminRouter } from "./routers/admin";
 import { storageRouter } from "./routers/storage";
+import { agencyRouter } from "./routers/agency";
 
 export const appRouter = router({
   auth: authRouter,
@@ -17,6 +18,7 @@ export const appRouter = router({
   incident: incidentRouter,
   admin: adminRouter,
   storage: storageRouter,
+  agency: agencyRouter,
 });
 
 export type AppRouter = typeof appRouter;

@@ -12,6 +12,22 @@ export function Nav() {
 
   const handleLogout = () => { signOut(); router.push("/login"); };
 
+  // Determine tabs based on role
+  const getTabs = () => {
+    if (!user) return [];
+    const role = user.role;
+    const tabs: { href: string; label: string }[] = [
+      { href: "/dashboard", label: "Home" },
+    ];
+    if (role === "hirer") {
+      tabs.push({ href: "/search", label: "Search" });
+    }
+    tabs.push({ href: "/consent", label: "Consent" });
+    return tabs;
+  };
+
+  const tabs = getTabs();
+
   return (
     <>
       {/* Top bar */}
@@ -22,10 +38,10 @@ export function Nav() {
       }}>
         <div style={{
           maxWidth: 520, margin: "0 auto", padding: "0 20px",
-          display: "flex", height: 52, alignItems: "center",
+          display: "flex", height: 48, alignItems: "center",
         }}>
           <a href="/" style={{
-            fontWeight: 800, fontSize: 18, textDecoration: "none",
+            fontWeight: 800, fontSize: 17, textDecoration: "none",
             color: C.navy, letterSpacing: "-0.02em",
           }}>
             SafeHire
@@ -40,7 +56,7 @@ export function Nav() {
                 {user.role}
               </span>
               <button onClick={handleLogout} style={{
-                padding: "5px 12px", background: "transparent",
+                padding: "4px 10px", background: "transparent",
                 border: `1px solid ${C.border}`, borderRadius: 6,
                 fontSize: 12, fontWeight: 600, cursor: "pointer", color: C.sub,
               }}>
@@ -51,13 +67,13 @@ export function Nav() {
             <div style={{ marginLeft: "auto", display: "flex", gap: 8, alignItems: "center" }}>
               <a href="/login" style={{
                 color: C.navy, textDecoration: "none", fontSize: 14,
-                fontWeight: 600, padding: "8px 14px",
+                fontWeight: 600, padding: "6px 12px",
               }}>
                 Log in
               </a>
               <a href="/login" style={{
                 background: C.amber, color: "#fff", textDecoration: "none",
-                fontSize: 14, fontWeight: 600, padding: "8px 18px", borderRadius: 8,
+                fontSize: 13, fontWeight: 600, padding: "7px 16px", borderRadius: 8,
               }}>
                 Sign up
               </a>
@@ -66,8 +82,8 @@ export function Nav() {
         </div>
       </nav>
 
-      {/* Bottom tab bar — logged-in users only */}
-      {user && (
+      {/* Bottom tab bar */}
+      {user && tabs.length > 0 && (
         <div style={{
           position: "fixed", bottom: 0, left: 0, right: 0,
           background: "#fff", borderTop: `1px solid ${C.border}`,
@@ -75,31 +91,26 @@ export function Nav() {
         }}>
           <div style={{
             display: "flex", justifyContent: "space-around",
-            maxWidth: 520, margin: "0 auto", padding: "8px 0 6px",
+            maxWidth: 520, margin: "0 auto", padding: "6px 0 4px",
           }}>
-            <Tab href="/dashboard" label="Home" active={pathname === "/dashboard"} />
-            {user.role === "hirer" && (
-              <Tab href="/search" label="Search" active={pathname === "/search"} />
-            )}
-            <Tab href="/consent" label="Consent" active={pathname === "/consent"} />
+            {tabs.map((tab) => {
+              const active = pathname === tab.href || (tab.href !== "/dashboard" && pathname.startsWith(tab.href));
+              return (
+                <a key={tab.href} href={tab.href} style={{
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  textDecoration: "none", padding: "6px 20px",
+                  fontSize: 13, fontWeight: active ? 700 : 500,
+                  color: active ? C.amber : C.muted,
+                  borderTop: active ? `2px solid ${C.amber}` : "2px solid transparent",
+                  marginTop: -1,
+                }}>
+                  {tab.label}
+                </a>
+              );
+            })}
           </div>
         </div>
       )}
     </>
-  );
-}
-
-function Tab({ href, label, active }: { href: string; label: string; active: boolean }) {
-  return (
-    <a href={href} style={{
-      display: "flex", alignItems: "center", justifyContent: "center",
-      textDecoration: "none", padding: "6px 20px",
-      fontSize: 13, fontWeight: active ? 700 : 500,
-      color: active ? C.amber : C.muted,
-      borderTop: active ? `2px solid ${C.amber}` : "2px solid transparent",
-      marginTop: -1,
-    }}>
-      {label}
-    </a>
   );
 }

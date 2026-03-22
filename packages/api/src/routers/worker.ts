@@ -25,6 +25,8 @@ export const workerRouter = router({
       languages: z.array(z.string()).optional(),
       experienceYears: z.number().int().min(0).optional(),
       photoUrl: z.string().url().optional(),
+      category: z.string().max(50).optional(),
+      locality: z.string().max(200).optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       const updated = await workerQueries.updateWorkerProfile(ctx.db, ctx.session.userId, input);
@@ -40,6 +42,8 @@ export const workerRouter = router({
       skills: z.array(z.string()),
       languages: z.array(z.string()),
       experienceYears: z.number().int().min(0),
+      category: z.string().max(50).optional(),
+      locality: z.string().max(200).optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       const profile = await workerQueries.createWorkerProfile(ctx.db, {
@@ -48,6 +52,8 @@ export const workerRouter = router({
         skills: input.skills,
         languages: input.languages,
         experienceYears: input.experienceYears,
+        category: input.category,
+        locality: input.locality,
       });
 
       // Create initial trust card for the worker

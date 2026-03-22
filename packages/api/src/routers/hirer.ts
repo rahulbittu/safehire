@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, protectedProcedure } from "../trpc";
+import { router, protectedProcedure, publicProcedure } from "../trpc";
 import { workerQueries, trustQueries } from "@verifyme/db";
 import { ConsentManager, AuditLogger } from "@verifyme/privacy";
 
@@ -8,9 +8,24 @@ export const hirerRouter = router({
    * Search workers — returns non-PII fields only (name, skills, experience, verification status).
    * No consent required for search results.
    */
+  /**
+   * Get all job categories sorted by sort_order.
+   */
+  getCategories: publicProcedure.query(async ({ ctx }) => {
+    const { data, error } = await ctx.db
+      .from("job_categories")
+      .select("*")
+      .order("sort_order", { ascending: true });
+
+    if (error) throw error;
+    return { categories: data ?? [] };
+  }),
+
   searchWorkers: protectedProcedure
     .input(z.object({
       query: z.string().optional(),
+      category: z.string().optional(),
+      locality: z.string().optional(),
       filters: z.object({
         skills: z.array(z.string()).optional(),
         languages: z.array(z.string()).optional(),
@@ -26,6 +41,8 @@ export const hirerRouter = router({
         skills: input.filters?.skills,
         languages: input.filters?.languages,
         minExperienceYears: input.filters?.minExperienceYears,
+        category: input.category,
+        locality: input.locality,
         page: input.page,
         limit: input.limit,
       });
